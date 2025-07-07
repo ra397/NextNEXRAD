@@ -42,19 +42,19 @@
             <span class="close-btn" onclick="this.parentElement.style.display='none'">×</span>
 
             <div class="settings-input-container">
-                <label for="settings-input" class="settings-label">Precalculated Coverages Threshold:</label>
+                <label for="settings-input" class="settings-label" id="precalculated-threshold-label">Precalculated Coverages Threshold (ft):</label>
                 <div class="settings-input">
                     <label>
                         <input type="radio" id="3k_coverage" name="precalculated-threshold-radiobuttons" value="coverages_3k" checked>
-                        3k
+                        <span id="3k_coverage_label">3k</span>
                     </label>
                     <label>
                         <input type="radio" id="6k_coverage" name="precalculated-threshold-radiobuttons" value="coverages_6k">
-                        6k
+                        <span id="6k_coverage_label">6k</span>
                     </label>
                     <label>
                         <input type="radio" id="10k_coverage" name="precalculated-threshold-radiobuttons" value="coverages_10k">
-                        10k
+                        <span id="10k_coverage_label">10k</span>
                     </label>
                 </div>
             </div>

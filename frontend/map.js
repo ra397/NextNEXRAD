@@ -21,6 +21,7 @@ async function initMap() {
     center: window.constants.map.centerUSA,
     draggableCursor: 'crosshair',
     fullscreenControl: false,
+    mapTypeId: "terrain",
     styles: window.constants.map.defaultMapStyle,
   });
 
@@ -138,16 +139,32 @@ document.getElementById("units-input").addEventListener("change", function () {
   const towerLabel = document.querySelector("label[for='towerHeight-input']");
   const aglInput = document.getElementById("aglThreshold-input");
   const towerInput = document.getElementById("towerHeight-input");
+  
+  const precalculatedThresholdLabel = document.getElementById("precalculated-threshold-label");
+  const threeThousandFeetCoverage = document.getElementById("3k_coverage_label");
+  const sixThousandFeetCoverage = document.getElementById("6k_coverage_label");
+  const tenThousandFeetCoverage = document.getElementById("10k_coverage_label");
+
 
   if (unit === "metric") {
     aglLabel.textContent = "AGL Threshold (m):";
     towerLabel.textContent = "Tower Height (m):";
     aglInput.placeholder = "e.g. 914.4";
     towerInput.placeholder = "e.g. 30.48";
+
+    precalculatedThresholdLabel.textContent = "Precalculated Coverages Threshold (m):"
+    threeThousandFeetCoverage.textContent = "914.4";
+    sixThousandFeetCoverage.textContent = "1828.8";
+    tenThousandFeetCoverage.textContent = "3048";
   } else {
     aglLabel.textContent = "AGL Threshold (ft):";
     towerLabel.textContent = "Tower Height (ft):";
     aglInput.placeholder = "e.g. 3000";
     towerInput.placeholder = "e.g. 100";
+
+    precalculatedThresholdLabel.textContent = "Precalculated Coverages Threshold (ft):"
+    threeThousandFeetCoverage.textContent = "3k";
+    sixThousandFeetCoverage.textContent = "6k";
+    tenThousandFeetCoverage.textContent = "10k";
   }
 });
