@@ -56,8 +56,8 @@ class RadarLayer {
                     {
                     properties: {
                         siteID : siteData.siteId,
-                        easting: data.features[i].geometry.coordinates[0],
-                        northing: data.features[i].geometry.coordinates[1],
+                        latitude: siteData.latitude,
+                        longitude: siteData.longitude,
                         elevation: siteData.elevation,
                     },
                     clickable: true,
@@ -85,8 +85,9 @@ class RadarLayer {
     }
 
     _addPrecalculatedOverlay(marker) {
-        const {siteID, easting, northing, elevation} = marker.properties;
-        const overlayBounds = this._getOverlayBounds(easting, northing);
+        const {siteID, latitude, longitude, elevation} = marker.properties;
+        const [x3857, y3857] = proj4('EPSG:4326', 'EPSG:3857', [longitude, latitude]);
+        const overlayBounds = this._getOverlayBounds(x3857, y3857);
         const url = `${this.radar_coverage_path}/coverages_3k/${siteID}.png`;
         const overlay = new google.maps.GroundOverlay(url, overlayBounds, {
             opacity: 0.7,
@@ -94,10 +95,6 @@ class RadarLayer {
         });
         overlay.setMap(this.map);
         this.precalcOverlay[siteID] = overlay;
-    }
-
-    showAllPrecalculatedCoverages() {
-
     }
 
     getCoverage(lat, lng, maxAlt, towerHeight, elevationAngles) {
