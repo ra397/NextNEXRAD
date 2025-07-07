@@ -68,7 +68,7 @@ async function initMap() {
       isLoading = true;
       showSpinner();
       radarLayer.getCoverage(lat, lng, alt_m, tower_m, angles);
-    } catch {
+    } catch (err) {
       console.error("Error in radarLayer.getCoverage", err);
     } finally {
       hideSpinner();

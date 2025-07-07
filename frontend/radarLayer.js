@@ -13,6 +13,8 @@ class RadarLayer {
         this.precalcOverlay = {};
         this.dynamicOverlay = {};
 
+        this.dynamicOverlayOrder = []; // Keeps track of the order each dynamic overlay is created
+
         this.precalculatedFolder = 'coverages_3k'; // default threshold
     }
 
@@ -55,6 +57,11 @@ class RadarLayer {
         tenThousandThresholdRadioButton.addEventListener("change", () => {
             this.setPrecalculatedFolder("coverages_10k");
         });
+
+        const undoMostRecentDynamicRadarCoverage = document.getElementById("remove-most-recent-radar-coverage");
+        undoMostRecentDynamicRadarCoverage.addEventListener("click", () => {
+            this.removeMostRecentDynamicMarkerandOverlay();
+        })
     }
 
     // Loads the radar sites from a GeoJSON file and creates markers for each site
@@ -151,6 +158,7 @@ class RadarLayer {
             },
             {clickable: true}
         );
+        this.dynamicOverlayOrder.push(marker.properties.siteID);
         return marker;
     }
 
@@ -238,6 +246,26 @@ class RadarLayer {
         const [westLng, southLat] = proj4('EPSG:3857', 'EPSG:4326', [bounds3857.west, bounds3857.south]);
         const [eastLng, northLat] = proj4('EPSG:3857', 'EPSG:4326', [bounds3857.east, bounds3857.north]);
         return { north: northLat, south: southLat, east: eastLng, west: westLng };
+    }
+
+    removeMostRecentDynamicMarkerandOverlay() {
+        if (this.dynamicOverlayOrder.length === 0) return;
+
+        const mostRecentSiteID = this.dynamicOverlayOrder.pop();
+
+        // Remove overlay from map and dictionary
+        const overlay = this.dynamicOverlay[mostRecentSiteID];
+        if (overlay) {
+            overlay.setMap(null);
+            delete this.dynamicOverlay[mostRecentSiteID];
+        }
+
+        // Remove marker from the map and collection
+        const marker = this.dynamicRadarSitesMarkers.getMarker(mostRecentSiteID);
+        if (marker) {
+            marker.setMap(null);
+            delete this.dynamicRadarSitesMarkers.markers[mostRecentSiteID]; 
+        }
     }
 }
 
