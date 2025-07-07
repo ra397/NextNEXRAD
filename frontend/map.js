@@ -27,31 +27,13 @@ async function initMap() {
     styles: window.constants.map.defaultMapStyle,
   });
 
-  // Load is Radar sites layer
   radarLayer = new RadarLayer(map, 'public/data/nexrad_epsg3857.geojson', 'public/data/nexrad_coverages');
   await radarLayer.init();
 
   usgsLayer = new UsgsLayer(map);
   await usgsLayer.init();
 
-  // Load in the USGS sites layer
-  // usgsSitesLayer = new markerCollection(map);
-  // usgsSitesLayer.reactClick = usgsSiteClicked;
-  // await usgsSitesLayer.init({
-  //   marker_options: {
-  //     markerFill: "green",
-  //     markerStroke: "green",
-  //     markerSize: 3.5
-  //   }
-  // });
-
   loadPopData();
-
-  //const usgsSitesURL = window._env_dev.USGS_SITES_URL;
-  //loadUsgsSites(usgsSitesLayer, usgsSitesURL);
-
-  // Load in population data for each USGS site
-  loadUsgsPopulationMap();
 
   // Event handler when user clicks on a point in the map
   map.addListener("click", (e) => {
@@ -144,115 +126,6 @@ document.getElementById("usgsSites-checkbox").addEventListener("change", functio
     usgsLayer.hideUsgsSites();
   }
 });
-
-function getArrayBuffer(url) {
-    return fetch(url).then(response => response.arrayBuffer());
-}
-
-// Load USGS sites from a GeoJSON PBF file
-function loadUsgsSites(target, src) {
-    getArrayBuffer(src).then((ret) => {
-        const pbf = new Pbf(ret);
-        const geojson = geobuf.decode(pbf);  // Converts to GeoJSON
-
-        for (let i = 0; i < geojson.features.length; i++) {
-            const f = geojson.features[i];
-            const c = f.geometry.coordinates;
-
-            // Skip small basins
-            if (1 * f.properties.drainage_area < 100) continue;
-
-            target.makeMarker(
-                c[1], // latitude
-                c[0], // longitude
-                {
-                    properties: f.properties,
-                    clickable: true,
-                    optimized: true
-                },
-                {
-                    clickable: true,
-                    mouseOver: false,
-                    mouseOut: false
-                }
-            );
-        }
-        target.hide(); // Do not show initially
-    });
-}
-
-// Load the USGS population map with maps of USGS site IDs to population counts
-function loadUsgsPopulationMap() {
-  fetch('public/data/usgs_population_map.json')
-    .then(res => res.json())
-    .then(data => {
-      usgsPopulationMap = data;
-    })
-    .catch(err => console.error('Error loading population map:', err));
-}
-
-// Event handler for when a USGS site marker is clicked
-// Displays a label with the USGS site ID, drainage area, and population and loads the basin boundary
-function usgsSiteClicked(event, marker) {
-  const props = marker.properties || marker.content?.dataset || {};
-  const usgsId = props.usgs_id;
-  const area = props.drainage_area;
-  const population = usgsPopulationMap?.[usgsId] ?? null;
-  showLabel(marker, usgsId, area, population);
-  loadBasin(usgsId);
-}
-
-// Load the basin boundary for a given USGS site ID
-async function loadBasin(usgsId) {
-  // If this basin is already displayed, do nothing
-  if (usgsBasinLayers[usgsId]) {
-    return;
-  }
-
-  // Otherwise, fetch and show it
-  try {
-    const buf = await getArrayBuffer(`${window._env_dev.USGS_BOUNDARY_URL}${usgsId}.pbf`);
-    const geojson = geobuf.decode(new Pbf(new Uint8Array(buf)));
-
-    const layer = new google.maps.Data({ map });
-    layer.addGeoJson(geojson);
-    layer.setStyle({
-      fillColor: "white",
-      fillOpacity: 0.0,
-      strokeColor: "black",
-      strokeWeight: 1,
-    });
-
-    usgsBasinLayers[usgsId] = layer;
-  } catch (err) {
-    console.error("Error loading basin:", err);
-  }
-}
-
-// Create a label element with the site ID, area, and optional population
-function createLabel(site_id, area, population = null, use_class = 'arrow_rht_box') {
-    const div = document.createElement('div');
-    div.classList.add(use_class);
-    div.setAttribute('style', 'position:absolute; will-change: left, top;');
-
-    let html = `${site_id}<br>Area: ${area.toFixed(1)} km²`;
-    if (population !== null) {
-        html += `<br>Population: ${population.toLocaleString()}`;
-    }
-
-    div.innerHTML = html;
-    return div;
-}
-
-// Show a label for a marker with the site ID, area, and optional population
-function showLabel(marker, site_id, area, population = null) {
-    if (marker.customLabel && marker.customLabel.remove) {
-        return;
-    }
-    const labelDiv = createLabel(site_id, area, population, 'arrow_rht_box');
-    const label = new infoTool(marker.getMap(), marker.getPosition(), labelDiv);
-    marker.customLabel = label;
-}
 
 // Updates labels in radar settings menu based on selected units
 document.getElementById("units-input").addEventListener("change", function () {
