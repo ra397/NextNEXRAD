@@ -5,6 +5,7 @@ let map;
 let radarLayer; // Radar layer for displaying radar coverage
 let usgsLayer;
 let podLayer;
+let populationLayer;
 
 let isLoading = false;
 
@@ -32,7 +33,9 @@ async function initMap() {
   podLayer = new PodLayer(map);
   podLayer.initUI();
 
-  loadPopData();
+  populationLayer = new PopulationLayer(map);
+  populationLayer.initUI();
+  await populationLayer.load();
 
   // Event handler when user clicks on a point in the map
   map.addListener("click", (e) => {
@@ -146,74 +149,4 @@ document.getElementById("units-input").addEventListener("change", function () {
     aglInput.placeholder = "e.g. 3000";
     towerInput.placeholder = "e.g. 100";
   }
-});
-
-/* Precalculated radar sites */
-document.getElementById("showAllRadarCoverages-checkbox").addEventListener('change', function () {
-  if (this.checked) {
-
-  } else {
-    
-  }
-});
-
-/* Population Threshold Raster */
-document.getElementById("popThreshold-slider").addEventListener('input', e => {
-  const threshold = +e.target.value;
-  document.getElementById("popThreshold-value").textContent = threshold.toLocaleString();
-  canvas.style.display = 'block';
-  drawRaster(canvas, popData, threshold);
-});
-
-let popData = [];
-let popData_bounds;
-let threshold = 0;
-const canvas = document.getElementById("pop-canvas");
-
-function loadPopData() {
-  fetch("public/data/usa_ppp_2020_5k_epsg_3857.json")
-  .then(res => res.json())
-  .then(json => {
-    popData = json.data;
-    popData_bounds = json.bounds;
-
-    const transformer = proj4("EPSG:3857", "EPSG:4326");
-    const [west, south] = transformer.forward([popData_bounds[0], popData_bounds[1]]);
-    const [east, north] = transformer.forward([popData_bounds[2], popData_bounds[3]]);
-
-    canvas.width = popData[0].length;
-    canvas.height = popData.length;
-
-    const overlayBounds = { north, south, east, west };
-    const overlay = new CanvasOverlay(overlayBounds, canvas);
-    overlay.setMap(map);
-  });
-}
-
-function drawRaster(canvas, data, threshold) {
-  const ctx = canvas.getContext("2d");
-  const width = data[0].length;
-  const height = data.length;
-
-  const imageData = ctx.createImageData(width, height);
-  for (let y = 0; y < height; y++) {
-    for (let x = 0; x < width; x++) {
-      const idx = (y * width + x) * 4;
-      const value = data[y][x];
-      if (value > threshold) {
-        imageData.data[idx] = 0;
-        imageData.data[idx + 1] = 0;
-        imageData.data[idx + 2] = 0;
-        imageData.data[idx + 3] = 125;
-      } else {
-        imageData.data[idx + 3] = 0;
-      }
-    }
-  }
-  ctx.putImageData(imageData, 0, 0);
-  ctx.imageSmoothingEnabled = false;
-}
-
-document.getElementById("clear-pop-layer").addEventListener('click', () => {
-  canvas.style.display = 'none';
 });
