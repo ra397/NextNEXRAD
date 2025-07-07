@@ -4,11 +4,7 @@ let map;
 
 let radarLayer; // Radar layer for displaying radar coverage
 let usgsLayer;
-
-let usgsSitesLayer;
-const usgsBasinLayers = {}; // Each basin boundary is its own Data layer
-
-let usgsPopulationMap = {};
+let podLayer;
 
 let isLoading = false;
 
@@ -32,6 +28,9 @@ async function initMap() {
 
   usgsLayer = new UsgsLayer(map);
   await usgsLayer.init();
+
+  podLayer = new PodLayer(map);
+  podLayer.initUI();
 
   loadPopData();
 
@@ -148,142 +147,6 @@ document.getElementById("units-input").addEventListener("change", function () {
     towerInput.placeholder = "e.g. 100";
   }
 });
-
-/* POD */
-
-// Holds the current POD parameters
-const podSettings = {
-  year:    null,
-  season:  'All',
-  stops:   32,
-  vmin:    0,
-  vmax:    50,
-  palette: 'Spectral',
-  opacity: 1.0
-};
-
-// Create range slider for POD layer
-const podRangeSlider = document.getElementById('pod-range-slider');
-
-noUiSlider.create(podRangeSlider, {
-  start: [podSettings.vmin, podSettings.vmax],
-  connect: true,
-  range: { min: 0, max: 100 },
-  tooltips: [true, true],
-  format: {
-    to:   v => Math.round(v),
-    from: v => Number(v)
-  }
-});
-
-let di = null;
-let podOverlay = null;
-let currentURL = null;
-
-// Given year and season, return start and end date for that season in that year
-function getSeasonDates(year, season) {
-  let start, end;
-  switch (season) {
-    case 'Winter': start = new Date(year,0,1);  end = new Date(year,2,31); break;
-    case 'Spring': start = new Date(year,3,1);  end = new Date(year,5,30); break;
-    case 'Summer': start = new Date(year,6,1);  end = new Date(year,8,30); break;
-    case 'Fall':   start = new Date(year,9,1);  end = new Date(year,11,31); break;
-    default:       start = new Date(year,0,1);  end = new Date(year,11,31);
-  }
-  return { start, end };
-}
-
-async function fetchAndDrawPOD() {
-  showSpinner(); isLoading = true;
-  const { start, end } = getSeasonDates(podSettings.year, podSettings.season);
-  const url = new POD().getUrl(start, end);
-
-  // If same URL, no need to fetch again
-  if (url === currentURL && di) {
-    isLoading = false;
-    hideSpinner();
-    return redrawStylingOnly();
-  }
-  currentURL = url;
-
-  if (!di) {
-    di = new dynaImg();
-    di.image = new Image();
-    di.image.crossOrigin = '';
-  }
-
-  applyPodStylingToDynaImg();
-
-  const blob = await di.load(url);
-
-  if (podOverlay) podOverlay.remove();
-  podOverlay = customOverlay(blob, window.constants.pod.POD_BBOX, map, 'GroundOverlay');
-  podOverlay.setOpacity(podSettings.opacity);
-
-  isLoading = false; hideSpinner();
-}
-
-async function redrawStylingOnly() {
-  if (!di) return;               // nothing loaded yet
-  applyPodStylingToDynaImg();
-  const blob = await di.redraw();
-  if (podOverlay) podOverlay.setSource(blob);
-}
-
-function applyPodStylingToDynaImg() {
-  di.setStops(podSettings.stops);
-  di.setRange(podSettings.vmin / 100, podSettings.vmax / 100);
-  di.setColors(podSettings.palette, window.constants.pod.POD_COLORS[podSettings.palette]);
-}
-
-document.getElementById('pod-year-select')
-  .addEventListener('change', e => {
-    const y = parseInt(e.target.value, 10);
-    podSettings.year = isNaN(y) ? null : y;
-    if (podSettings.year) {
-      fetchAndDrawPOD();
-    }
-  });
-
-  document.getElementById('pod-season-select')
-  .addEventListener('change', e => {
-    podSettings.season = e.target.value || 'All';
-    if (podSettings.year) {
-      fetchAndDrawPOD();
-    }
-  });
-
-
-podRangeSlider.noUiSlider.on('update', vals => {
-  podSettings.vmin = +vals[0];
-  podSettings.vmax = +vals[1];
-});
-podRangeSlider.noUiSlider.on('set', redrawStylingOnly);
-
-document.getElementById('pod-color-count')
-  .addEventListener('change', e => {
-    podSettings.stops = +e.target.value;
-    redrawStylingOnly();
-  });
-
-document.querySelectorAll('input[name="palette"]')
-  .forEach(r => r.addEventListener('change', e => {
-    podSettings.palette = e.target.value.replace('-', '');
-    redrawStylingOnly();
-  }));
-
-const opacitySlider = document.getElementById('pod-opacity');
-const opacityLabel  = document.getElementById('pod-opacity-value');
-opacitySlider.addEventListener('input', e => {
-  const pct = +e.target.value;
-  opacityLabel.textContent = `${pct}%`;
-  podSettings.opacity = pct / 100;
-  if (podOverlay) podOverlay.setOpacity(podSettings.opacity);
-});
-
-document.getElementById("clear-pod-layer").addEventListener('click', () => {
-  podOverlay.remove();
-})
 
 /* Precalculated radar sites */
 document.getElementById("showAllRadarCoverages-checkbox").addEventListener('change', function () {

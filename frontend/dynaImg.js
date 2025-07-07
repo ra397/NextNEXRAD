@@ -152,7 +152,7 @@ class dynaImg {
 
     async load (url) {
         console.log ("[dynaPng] Loading data: ", url)
-        const req = await getArrayBuffer(url,  { signal: AbortSignal.timeout(2500) })
+        const req = await this._getArrayBuffer(url,  { signal: AbortSignal.timeout(2500) })
         const res = await req;
 
         let w, h, s
@@ -163,6 +163,10 @@ class dynaImg {
         this.setSize(w,h)
         this.scale = s;
         return this.redraw();
+    }
+
+    _getArrayBuffer(url) {
+        return fetch(url).then(response => response.arrayBuffer());
     }
 }
 
