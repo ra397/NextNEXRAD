@@ -117,3 +117,18 @@ body {
 #pop-canvas {
   image-rendering: pixelated;
 }
+
+.close-btn {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #666;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+.close-btn:hover {
+  color: #000;
+}

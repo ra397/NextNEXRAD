@@ -12,6 +12,8 @@ class RadarLayer {
 
         this.precalcOverlay = {};
         this.dynamicOverlay = {};
+
+        this.precalculatedFolder = 'coverages_3k';
     }
 
     async init() {
@@ -35,6 +37,24 @@ class RadarLayer {
         this.dynamicRadarSitesMarkers.reactClick = this.dynamicRadarSiteClicked.bind(this);
         
         this.loadPrecalculatedRadarSites();
+    }
+
+    initUI() {
+        const threeThousandThresholdRadioButton = document.getElementById("3k_coverage");
+        const sixThousandThresholdRadioButton = document.getElementById("6k_coverage");
+        const tenThousandThresholdRadioButton = document.getElementById("10k_coverage");
+
+        threeThousandThresholdRadioButton.addEventListener("change", () => {
+            this.setPrecalculatedFolder("coverages_3k");
+        });
+
+        sixThousandThresholdRadioButton.addEventListener("change", () => {
+            this.setPrecalculatedFolder("coverages_6k");
+        });
+
+        tenThousandThresholdRadioButton.addEventListener("change", () => {
+            this.setPrecalculatedFolder("coverages_10k");
+        });
     }
 
     // Loads the radar sites from a GeoJSON file and creates markers for each site
@@ -88,13 +108,17 @@ class RadarLayer {
         const {siteID, latitude, longitude, elevation} = marker.properties;
         const [x3857, y3857] = proj4('EPSG:4326', 'EPSG:3857', [longitude, latitude]);
         const overlayBounds = this._getOverlayBounds(x3857, y3857);
-        const url = `${this.radar_coverage_path}/coverages_3k/${siteID}.png`;
+        const url = `${this.radar_coverage_path}/${this.precalculatedFolder}/${siteID}.png`;
         const overlay = new google.maps.GroundOverlay(url, overlayBounds, {
             opacity: 0.7,
             clickable: false,
         });
         overlay.setMap(this.map);
         this.precalcOverlay[siteID] = overlay;
+    }
+
+    setPrecalculatedFolder(folder) {
+        this.precalculatedFolder = folder;
     }
 
     getCoverage(lat, lng, maxAlt, towerHeight, elevationAngles) {

@@ -39,6 +39,27 @@
         <!-- Popup window for each sidebar button, initially not visible -->
         <div id="radar-settings" class="sidebar-window">
             <h3>Radar Settings</h3>
+            <span class="close-btn" onclick="this.parentElement.style.display='none'">×</span>
+
+            <div class="settings-input-container">
+                <label for="settings-input" class="settings-label">Precalculated Coverages Threshold:</label>
+                <div class="settings-input">
+                    <label>
+                        <input type="radio" id="3k_coverage" name="precalculated-threshold-radiobuttons" value="coverages_3k" checked>
+                        3k
+                    </label>
+                    <label>
+                        <input type="radio" id="6k_coverage" name="precalculated-threshold-radiobuttons" value="coverages_6k">
+                        6k
+                    </label>
+                    <label>
+                        <input type="radio" id="10k_coverage" name="precalculated-threshold-radiobuttons" value="coverages_10k">
+                        10k
+                    </label>
+                </div>
+            </div>
+            
+            <hr>
 
             <div class="settings-input-container">
                 <label for="aglThreshold-input" class="settings-label">AGL Threshold (ft):</label>
@@ -83,6 +104,7 @@
 
         <div id="population-settings" class="sidebar-window">
             <h3>Population Settings</h3>
+            <span class="close-btn" onclick="this.parentElement.style.display='none'">×</span>
 
             <label for="popThreshold-slider" class="settings-label">Population Threshold:</label>
             <div class="settings-input-container">
@@ -97,6 +119,7 @@
 
         <div id="usgs-settings" class="sidebar-window">
             <h3>USGS Settings</h3>
+            <span class="close-btn" onclick="this.parentElement.style.display='none'">×</span>
 
             <div class="settings-input-container">
                 <input type="checkbox" id="usgsSites-checkbox"><span>USGS Sites</span>
@@ -105,6 +128,7 @@
 
         <div id="pod-settings" class="sidebar-window">
             <h3>POD Settings</h3>
+            <span class="close-btn" onclick="this.parentElement.style.display='none'">×</span>
 
             <div class="settings-input-container">
                 <label for="pod-year-select" class="settings-label">Year:</label>
@@ -173,6 +197,7 @@
 
         <div id="general-settings" class="sidebar-window">
             <h3>General Settings</h3>
+            <span class="close-btn" onclick="this.parentElement.style.display='none'">×</span>
 
             <div class="settings-input-container">
                 <label for="units-input" class="settings-label">Units:</label>
@@ -185,6 +210,7 @@
 
         <div id="information" class="sidebar-window">
             <h3>Information</h3>
+            <span class="close-btn" onclick="this.parentElement.style.display='none'">×</span>
         </div>
 
 
