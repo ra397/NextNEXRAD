@@ -161,4 +161,13 @@ class markerCollection {
     
     hide = () => {for (var i = 0; i < this.markers.length; i ++) this.markers[i].setMap(null);}
     show = () => {for (var i = 0; i < this.markers.length; i ++) this.markers[i].setMap(this.map);}
+
+    getMarker(id) {
+        for (let i = 0; i < this.markers.length; i++) {
+            if (id == this.markers[i].properties.siteID) {
+                return this.markers[i];
+            }
+        }
+        return null;
+    }
 }

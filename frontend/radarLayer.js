@@ -13,7 +13,7 @@ class RadarLayer {
         this.precalcOverlay = {};
         this.dynamicOverlay = {};
 
-        this.precalculatedFolder = 'coverages_3k';
+        this.precalculatedFolder = 'coverages_3k'; // default threshold
     }
 
     async init() {
@@ -119,6 +119,18 @@ class RadarLayer {
 
     setPrecalculatedFolder(folder) {
         this.precalculatedFolder = folder;
+
+        // Remove existing precalculated overlays from map
+        for (const siteID in this.precalcOverlay) {
+            this.precalcOverlay[siteID].setMap(null);
+        }
+
+        for (const siteID in this.precalcOverlay) {
+            const marker = this.precalculatedRadarSitesMarkers.getMarker(siteID);
+            if (marker) {
+                this._addPrecalculatedOverlay(marker);
+            }
+        }
     }
 
     getCoverage(lat, lng, maxAlt, towerHeight, elevationAngles) {
