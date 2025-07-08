@@ -16,6 +16,9 @@ class RadarLayer {
         this.dynamicOverlayOrder = []; // Keeps track of the order each dynamic overlay is created
 
         this.precalculatedFolder = 'coverages_3k'; // default threshold
+
+        this.spinner = null;
+        this.isLoading = false;
     }
 
     async init() {
@@ -42,6 +45,8 @@ class RadarLayer {
     }
 
     initUI() {
+        this.spinner = document.getElementById("loading-spinner");
+
         const threeThousandThresholdRadioButton = document.getElementById("3k_coverage");
         const sixThousandThresholdRadioButton = document.getElementById("6k_coverage");
         const tenThousandThresholdRadioButton = document.getElementById("10k_coverage");
@@ -140,9 +145,21 @@ class RadarLayer {
         }
     }
 
-    getCoverage(lat, lng, maxAlt, towerHeight, elevationAngles) {
+    async getCoverage(lat, lng, maxAlt, towerHeight, elevationAngles) {
+        if (this.isLoading) {
+            return;
+        }
         const marker = this._addDynamicMarker(lat, lng);
-        this._sendCoverageRequest(marker, lat, lng, maxAlt, towerHeight, elevationAngles);
+        this.isLoading = true;
+        this.showSpinner();
+        try {
+            await this._sendCoverageRequest(marker, lat, lng, maxAlt, towerHeight, elevationAngles);
+        } catch (err) {
+            console.error("Error fetching coverage:", err);
+        } finally {
+            this.isLoading = false;
+            this.hideSpinner();
+        }
     }
 
     _addDynamicMarker(lat, lng) {
@@ -265,6 +282,18 @@ class RadarLayer {
         if (marker) {
             marker.setMap(null);
             delete this.dynamicRadarSitesMarkers.markers[mostRecentSiteID]; 
+        }
+    }
+
+    showSpinner() {
+        if (this.spinner) {
+            this.spinner.style.display = "block";
+        }
+    }
+
+    hideSpinner() {
+        if (this.spinner) {
+            this.spinner.style.display = "none";
         }
     }
 }
