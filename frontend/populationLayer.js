@@ -27,7 +27,7 @@ class PopulationLayer {
   }
 
   async load() {
-    const res = await fetch("public/data/usa_ppp_2020_5k_epsg_3857.json");
+    const res = await fetch("public/data/usa_ppp_2020_5km_epsg_3857_clipped.json");
     const json = await res.json();
 
     this.data = json.data;
