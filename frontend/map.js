@@ -9,12 +9,9 @@ let populationLayer;
 
 let isLoading = false;
 
-proj4.defs("EPSG:3857",
-  "+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=0 " +
-  "+datum=WGS84 +units=m +no_defs"
-);
-
 async function initMap() {
+  proj4.defs("EPSG:3857", proj4.defs("GOOGLE"));
+
   // Initialize the map
   map = new google.maps.Map(document.getElementById("map"), {
     zoom: window.constants.map.defaultZoom,

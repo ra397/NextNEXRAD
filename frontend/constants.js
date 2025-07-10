@@ -113,8 +113,6 @@ window.constants = {
         },
     },
     radar: {
-        pixelSize: 114,
-        matrixSize: 4028,
-        halfExtent: (114 * 4028) / 2,
+        halfExtent: 230000,
     }
 }
