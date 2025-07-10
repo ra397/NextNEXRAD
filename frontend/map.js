@@ -10,9 +10,9 @@ let coveragesLayer;
 
 let isLoading = false;
 
-async function initMap() {
-  proj4.defs("EPSG:3857", proj4.defs("GOOGLE"));
+proj4.defs("EPSG:3857", proj4.defs("GOOGLE"));
 
+async function initMap() {
   // Initialize the map
   map = new google.maps.Map(document.getElementById("map"), {
     zoom: window.constants.map.defaultZoom,
@@ -39,6 +39,7 @@ async function initMap() {
 
   coveragesLayer = new CoveragesLayer(map);
   coveragesLayer.load();
+  coveragesLayer.initUI();
 
 
   // Event handler when user clicks on a point in the map

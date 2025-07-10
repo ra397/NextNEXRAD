@@ -26,7 +26,7 @@
     <body>
         <div id="map"></div>
         <canvas id="pop-canvas" width="1372" height="740"></canvas>
-        <canvas id="chess-canvas"></canvas>
+        <canvas id="coverage-canvas"></canvas>
 
         <div class="sidebar">
             <button class="sidebar-btn" onclick="toggleWindow('radar-settings')">Radar Settings</button>
@@ -58,6 +58,12 @@
                         <span id="10k_coverage_label">10k</span>
                     </label>
                 </div>
+            </div>
+
+            <div class="settings-input-container">
+                <label class="settings-label">Show all</label>
+
+                <input type="checkbox" id="show-all-coverage-checkbox">
             </div>
             
             <hr>

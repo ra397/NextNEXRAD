@@ -114,11 +114,7 @@ body {
   width: 100%;
 }
 
-#pop-canvas {
-  image-rendering: pixelated;
-}
-
-#chess-canvas {
+#pop-canvas, #coverage-canvas {
   image-rendering: pixelated;
 }
 
