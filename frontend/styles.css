@@ -118,6 +118,10 @@ body {
   image-rendering: pixelated;
 }
 
+#chess-canvas {
+  image-rendering: pixelated;
+}
+
 .close-btn {
   position: absolute;
   top: 8px;

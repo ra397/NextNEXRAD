@@ -6,6 +6,7 @@ let radarLayer; // Radar layer for displaying radar coverage
 let usgsLayer;
 let podLayer;
 let populationLayer;
+let coveragesLayer;
 
 let isLoading = false;
 
@@ -35,6 +36,10 @@ async function initMap() {
   populationLayer = new PopulationLayer(map);
   populationLayer.initUI();
   await populationLayer.load();
+
+  coveragesLayer = new CoveragesLayer(map);
+  coveragesLayer.load();
+
 
   // Event handler when user clicks on a point in the map
   map.addListener("click", async (e) => {
