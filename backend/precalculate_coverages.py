@@ -59,14 +59,16 @@ with open("nexrad_epsg3857.geojson", "r") as f:
 
         tower_m = feet_to_meters(radar_info["elevation_ft"]) - terrain_elevation
 
-        # Get blockage for the radar
-        img_buf = get_blockage(
-            easting=radar_info["easting"],
-            northing=radar_info["northing"],
-            tower_m=tower_m,
-        )
+        if tower_m < 100:
+            # Get blockage for the radar
+            img_buf = get_blockage(
+                easting=radar_info["easting"],
+                northing=radar_info["northing"],
+                tower_m=tower_m,
+                agl_threshold_m=3048
+            )
 
-        print(f"Processing radar: {radar_info['site_id']} with tower height {tower_m:.2f} m")
+            print(f"Processing radar: {radar_info['site_id']} with tower height {tower_m:.2f} m")
 
-        with open(f"coverages_3k/{radar_info['site_id']}.png", "wb") as f:
-            f.write(img_buf.getbuffer())
+            with open(f"coverages_10k/{radar_info['site_id']}.png", "wb") as f:
+                f.write(img_buf.getbuffer())
