@@ -19,6 +19,8 @@ class RadarLayer {
 
         this.spinner = null;
         this.isLoading = false;
+
+        this.geod = geodesic.Geodesic.WGS84;
     }
 
     async init() {
@@ -118,8 +120,7 @@ class RadarLayer {
 
     _addPrecalculatedOverlay(marker) {
         const {siteID, latitude, longitude, elevation} = marker.properties;
-        const [x3857, y3857] = proj4('EPSG:4326', 'EPSG:3857', [longitude, latitude]);
-        const overlayBounds = this._getOverlayBounds(x3857, y3857);
+        const overlayBounds = this.calculateBoundingBox(latitude, longitude);
         const url = `${this.radar_coverage_path}/${this.precalculatedFolder}/${siteID}.png`;
         const overlay = new google.maps.GroundOverlay(url, overlayBounds, {
             opacity: 0.7,
@@ -201,7 +202,7 @@ class RadarLayer {
         });
         const blob = await response.blob();
         const imgUrl = URL.createObjectURL(blob);
-        const overlayBounds = this._getOverlayBounds(x3857, y3857);
+        const overlayBounds = this.calculateBoundingBox(lat, lng);
         const overlay = new google.maps.GroundOverlay(imgUrl, overlayBounds, {
             opacity: 0.7,
             clickable: false
@@ -253,16 +254,28 @@ class RadarLayer {
         return { siteId, latitude, longitude, elevation };
     }
 
-    _getOverlayBounds(x3857, y3857) {
-        const bounds3857 = {
-            west: x3857 - this.halfExtent,
-            east: x3857 + this.halfExtent,
-            south: y3857 - this.halfExtent,
-            north: y3857 + this.halfExtent
+    calculateDestinationPoint(latDeg, lonDeg, bearingDeg, distance) {
+        const result = this.geod.Direct(latDeg, lonDeg, bearingDeg, distance);
+        return result;
+    }
+
+    calculateBoundingBox(lat, lng, distance = 230000) {
+        const north = this.calculateDestinationPoint(lat, lng, 0, distance);
+        const east = this.calculateDestinationPoint(lat, lng, 90, distance);
+        const south = this.calculateDestinationPoint(lat, lng, 180, distance);
+        const west = this.calculateDestinationPoint(lat, lng, 270, distance);
+
+        const vertical = this.geod.Inverse(north.lat2, north.lon2, south.lat2, south.lon2).s12;
+        const horizontal = this.geod.Inverse(east.lat2, east.lon2, west.lat2, west.lon2).s12;
+
+        const bbox = {
+            north: north.lat2,
+            south: south.lat2,
+            east: east.lon2,
+            west: west.lon2,
         };
-        const [westLng, southLat] = proj4('EPSG:3857', 'EPSG:4326', [bounds3857.west, bounds3857.south]);
-        const [eastLng, northLat] = proj4('EPSG:3857', 'EPSG:4326', [bounds3857.east, bounds3857.north]);
-        return { north: northLat, south: southLat, east: eastLng, west: westLng };
+        
+        return bbox;
     }
 
     removeMostRecentDynamicMarkerandOverlay() {
