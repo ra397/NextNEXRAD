@@ -38,7 +38,7 @@ async function initMap() {
   await populationLayer.load();
 
   coveragesLayer = new CoveragesLayer(map);
-  coveragesLayer.load();
+  coveragesLayer.init();
   coveragesLayer.initUI();
 
 

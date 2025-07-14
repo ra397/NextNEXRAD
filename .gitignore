@@ -4,6 +4,7 @@ __pycache__/
 
 # Ignore frontend build artifacts
 frontend/public/data/nexrad_coverages
+frontend/public/data
 
 # Ignore raster and model files
 backend/_dem090
