@@ -3,23 +3,22 @@ from calculate_blockage.constants import DEM_PATH, VCP12, window_size
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 from io import BytesIO
-from calculate_blockage.read_dem import DemReader
 
 def make_png(matrix):
-    color = [1.0, 0.0, 0.0, 0.7]  # red with 0.7 opacity
-    transparent = [0.0, 0.0, 0.0, 0.0]  # fully transparent
+    color = [1.0, 0.0, 0.0, 1.0]  # opaque red
+    transparent = [1.0, 0.0, 0.0, 0.0]  # fully transparent
 
-    fig, ax = plt.subplots(figsize=(window_size / 100.0, window_size / 100.0), dpi=100)
-    ax.axis("off")
+    fig = plt.figure(figsize=(window_size / 100.0, window_size / 100.0), dpi=100, frameon=False)
+    ax = fig.add_axes([0, 0, 1, 1])  # type: ignore # fill entire figure
+    ax.set_axis_off()
     ax.imshow(matrix, cmap=ListedColormap([transparent, color]), interpolation="nearest")
 
     buf = BytesIO()
-    plt.savefig(buf, format="png", dpi=100, transparent=True)
+    plt.savefig(buf, format="png", dpi=100, transparent=True, bbox_inches='tight', pad_inches=0)
     plt.close(fig)
     buf.seek(0)
 
     return buf
-
 
 def get_blockage(easting, northing, elevation_angles_deg=None, tower_m=None, agl_threshold_m=None):
     if elevation_angles_deg is None:
@@ -42,11 +41,10 @@ def get_blockage(easting, northing, elevation_angles_deg=None, tower_m=None, agl
     return img_buf
 
 if __name__ == "__main__":
-    easting = -10083411.900760256 # example easting coordinate
-    northing = 5102985.226796195
+    easting, northing = 649531.417877711355686, 2644666.859246487729251
     img_buf = get_blockage(easting, northing)
     
-    with open("kdvn_3857.png", "wb") as f:
+    with open("kmqt.png", "wb") as f:
         f.write(img_buf.getbuffer())
     
-    print("Blockage image saved as blockage_output.png")
+    print("Blockage image saved as kmqt.png")
