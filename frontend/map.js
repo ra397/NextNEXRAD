@@ -10,13 +10,16 @@ let coveragesLayer;
 
 let isLoading = false;
 
-proj4.defs("EPSG:3857", proj4.defs("GOOGLE"));
+proj4.defs("EPSG:5070", "+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 " +
+                         "+x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs");
 
 async function initMap() {
   // Initialize the map
   map = new google.maps.Map(document.getElementById("map"), {
     zoom: window.constants.map.defaultZoom,
     center: window.constants.map.centerUSA,
+    minZoom: 5,
+    maxZoom: 12,
     draggableCursor: 'crosshair',
     fullscreenControl: false,
     mapTypeId: "terrain",
