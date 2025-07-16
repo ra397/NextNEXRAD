@@ -2,6 +2,7 @@ from processor import get_blockage
 import json
 from calculate_blockage.read_dem import DemReader
 from calculate_blockage.constants import DEM_PATH
+import base64
 
 def feet_to_meters(feet):
   meters = feet * 0.3048
@@ -38,7 +39,7 @@ def extract_radar_info(feature):
     }
 
 
-with open("nexrad_epsg3857.geojson", "r") as f:
+with open("nexrad_epsg5070.geojson", "r") as f:
     data = json.load(f)
 
     for feature in data["features"]:
@@ -59,16 +60,19 @@ with open("nexrad_epsg3857.geojson", "r") as f:
 
         tower_m = feet_to_meters(radar_info["elevation_ft"]) - terrain_elevation
 
-        if tower_m < 100:
-            # Get blockage for the radar
-            img_buf = get_blockage(
-                easting=radar_info["easting"],
-                northing=radar_info["northing"],
-                tower_m=tower_m,
-                agl_threshold_m=3048
-            )
+        # Get blockage for the radar
+        response = get_blockage(
+            easting=radar_info["easting"],
+            northing=radar_info["northing"],
+            tower_m=tower_m,
+            agl_threshold_m=3048
+        )
 
-            print(f"Processing radar: {radar_info['site_id']} with tower height {tower_m:.2f} m")
+        print(f"Processing radar: {radar_info['site_id']} with tower height {tower_m:.2f} m")
 
-            with open(f"coverages_10k/{radar_info['site_id']}.png", "wb") as f:
-                f.write(img_buf.getbuffer())
+        img_url = response["image_url"]
+        header, base64_data = img_url.split(",", 1)
+
+
+        with open(f"coverages_3k/{radar_info['site_id']}.png", "wb") as f:
+            f.write(base64.b64decode(base64_data))

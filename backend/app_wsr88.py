@@ -1,9 +1,6 @@
-from flask import Flask, request, make_response, jsonify, send_file
+from flask import Flask, request, jsonify
 from processor import get_blockage
-from population.calculate_pop_points import calculate_pop_points
 import traceback
-import io
-import httpx
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -32,31 +29,13 @@ def calculate_blockage():
 
         print("Request received:", data)
 
-        img_buf = get_blockage(
+        return jsonify(get_blockage(
             easting=easting,
             northing=northing,
             elevation_angles_deg=elevation_angles,
             tower_m=tower_m,
             agl_threshold_m=max_alt_m,
-        )
-        img_buf.seek(0)
-        return send_file(img_buf, mimetype="image/png")
-
-    except Exception as e:
-        traceback.print_exc()
-        return jsonify({"detail": str(e)}), 500
-
-@app.route("/api-wsr88/population_points", methods=["POST"])
-def get_population_points():
-    try:
-        body = request.get_json()
-        threshold = body.get("population_threshold")
-
-        if threshold is None or not (0 <= threshold <= 100000):
-            return jsonify({"detail": "Invalid population threshold"}), 400
-
-        geojson_result = calculate_pop_points(population_threshold=threshold)
-        return jsonify(geojson_result)
+        ))
 
     except Exception as e:
         traceback.print_exc()
