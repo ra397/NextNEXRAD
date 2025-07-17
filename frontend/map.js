@@ -41,9 +41,7 @@ async function initMap() {
   await populationLayer.load();
 
   coveragesLayer = new CoveragesLayer(map);
-  coveragesLayer.init();
   coveragesLayer.initUI();
-
 
   // Event handler when user clicks on a point in the map
   map.addListener("click", async (e) => {
