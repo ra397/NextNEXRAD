@@ -71,6 +71,18 @@ class UsgsLayer {
 
     hideUsgsSites() {
         this.usgsSitesMarkers.hide();
+
+        for (const usgsId in this.basinLayers) {
+            this.basinLayers[usgsId].setMap(null);
+        }
+        this.basinLayers = {};
+
+        for (const marker of this.usgsSitesMarkers.markers) {
+            if (marker.customLabel && marker.customLabel.remove) {
+                marker.customLabel.remove();
+            }
+            delete marker.customLabel;
+        }
     }
 
     usgsSiteClicked(event, marker) {
@@ -132,7 +144,7 @@ class UsgsLayer {
         const displayArea = useMetric ? Math.round(area_km2) : Math.round(area_km2 * 0.386102);
         const unit = useMetric ? "km²" : "mi²";
 
-        let html = `${site_id}<br>Area: ${displayArea} ${unit}`;
+        let html = `ID: ${site_id}<br>Area: ${displayArea} ${unit}`;
         if (population !== null) {
             html += `<br>Population: ${(Math.round(population / 100) * 100).toLocaleString()}`;
         }
@@ -140,7 +152,6 @@ class UsgsLayer {
         div.innerHTML = html;
         return div;
     }
-
 
     updateAllLabels() {
         for (const marker of this.usgsSitesMarkers.markers) {

@@ -58,7 +58,7 @@ class CoveragesLayer {
         maxZoom: 12,
         minZoom: 5,
         name: key,
-        opacity: 0.7
+        opacity: 0.4
       });
     }
 
