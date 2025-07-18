@@ -7,7 +7,7 @@ class CoveragesLayer {
       coverages_10k: null
     };
     this.tileLayerIndex = 0;
-    this.currentThreshold = "XYZ_tiles_3k";
+    this.currentThreshold = "3k_tiles";
 
     this.showAllCheckbox = null;
     this.radioButtons = [];
@@ -38,7 +38,7 @@ class CoveragesLayer {
 
   getSelectedThresholdKey() {
     const selected = this.radioButtons.find(r => r.checked);
-    if (!selected) return "XYZ_tiles_3k";
+    if (!selected) return "3k_tiles";
     return selected.value;
   }
 
