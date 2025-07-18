@@ -41,8 +41,20 @@ infoTool.prototype.setContent = function (content) {
 };
 
 infoTool.prototype.updateContent = function (content) {
-    this.setContent(content);
+    if (!this.ready || !this.gmLayer || !this.container) return;
+
+    if (typeof content === 'object' && content !== null) {
+        // Replace the entire container (safe if each label has its own)
+        this.gmLayer.replaceChild(content, this.container);
+        this.container = content;
+    } else {
+        // Replace only the inner content (safer for multiple labels)
+        this.container.innerHTML = content ?? '';
+    }
+
+    this.draw(); // Reposition it
 };
+
 
 infoTool.prototype.draw = function () {
     if (!this.container || !this.latLng) return;

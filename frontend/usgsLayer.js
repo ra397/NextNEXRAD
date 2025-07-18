@@ -117,22 +117,39 @@ class UsgsLayer {
     showLabel(marker, site_id, area, population = null) {
         const labelDiv = this.createLabel(site_id, area, population, 'arrow_rht_box');
         const label = new infoTool(marker.getMap(), marker.getPosition(), labelDiv);
-        marker.customLabel = label;        
+        marker.customLabel = label;    
+        marker._usgsData = { site_id, area, population };    
     }
 
-    createLabel(site_id, area, population = null, use_class = 'arrow_rht_box') {
+    createLabel(site_id, area_km2, population = null, use_class = 'arrow_rht_box') {
         const div = document.createElement('div');
         div.classList.add(use_class);
         div.setAttribute('style', 'position:absolute; will-change: left, top;');
 
-        let html = `${site_id}<br>Area: ${area.toFixed(1)} km²`;
+        const useMetric = (window.currentUnitSystem === "metric");
+        const displayArea = useMetric ? Math.round(area_km2) : Math.round(area_km2 * 0.386102);
+        const unit = useMetric ? "km²" : "mi²";
+
+        let html = `${site_id}<br>Area: ${displayArea} ${unit}`;
         if (population !== null) {
-            html += `<br>Population: ${population.toLocaleString()}`;
+            html += `<br>Population: ${(Math.round(population / 100) * 100).toLocaleString()}`;
         }
 
         div.innerHTML = html;
         return div;
     }
+
+
+    updateAllLabels() {
+        for (const marker of this.usgsSitesMarkers.markers) {
+            const data = marker._usgsData;
+            if (!data || !marker.customLabel) continue;
+
+            const updatedDiv = this.createLabel(data.site_id, data.area, data.population, 'arrow_rht_box');
+            marker.customLabel.updateContent(updatedDiv);
+        }
+    }
+
     _getArrayBuffer(url) {
         return fetch(url).then(response => response.arrayBuffer());
     }

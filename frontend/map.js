@@ -1,5 +1,7 @@
 const server = window._env_dev.SERVER_URL;
 
+window.currentUnitSystem = "imperial";
+
 let map;
 
 let radarLayer; // Radar layer for displaying radar coverage
@@ -133,6 +135,7 @@ document.getElementById("usgsSites-checkbox").addEventListener("change", functio
 // Updates labels in radar settings menu based on selected units
 document.getElementById("units-input").addEventListener("change", function () {
   const unit = this.value;
+  window.currentUnitSystem = unit;
   
   const aglLabel = document.querySelector("label[for='aglThreshold-input']");
   const towerLabel = document.querySelector("label[for='towerHeight-input']");
@@ -165,5 +168,9 @@ document.getElementById("units-input").addEventListener("change", function () {
     threeThousandFeetCoverage.textContent = "3k";
     sixThousandFeetCoverage.textContent = "6k";
     tenThousandFeetCoverage.textContent = "10k";
+  }
+
+  if (usgsLayer.updateAllLabels) {
+    usgsLayer.updateAllLabels();
   }
 });
