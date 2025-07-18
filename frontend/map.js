@@ -76,6 +76,13 @@ async function initMap() {
       console.error("Error in radarLayer.getCoverage", err);
     }
   });
+
+  map.addListener("zoom_changed", () => {
+    const zoom = map.getZoom();
+    if (usgsLayer.updateMarkerSize) {
+      usgsLayer.updateMarkerSize(zoom);
+    }
+  })
 }
 
 // Toggle the visibility of a sidebar window

@@ -7,6 +7,8 @@ class UsgsLayer {
         this.populationPerBasinMap = null;
 
         this.basinLayers = {};
+
+        this._lastMarkerSize = null;
     }
 
     async init() {
@@ -14,7 +16,7 @@ class UsgsLayer {
             marker_options: {
                 markerFill: "green",
                 markerStroke: "green",
-                markerSize: 3.5
+                markerSize: 3.0
             }
         });
         this.usgsSitesMarkers.reactClick = this.usgsSiteClicked.bind(this);
@@ -152,6 +154,22 @@ class UsgsLayer {
 
     _getArrayBuffer(url) {
         return fetch(url).then(response => response.arrayBuffer());
+    }
+
+    updateMarkerSize(zoom) {
+        let size;
+
+        if (zoom >= 8 && zoom <= 12) {
+            const zoomBin = Math.floor(zoom);
+            size = Math.max(2.5, Math.min(8, 0.5 * zoomBin));
+        } else {
+            size = 3.0; // default size when zoomed out or too far in
+        }
+
+        if (this._lastMarkerSize === size) return;
+        this._lastMarkerSize = size;
+
+        this.usgsSitesMarkers.updateIcons({ markerSize: size });
     }
 }
 
