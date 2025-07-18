@@ -4,7 +4,9 @@ class PopulationLayer {
     this.canvas = document.getElementById("pop-canvas");
     this.ctx = this.canvas.getContext("2d");
 
-    this.data = [];
+    this.data = null; // will be a flat Int32Array
+    this.width = 0;
+    this.height = 0;
     this.bounds = null;
     this.threshold = 0;
     this.overlay = null;
@@ -27,43 +29,46 @@ class PopulationLayer {
   }
 
   async load() {
-    const res = await fetch("public/data/usa_ppp_2020_5km_epsg_3857_clipped.json");
-    const json = await res.json();
+    // Load bounds in EPSG:4326
+    const boundsRes = await fetch("public/data/popRaster_bounds.json");
+    const boundsArray = await boundsRes.json(); // [west, south, east, north]
+    this.bounds = boundsArray;
 
-    this.data = json.data;
-    this.bounds = json.bounds;
+    // Load and decompress binary raster
+    const gzRes = await fetch("public/data/usa_ppp_2020_5km_epsg3857_clipped.bin.gz");
+    const compressed = new Uint8Array(await gzRes.arrayBuffer());
+    const decompressed = fflate.decompressSync(compressed); 
 
-    this.canvas.width = this.data[0].length;
-    this.canvas.height = this.data.length;
+    const view = new DataView(decompressed.buffer);
+    this.width = view.getUint32(0, true);
+    this.height = view.getUint32(4, true);
 
-    const transformer = proj4("EPSG:3857", "EPSG:4326");
-    const [west, south] = transformer.forward([this.bounds[0], this.bounds[1]]);
-    const [east, north] = transformer.forward([this.bounds[2], this.bounds[3]]);
+    this.data = new Int32Array(decompressed.buffer, 8, this.width * this.height);
 
-    const overlayBounds = { north, south, east, west };
-    this.overlay = new CanvasOverlay(overlayBounds, this.canvas);
+    this.canvas.width = this.width;
+    this.canvas.height = this.height;
+
+    this.overlay = new CanvasOverlay(this.bounds, this.canvas);
     this.overlay.setMap(this.map);
   }
 
   draw() {
-    if (!this.data.length || !this.ctx) return;
+    if (!this.data || !this.ctx) return;
 
-    const width = this.data[0].length;
-    const height = this.data.length;
-
-    const imageData = this.ctx.createImageData(width, height);
-    for (let y = 0; y < height; y++) {
-      for (let x = 0; x < width; x++) {
-        const idx = (y * width + x) * 4;
-        const value = this.data[y][x];
+    const imageData = this.ctx.createImageData(this.width, this.height);
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
+        const i = y * this.width + x;
+        const value = this.data[i];
+        const idx = i * 4;
 
         if (value > this.threshold) {
           imageData.data[idx] = 0;
           imageData.data[idx + 1] = 0;
           imageData.data[idx + 2] = 0;
-          imageData.data[idx + 3] = 125; // semi-transparent black
+          imageData.data[idx + 3] = 125;
         } else {
-          imageData.data[idx + 3] = 0; // transparent
+          imageData.data[idx + 3] = 0;
         }
       }
     }
