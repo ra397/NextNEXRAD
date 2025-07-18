@@ -18,7 +18,7 @@ class PopulationLayer {
 
     slider.addEventListener("input", e => {
       this.threshold = +e.target.value;
-      label.textContent = this.threshold.toLocaleString();
+      label.textContent = `${this.threshold.toLocaleString()} people / 25 km²`;
       this.canvas.style.display = "block";
       this.draw();
     });
