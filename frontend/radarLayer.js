@@ -147,8 +147,7 @@ class RadarLayer {
         const bounds = new google.maps.LatLngBounds(sw, ne);
 
         const overlay = customOverlay(url, bounds, this.map, 'OverlayView');
-        overlay.setOpacity(0.5);
-
+        overlay.setOpacity(0.7);
 
         this.precalcOverlay[siteID] = overlay;
     }
@@ -227,7 +226,7 @@ class RadarLayer {
         const ne = new google.maps.LatLng(result.bounds.north, result.bounds.east);
         const bounds = new google.maps.LatLngBounds(sw, ne);
         const overlay = customOverlay(result.image_url, bounds, this.map, 'OverlayView');
-        overlay.setOpacity(0.5);
+        overlay.setOpacity(0.7);
 
         this.dynamicOverlay[marker.properties.siteID] = overlay;
     }
