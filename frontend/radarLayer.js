@@ -249,16 +249,7 @@ class RadarLayer {
     precalculatedRadarSiteHover(event, marker) {
         const { id, name, lat, lng, elev_ft, tower_ft } = marker.properties;
 
-        const popupContent = document.createElement("div");
-        popupContent.innerHTML = `
-            <div>
-                <strong>${id} - ${name}</strong><br>
-                Lat: ${lat.toFixed(4)}<br>
-                Lng: ${lng.toFixed(4)}<br>
-                Elev: ${elev_ft} ft<br>
-                Tower: ${tower_ft} ft
-            </div>
-        `;
+        const popupContent = this.createLabel(id, name, lat, lng, elev_ft, tower_ft);
 
         this.activePopup = new markerTip(
             new google.maps.LatLng(lat, lng),
@@ -266,6 +257,25 @@ class RadarLayer {
             popupContent
         );
         this.activePopup.setMap(this.map);
+    }
+
+    createLabel(id, name, lat, lng, elev_ft, tower_ft) {
+        const useMetric = (window.currentUnitSystem === "metric");
+
+        const elev = useMetric ? `${(elev_ft * 0.3048).toFixed(0)} m` : `${elev_ft} ft`;
+        const tower = useMetric ? `${(tower_ft * 0.3048).toFixed(0)} m` : `${tower_ft} ft`;
+
+        const div = document.createElement("div");
+        div.innerHTML = `
+            <div>
+                <strong>${id} - ${name}</strong><br>
+                Lat: ${lat.toFixed(4)}<br>
+                Lng: ${lng.toFixed(4)}<br>
+                Elev: ${elev}<br>
+                Tower: ${tower}
+            </div>
+        `;
+        return div;
     }
 
     precalculatedRadarSiteHoverEnd() {
