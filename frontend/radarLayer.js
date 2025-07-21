@@ -25,6 +25,8 @@ class RadarLayer {
         this.boundsData = null;
 
         this.isSelectModeActive = false;
+
+        this.infoWindow = new google.maps.InfoWindow();
     }
 
     async init() {
@@ -46,6 +48,8 @@ class RadarLayer {
 
         this.precalculatedRadarSitesMarkers.reactClick = this.precalculatedRadarSiteClicked.bind(this);
         this.dynamicRadarSitesMarkers.reactClick = this.dynamicRadarSiteClicked.bind(this);
+        this.precalculatedRadarSitesMarkers.reactMouseOver = this.precalculatedRadarSiteHover.bind(this);
+        this.precalculatedRadarSitesMarkers.reactMouseOut = this.precalculatedRadarSiteHoverEnd.bind(this);
         
         this.loadPrecalculatedRadarSites();
         this.loadBounds();
@@ -78,7 +82,6 @@ class RadarLayer {
         const radarModeCheckbox = document.getElementById("radar-mode-checkbox");
         radarModeCheckbox.addEventListener("change", (e) => {
             this.isSelectModeActive = e.target.checked;
-            console.log(this.isSelectModeActive);
             this.map.setOptions({
                 draggableCursor: this.isSelectModeActive ? "crosshair" : "pointer"
             });
@@ -90,31 +93,28 @@ class RadarLayer {
         fetch(this.radar_sites_path)
         .then(response => response.json())
         .then(data => {
-            for (let i = 0; i < data.features.length; i++) {
-                const description = data.features[i].properties.description;
-                const siteData = this._extractSiteData(description);
-                const coords = {
-                    latitude: siteData.latitude,
-                    longitude: siteData.longitude,
-                };
-
+            for (let i = 0; i < data.length; i++) {
                 this.precalculatedRadarSitesMarkers.makeMarker(
-                    coords.latitude,
-                    coords.longitude,
+                    data[i].lat,
+                    data[i].lng,
                     {
-                    properties: {
-                        siteID : siteData.siteId,
-                        latitude: siteData.latitude,
-                        longitude: siteData.longitude,
-                        elevation: siteData.elevation,
-                    },
-                    clickable: true,
-                    optimized: true
+                        properties: {
+                            id: data[i].id,
+                            name: data[i].name,
+                            lat: data[i].lat,
+                            lng: data[i].lng,
+                            elev_ft: data[i].elev,
+                            tower_ft: data[i].tower,
+                        },
+                        clickable: true,
+                        mouseOver: true,
+                        mouseOut: true,
+                        optimized: true,
                     },
                     {
-                    clickable: true,
-                    mouseOver: false,
-                    mouseOut: false
+                        clickable: true,
+                        mouseOver: true,
+                        mouseOut: true,
                     }
                 );
             }
@@ -127,7 +127,7 @@ class RadarLayer {
     }
 
     precalculatedRadarSiteClicked(event, marker) {
-        const siteID = marker.properties.siteID;
+        const siteID = marker.properties.id;
         if (this.precalcOverlay[siteID]) {
             // If overlay already exists for this site, remove it
             this.precalcOverlay[siteID].setMap(null);
@@ -138,9 +138,9 @@ class RadarLayer {
     }
 
     _addPrecalculatedOverlay(marker) {
-        const {siteID, latitude, longitude, elevation} = marker.properties;
-        const url = `${this.radar_coverage_path}/${this.precalculatedFolder}/${siteID}.png`;
-        const overlayBounds = this.boundsData[siteID];
+        const {id, name, lat, lng, elev_ft, tower_ft} = marker.properties;
+        const url = `${this.radar_coverage_path}/${this.precalculatedFolder}/${id}.png`;
+        const overlayBounds = this.boundsData[id];
 
         const sw = new google.maps.LatLng(overlayBounds.south, overlayBounds.west);
         const ne = new google.maps.LatLng(overlayBounds.north, overlayBounds.east);
@@ -149,7 +149,7 @@ class RadarLayer {
         const overlay = customOverlay(url, bounds, this.map, 'OverlayView');
         overlay.setOpacity(0.7);
 
-        this.precalcOverlay[siteID] = overlay;
+        this.precalcOverlay[id] = overlay;
     }
 
     setPrecalculatedFolder(folder) {
@@ -246,32 +246,24 @@ class RadarLayer {
         }
     }
 
-    // Helper: extracts site data from the description
-    _extractSiteData(description) {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(description, 'text/html');
-        const tdElements = Array.from(doc.querySelectorAll('td'));
+    precalculatedRadarSiteHover(event, marker) {
+        const { id, name, lat, lng, elev_ft, tower_ft } = marker.properties;
+        const content = `
+            <div style="font-size:12px">
+                <b>${id} - ${name}</b><br>
+                Lat: ${lat.toFixed(4)}<br>
+                Lng: ${lng.toFixed(4)}<br>
+                Elev: ${elev_ft} ft<br>
+                Tower: ${tower_ft} ft
+            </div>
+        `;
+        this.infoWindow.setContent(content);
+        this.infoWindow.setPosition({ lat, lng });
+        this.infoWindow.open(this.map);
+    }
 
-        let siteId = null;
-        let latitude = null;
-        let longitude = null;
-        let elevation = null;
-
-        tdElements.forEach(td => {
-            const text = td.textContent.trim();
-
-            if (text.startsWith("SITE ID")) {
-            const match = text.match(/NEXRAD:([A-Z0-9]+)/);
-            if (match) siteId = match[1];
-            } else if (text.startsWith("LATITUDE")) {
-            latitude = parseFloat(text.replace("LATITUDE", "").trim());
-            } else if (text.startsWith("LONGITUDE")) {
-            longitude = parseFloat(text.replace("LONGITUDE", "").trim());
-            } else if (text.startsWith("ELEVATION")) {
-            elevation = parseFloat(text.replace("ELEVATION", "").trim());
-            }
-        });
-        return { siteId, latitude, longitude, elevation };
+    precalculatedRadarSiteHoverEnd() {
+        this.infoWindow.close();
     }
 
     removeMostRecentDynamicMarkerandOverlay() {

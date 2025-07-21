@@ -133,6 +133,24 @@ class markerCollection {
                 !1
             );
         }
+        if (evnts.mouseOver) {
+            m.addListener(
+                'mouseover',
+                function (ev) {
+                    self.reactMouseOver(ev, this)
+                },
+                !1
+            );
+        }
+        if (evnts.mouseOut) {
+            m.addListener(
+                'mouseout',
+                function (ev) {
+                    self.reactMouseOut(ev, this)
+                },
+                !1
+            );
+        }
         this.markers.push(m)
         return m;
     }

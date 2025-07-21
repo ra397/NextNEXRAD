@@ -27,7 +27,7 @@ async function initMap() {
     styles: window.constants.map.defaultMapStyle,
   });
 
-  radarLayer = new RadarLayer(map, 'public/data/nexrad_epsg3857.geojson', 'public/data/nexrad_coverages');
+  radarLayer = new RadarLayer(map, 'public/data/nexrad.json', 'public/data/nexrad_coverages');
   radarLayer.initUI();
   await radarLayer.init();
 

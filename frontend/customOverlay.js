@@ -67,12 +67,12 @@ mercatorOverlay.prototype.onAdd = function () {
     if (!this._div_) {
         this._div_ = document.createElement('div');
         this._div_.className = 'overlayDiv';
-        this._div_.style.opacity = this._opacity; // ✅ Apply persisted opacity
+        this._div_.style.opacity = this._opacity;
 
         this._img_ = new Image();
         this._img_.className = 'overlayImg';
         this._img_.src = this._imgSrc;
-        this._img_.style.opacity = this._opacity; // ✅ Apply here too
+        this._img_.style.opacity = this._opacity; 
 
         this._div_.appendChild(this._img_);
         this.style = this._div_.style;
