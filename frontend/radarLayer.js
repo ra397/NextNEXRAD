@@ -26,7 +26,7 @@ class RadarLayer {
 
         this.isSelectModeActive = false;
 
-        this.infoWindow = new google.maps.InfoWindow();
+        this.activePopup = null;
     }
 
     async init() {
@@ -248,22 +248,31 @@ class RadarLayer {
 
     precalculatedRadarSiteHover(event, marker) {
         const { id, name, lat, lng, elev_ft, tower_ft } = marker.properties;
-        const content = `
-            <div style="font-size:12px">
-                <b>${id} - ${name}</b><br>
+
+        const popupContent = document.createElement("div");
+        popupContent.innerHTML = `
+            <div>
+                <strong>${id} - ${name}</strong><br>
                 Lat: ${lat.toFixed(4)}<br>
                 Lng: ${lng.toFixed(4)}<br>
                 Elev: ${elev_ft} ft<br>
                 Tower: ${tower_ft} ft
             </div>
         `;
-        this.infoWindow.setContent(content);
-        this.infoWindow.setPosition({ lat, lng });
-        this.infoWindow.open(this.map);
+
+        this.activePopup = new markerTip(
+            new google.maps.LatLng(lat, lng),
+            "arrow_btm_box",  // Make sure to define this CSS class
+            popupContent
+        );
+        this.activePopup.setMap(this.map);
     }
 
     precalculatedRadarSiteHoverEnd() {
-        this.infoWindow.close();
+        if (this.activePopup) {
+            this.activePopup.setMap(null);
+            this.activePopup = null;
+        }
     }
 
     removeMostRecentDynamicMarkerandOverlay() {
