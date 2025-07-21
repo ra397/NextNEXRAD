@@ -23,6 +23,8 @@ class RadarLayer {
         this.geod = geodesic.Geodesic.WGS84;
 
         this.boundsData = null;
+
+        this.isSelectModeActive = false;
     }
 
     async init() {
@@ -72,6 +74,15 @@ class RadarLayer {
         undoMostRecentDynamicRadarCoverage.addEventListener("click", () => {
             this.removeMostRecentDynamicMarkerandOverlay();
         })
+
+        const radarModeCheckbox = document.getElementById("radar-mode-checkbox");
+        radarModeCheckbox.addEventListener("change", (e) => {
+            this.isSelectModeActive = e.target.checked;
+            console.log(this.isSelectModeActive);
+            this.map.setOptions({
+                draggableCursor: this.isSelectModeActive ? "crosshair" : "pointer"
+            });
+        });
     }
 
     // Loads the radar sites from a GeoJSON file and creates markers for each site

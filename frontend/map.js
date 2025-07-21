@@ -22,7 +22,6 @@ async function initMap() {
     center: window.constants.map.centerUSA,
     minZoom: 5,
     maxZoom: 12,
-    draggableCursor: 'crosshair',
     fullscreenControl: false,
     mapTypeId: "terrain",
     styles: window.constants.map.defaultMapStyle,
@@ -47,10 +46,9 @@ async function initMap() {
 
   // Event handler when user clicks on a point in the map
   map.addListener("click", async (e) => {
-    // Do not allow user to click on map if a request is being processed
-    if (isLoading) return;
+    // Prevent click behavior unless radar selection mode is active
+    if (!radarLayer.isSelectModeActive || radarLayer.isLoading) return;
 
-    // Get the lat and lon coordinates of the point that was clicked (epsg:4326)
     const lat = e.latLng.lat();
     const lng = e.latLng.lng();
 
