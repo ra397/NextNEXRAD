@@ -122,7 +122,7 @@ class RadarLayer {
     }
 
     async loadBounds() {
-        const response = await fetch("/public/data/nexrad_coverages/radar_bounds.json");
+        const response = await fetch("public/data/nexrad_coverages/radar_bounds.json");
         this.boundsData = await response.json();
     }
 

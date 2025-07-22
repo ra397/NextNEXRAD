@@ -182,7 +182,7 @@ class markerCollection {
 
     getMarker(id) {
         for (let i = 0; i < this.markers.length; i++) {
-            if (id == this.markers[i].properties.siteID) {
+            if (id == this.markers[i].properties.id) {
                 return this.markers[i];
             }
         }
