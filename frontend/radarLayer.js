@@ -30,7 +30,7 @@ class RadarLayer {
 
         this.rangeCircles = {};
         this.activeRangeDistances = new Set([50000, 100000, 150000, 200000, 230000]);
-        this.showRangeCircles = true;
+        this.showRangeCircles = false;
     }
 
     async init() {
@@ -111,6 +111,12 @@ class RadarLayer {
                 this.updateAllRangeCircles();
             });
         });
+
+        const unitsInput = document.getElementById("units-input");
+        unitsInput.addEventListener("change", () => {
+            this.updateRangeRingLabels();
+        });
+        this.updateRangeRingLabels();
     }
 
     // Loads the radar sites from a GeoJSON file and creates markers for each site
@@ -346,13 +352,14 @@ class RadarLayer {
             if (this.rangeCircles[siteID][radius]) continue;
 
             const circle = new google.maps.Circle({
-                strokeColor: '#00AA00',
-                strokeOpacity: 0.8,
+                strokeColor: '#000000ff',
+                strokeOpacity: 0.5,
                 strokeWeight: 1,
                 fillOpacity: 0.0,
                 map: null,
                 center: marker.getPosition(),
-                radius: radius
+                radius: radius,
+                clickable: false,
             });
 
             this.rangeCircles[siteID][radius] = circle;
@@ -398,6 +405,22 @@ class RadarLayer {
         }
 
         delete this.rangeCircles[siteID];
+    }
+
+    updateRangeRingLabels() {
+        const useMetric = (document.getElementById("units-input").value === "metric");
+
+        const rangeCheckboxes = document.querySelectorAll(".range-checkbox");
+        rangeCheckboxes.forEach(checkbox => {
+            const label = checkbox.parentElement;
+            const radiusMeters = parseInt(checkbox.dataset.distance);
+
+            const labelText = useMetric
+                ? `${radiusMeters / 1000} km`
+                : `${Math.round(radiusMeters / 1609.34)} mi`;
+
+            label.childNodes[1].textContent = ` ${labelText}`;
+        });
     }
 
     showSpinner() {
