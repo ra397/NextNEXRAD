@@ -35,12 +35,24 @@
         <canvas id="coverage-canvas"></canvas>
 
         <div class="sidebar">
-            <button class="sidebar-btn" onclick="toggleWindow('radar-settings')">Radar Settings</button>
-            <button class="sidebar-btn" onclick="toggleWindow('population-settings')">Population Settings</button>
-            <button class="sidebar-btn" onclick="toggleWindow('usgs-settings')">USGS Settings</button>
-            <button class="sidebar-btn" onclick="toggleWindow('pod-settings')">POD Settings</button>
-            <button class="sidebar-btn" onclick="toggleWindow('general-settings')">General Settings</button>
-            <button class="sidebar-btn" onclick="toggleWindow('information')">Information</button>
+            <button class="sidebar-btn" onclick="toggleWindow('radar-settings')">
+                <img src="public\icons\forecast-weather-station-radar-svgrepo-com.svg" alt="Radar Settings" class="sidebar-icon">
+            </button>
+            <button class="sidebar-btn" onclick="toggleWindow('population-settings')">
+                <img src="public\icons\people-svgrepo-com.svg" alt="Population Settings" class="sidebar-icon">
+            </button>
+            <button class="sidebar-btn" onclick="toggleWindow('usgs-settings')">
+                <img src="public\icons\river-6-svgrepo-com.svg" alt="USGS Settings" class="sidebar-icon">
+            </button>
+            <button class="sidebar-btn" onclick="toggleWindow('pod-settings')">
+                <img src="public\icons\rain-heavy-svgrepo-com.svg" alt="POD Settings" class="sidebar-icon">
+            </button>
+            <button class="sidebar-btn" onclick="toggleWindow('general-settings')">
+                <img src="public\icons\settings-svgrepo-com.svg" alt="General Settings" class="sidebar-icon">
+            </button>
+            <button class="sidebar-btn" onclick="toggleWindow('information')">
+                <img src="https://s-iihr72.iihr.uiowa.edu/modular/nwcm/img/info.svg" alt="Information" class="sidebar-icon">
+            </button>
         </div>
 
         <!-- Popup window for each sidebar button, initially not visible -->
