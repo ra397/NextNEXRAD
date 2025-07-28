@@ -27,6 +27,10 @@ class RadarLayer {
         this.isSelectModeActive = false;
 
         this.activePopup = null;
+
+        this.rangeCircles = {};
+        this.activeRangeDistances = new Set([50000, 100000, 150000, 200000, 230000]);
+        this.showRangeCircles = true;
     }
 
     async init() {
@@ -86,6 +90,27 @@ class RadarLayer {
                 draggableCursor: this.isSelectModeActive ? "crosshair" : "pointer"
             });
         });
+
+        // Master "Show Range Rings" checkbox
+        const radarRangeCheckbox = document.getElementById("radar-range-checkbox");
+        radarRangeCheckbox.addEventListener("change", (e) => {
+            this.showRangeCircles = e.target.checked;
+            this.updateAllRangeCircles();
+        });
+
+        // Individual distance checkboxes
+        const rangeCheckboxes = document.querySelectorAll(".range-checkbox");
+        rangeCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener("change", () => {
+                const radius = parseInt(checkbox.dataset.distance);
+                if (checkbox.checked) {
+                    this.activeRangeDistances.add(radius);
+                } else {
+                    this.activeRangeDistances.delete(radius);
+                }
+                this.updateAllRangeCircles();
+            });
+        });
     }
 
     // Loads the radar sites from a GeoJSON file and creates markers for each site
@@ -132,9 +157,11 @@ class RadarLayer {
             // If overlay already exists for this site, remove it
             this.precalcOverlay[siteID].setMap(null);
             delete this.precalcOverlay[siteID];
+            this.updateRangeCircles(siteID);
             return;
         }
         this._addPrecalculatedOverlay(marker);
+        this.updateRangeCircles(siteID);
     }
 
     _addPrecalculatedOverlay(marker) {
@@ -150,6 +177,7 @@ class RadarLayer {
         overlay.setOpacity(0.7);
 
         this.precalcOverlay[id] = overlay;
+        this.addRangeCircles(marker, id);
     }
 
     setPrecalculatedFolder(folder) {
@@ -199,6 +227,7 @@ class RadarLayer {
             {clickable: true}
         );
         this.dynamicOverlayOrder.push(marker.properties.siteID);
+        this.addRangeCircles(marker, marker.properties.siteID);
         return marker;
     }
 
@@ -244,6 +273,7 @@ class RadarLayer {
         } else {
             overlay.setMap(this.map); // Show again
         }
+        this.updateRangeCircles(siteID);
     }
 
     precalculatedRadarSiteHover(event, marker) {
@@ -301,8 +331,73 @@ class RadarLayer {
         const marker = this.dynamicRadarSitesMarkers.getMarker(mostRecentSiteID);
         if (marker) {
             marker.setMap(null);
-            delete this.dynamicRadarSitesMarkers.markers[mostRecentSiteID]; 
+            delete this.dynamicRadarSitesMarkers.markers[mostRecentSiteID];
+            this.removeRangeCircles(mostRecentSiteID);
         }
+    }
+
+    addRangeCircles(marker, siteID) {
+        if (!this.rangeCircles[siteID]) {
+            this.rangeCircles[siteID] = {};
+        }
+
+        for (const radius of [50000, 100000, 150000, 200000, 230000]) {
+            // Avoid recreating existing
+            if (this.rangeCircles[siteID][radius]) continue;
+
+            const circle = new google.maps.Circle({
+                strokeColor: '#00AA00',
+                strokeOpacity: 0.8,
+                strokeWeight: 1,
+                fillOpacity: 0.0,
+                map: null,
+                center: marker.getPosition(),
+                radius: radius
+            });
+
+            this.rangeCircles[siteID][radius] = circle;
+        }
+
+        this.updateRangeCircles(siteID);
+    }
+
+    updateRangeCircles(siteID) {
+        const visible = this.showRangeCircles;
+        const siteCircles = this.rangeCircles[siteID];
+        if (!siteCircles) return;
+
+        for (const radius in siteCircles) {
+            const circle = siteCircles[radius];
+            const shouldShow = visible && this.activeRangeDistances.has(parseInt(radius));
+
+            // Get the associated marker (precalc or dynamic)
+            const marker = this.precalculatedRadarSitesMarkers.getMarker(siteID) ||
+                        this.dynamicRadarSitesMarkers.getMarker(siteID);
+
+            const overlay = this.precalcOverlay[siteID] || this.dynamicOverlay[siteID];
+            const overlayVisible = overlay && overlay.getMap() !== null;
+            const markerVisible = marker && marker.getMap() !== null;
+
+            circle.setMap(shouldShow && markerVisible && overlayVisible ? this.map : null);
+
+        }
+    }
+
+    updateAllRangeCircles() {
+        for (const siteID in this.rangeCircles) {
+            this.updateRangeCircles(siteID);
+        }
+    }
+
+    removeRangeCircles(siteID) {
+        if (!this.rangeCircles[siteID]) return;
+
+        for (const radius in this.rangeCircles[siteID]) {
+            const circle = this.rangeCircles[siteID][radius];
+            circle.setMap(null);
+        }
+
+        delete this.rangeCircles[siteID];
     }
 
     showSpinner() {
