@@ -27,6 +27,7 @@ class RadarLayer {
         this.isSelectModeActive = false;
 
         this.activePopup = null;
+        this.hoverTimeout = null;
 
         this.rangeCircles = {};
         this.activeRangeDistances = new Set([50000, 100000, 150000, 200000, 230000]);
@@ -285,14 +286,17 @@ class RadarLayer {
     precalculatedRadarSiteHover(event, marker) {
         const { id, name, lat, lng, elev_ft, tower_ft } = marker.properties;
 
-        const popupContent = this.createLabel(id, name, lat, lng, elev_ft, tower_ft);
+        clearTimeout(this.hoverTimeout);
+        this.hoverTimeout = setTimeout(() => {
+            const popupContent = this.createLabel(id, name, lat, lng, elev_ft, tower_ft);
 
-        this.activePopup = new markerTip(
-            new google.maps.LatLng(lat, lng),
-            "arrow_btm_box",  // Make sure to define this CSS class
-            popupContent
-        );
-        this.activePopup.setMap(this.map);
+            this.activePopup = new markerTip(
+                new google.maps.LatLng(lat, lng),
+                "arrow_btm_box",
+                popupContent
+            );
+            this.activePopup.setMap(this.map);
+        }, 366); // Delay in ms
     }
 
     createLabel(id, name, lat, lng, elev_ft, tower_ft) {
@@ -315,6 +319,8 @@ class RadarLayer {
     }
 
     precalculatedRadarSiteHoverEnd() {
+        clearTimeout(this.hoverTimeout);
+
         if (this.activePopup) {
             this.activePopup.setMap(null);
             this.activePopup = null;
