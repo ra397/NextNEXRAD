@@ -1,6 +1,7 @@
 body {
     /* Disallow scroll wheel*/
     overflow: hidden;
+    font-family: 'Open Sans', sans-serif;
 }
 
 #map {
@@ -14,6 +15,11 @@ body {
   image-rendering: pixelated;
 }
 
+.window-title-container {
+  border: 1px solid transparent;
+  background-color: green;
+  color: white;
+}
 .sidebar {
   /* Display on the right side of the map */
   position: absolute;
@@ -39,8 +45,8 @@ body {
 }
 
 .settings-input-container {
-    display: flex;
-    margin-bottom: 3px;
+  display: flex;
+  margin-top: 10px;
 }
 
 .settings-label {
@@ -146,7 +152,7 @@ body {
   right: 12px;
   font-size: 20px;
   font-weight: bold;
-  color: #666;
+  color: white;
   cursor: pointer;
   z-index: 1000;
 }

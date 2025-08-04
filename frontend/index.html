@@ -57,7 +57,9 @@
 
         <!-- Popup window for each sidebar button, initially not visible -->
         <div id="radar-settings" class="sidebar-window">
-            <h3>Radar Settings</h3>
+            <div class="window-title-container">
+                <h3>Radar Settings</h3>
+            </div>
             <span class="close-btn" onclick="this.parentElement.style.display='none'">×</span>
 
             <div class="settings-input-container">
@@ -158,10 +160,12 @@
         </div>
 
         <div id="population-settings" class="sidebar-window">
-            <h3>Population Settings</h3>
+            <div class="window-title-container">
+                <h3>Population Settings</h3>
+            </div>
             <span class="close-btn" onclick="this.parentElement.style.display='none'">×</span>
 
-            <label for="popThreshold-slider" class="settings-label">Population Threshold:</label>
+            <br><label for="popThreshold-slider" class="settings-label">Population Threshold:</label>
             <div class="settings-input-container">
                 <input type="range" id="popThreshold-slider" min="0" max="25000" value="7500" step="25">
                 <span id="popThreshold-value">7,500 people / 25 km²</span>
@@ -173,7 +177,9 @@
         </div>
 
         <div id="usgs-settings" class="sidebar-window">
-            <h3>USGS Settings</h3>
+            <div class="window-title-container">
+                <h3>USGS Settings</h3>
+            </div>
             <span class="close-btn" onclick="this.parentElement.style.display='none'">×</span>
 
             <div class="settings-input-container">
@@ -182,7 +188,9 @@
         </div>
 
         <div id="pod-settings" class="sidebar-window">
-            <h3>POD Settings</h3>
+            <div class="window-title-container">
+                <h3>POD Settings</h3>
+            </div>
             <span class="close-btn" onclick="this.parentElement.style.display='none'">×</span>
 
             <div class="settings-input-container">
@@ -251,7 +259,9 @@
         </div>
 
         <div id="general-settings" class="sidebar-window">
-            <h3>General Settings</h3>
+            <div class="window-title-container">
+                <h3>General Settings</h3>
+            </div>
             <span class="close-btn" onclick="this.parentElement.style.display='none'">×</span>
 
             <div class="settings-input-container">
@@ -264,7 +274,9 @@
         </div>
 
         <div id="information" class="sidebar-window">
-            <h3>Information</h3>
+            <div class="window-title-container">
+                <h3>Information</h3>
+            </div>
             <span class="close-btn" onclick="this.parentElement.style.display='none'">×</span>
         </div>
 
