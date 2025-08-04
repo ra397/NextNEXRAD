@@ -25,8 +25,8 @@ class UsgsLayer {
     }
 
     loadUsgsSites() {
-        const url = window._env_dev.USGS_SITES_URL;
-        this._getArrayBuffer(url).then((ret) => {
+        const usgsSiteSrc = "public/data/uid_markers.pbf";
+        this._getArrayBuffer(usgsSiteSrc).then((ret) => {
             const pbf = new Pbf(ret);
             const geojson = geobuf.decode(pbf);  // Converts to GeoJSON
 
@@ -120,6 +120,7 @@ class UsgsLayer {
                 fillOpacity: 0.2,
                 strokeColor: "black",
                 strokeWeight: 1,
+                clickable: false
             });
 
             this.basinLayers[usgsId] = layer;
