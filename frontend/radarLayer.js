@@ -265,6 +265,7 @@ class RadarLayer {
         overlay.setOpacity(0.7);
 
         this.dynamicOverlay[marker.properties.id] = overlay;
+        this.updateRangeCircles(marker.properties.id);
     }
 
     dynamicRadarSiteClicked(event, marker) {
