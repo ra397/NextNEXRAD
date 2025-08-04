@@ -39,7 +39,7 @@ class RadarLayer {
             marker_options: {
                 markerFill: 'red',
                 markerStroke: 'red',
-                markerSize: 3.5
+                markerSize: 4.5
             }
         });
 
@@ -47,7 +47,7 @@ class RadarLayer {
             marker_options: {
                 markerFill: 'purple',
                 markerStroke: 'purple',
-                markerSize: 3.5
+                markerSize: 4.5
             }
         })
 
