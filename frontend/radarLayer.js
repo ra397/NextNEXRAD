@@ -227,14 +227,14 @@ class RadarLayer {
             lng,
             {
                 properties: {
-                    siteID: `${lat}${lng}`,
+                    id: `${lat}${lng}`,
                 },
                 clickable: true
             },
             {clickable: true}
         );
-        this.dynamicOverlayOrder.push(marker.properties.siteID);
-        this.addRangeCircles(marker, marker.properties.siteID);
+        this.dynamicOverlayOrder.push(marker.properties.id);
+        this.addRangeCircles(marker, marker.properties.id);
         return marker;
     }
 
@@ -264,11 +264,11 @@ class RadarLayer {
         const overlay = customOverlay(result.image_url, bounds, this.map, 'OverlayView');
         overlay.setOpacity(0.7);
 
-        this.dynamicOverlay[marker.properties.siteID] = overlay;
+        this.dynamicOverlay[marker.properties.id] = overlay;
     }
 
     dynamicRadarSiteClicked(event, marker) {
-        const siteID = marker.properties.siteID;
+        const siteID = marker.properties.id;
         const overlay = this.dynamicOverlay[siteID];
         if (!overlay) {
             console.warn(`No overlay found for dynamic site ${siteID}`);
@@ -335,6 +335,7 @@ class RadarLayer {
         // Remove overlay from map and dictionary
         const overlay = this.dynamicOverlay[mostRecentSiteID];
         if (overlay) {
+            console.log("Removing overlay for site ID:", mostRecentSiteID);
             overlay.setMap(null);
             delete this.dynamicOverlay[mostRecentSiteID];
         }
@@ -342,6 +343,7 @@ class RadarLayer {
         // Remove marker from the map and collection
         const marker = this.dynamicRadarSitesMarkers.getMarker(mostRecentSiteID);
         if (marker) {
+            console.log("Removing marker for site ID:", mostRecentSiteID);
             marker.setMap(null);
             delete this.dynamicRadarSitesMarkers.markers[mostRecentSiteID];
             this.removeRangeCircles(mostRecentSiteID);
