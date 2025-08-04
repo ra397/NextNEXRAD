@@ -125,7 +125,7 @@ class PodLayer {
     const blob = await this.di.load(url);
 
     if (this.podOverlay) this.podOverlay.remove();
-    this.podOverlay = customOverlay(blob, window.constants.pod.POD_BBOX, this.map, 'GroundOverlay');
+    this.podOverlay = customOverlay(blob, window.constants.pod.POD_BBOX, this.map, 'OverlayView');
     this.podOverlay.setOpacity(this.settings.opacity);
 
     isLoading = false; hideSpinner();
