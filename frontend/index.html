@@ -19,14 +19,18 @@
         <!-- PBF -->
         <script src="https://unpkg.com/pbf@3.0.5/dist/pbf.js"></script>
         <script src="https://unpkg.com/geobuf@3.0.1/dist/geobuf.js"></script>
+        <script src="https://unpkg.com/geobuf@3.0.2/dist/geobuf-dev.js"></script>
 
         <!-- noUiSlider -->
-         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@15.7.0/dist/nouislider.min.css">
-         <script src="https://cdn.jsdelivr.net/npm/nouislider@15.7.0/dist/nouislider.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@15.7.0/dist/nouislider.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/nouislider@15.7.0/dist/nouislider.min.js"></script>
+
+        <!-- plotly -->
+        <script src="https://cdn.plot.ly/plotly-2.31.1.js" charset="utf-8"></script>
         
         <!-- Google Maps API -->
         <script
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCTYZ2ogy4XY8GmiIpiw89OpE9iRk5MnxM&libraries=marker">
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCTYZ2ogy4XY8GmiIpiw89OpE9iRk5MnxM&libraries=marker,places,visualization,geometry">
         </script>
     </head>
     <body>
@@ -195,6 +199,10 @@
             <div class="settings-input-container">
                 <input type="checkbox" id="usgsSites-checkbox"><span>USGS Sites</span>
             </div>
+
+            <div class="settings-input-container">
+                <input type="checkbox" id="riverNetwork-checkbox"><span>River Network</span>
+            </div>
         </div>
 
         <div id="pod-settings" class="sidebar-window">
@@ -310,6 +318,9 @@
         <script src="populationLayer.js"></script>
         <script src="coveragesLayer.js"></script>
         <script src="markerTip.js"></script>
+        <script src="pbfLayer.js"></script>
+        <script src="riverNetworkHelper.js"></script>
+        <script src="riverNetworkLayer.js"></script>
         <script src="map.js"></script>
         <script>
             window.onload = function () {

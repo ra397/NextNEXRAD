@@ -262,7 +262,7 @@ class RadarLayer {
             elevation_angles: elevationAngles,
         };
 
-        const serverUrl = window._env_dev.SERVER_URL;
+        const serverUrl = window._env_prod.SERVER_URL;
         const response = await fetch(`${serverUrl}/calculate_blockage`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },

@@ -1,4 +1,4 @@
-const server = window._env_dev.SERVER_URL;
+const server = window._env_prod.SERVER_URL;
 
 window.currentUnitSystem = "imperial";
 
@@ -9,6 +9,7 @@ let usgsLayer;
 let podLayer;
 let populationLayer;
 let coveragesLayer;
+let riverLayer;
 
 let isLoading = false;
 
@@ -43,6 +44,9 @@ async function initMap() {
 
   coveragesLayer = new CoveragesLayer(map);
   coveragesLayer.initUI();
+
+  riverLayer = new RiverNetworkLayer(map);
+  riverLayer.initUI();
 
   // Event handler when user clicks on a point in the map
   map.addListener("click", async (e) => {
