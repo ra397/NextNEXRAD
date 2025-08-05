@@ -52,6 +52,7 @@ body {
 .settings-label {
     /* Fixed size for labels, that way the text inputs are aligned top to bottom */
     width: 140px;
+
 }
 
 .settings-input {
@@ -182,4 +183,12 @@ body {
 .sidebar-icon {
   width: 48px;
   height: 48px;
+}
+
+#radarLat {
+  margin-bottom: 5px;
+}
+
+#radar-submit-container {
+  width: 100%;
 }

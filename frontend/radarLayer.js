@@ -118,6 +118,19 @@ class RadarLayer {
             this.updateRangeRingLabels();
         });
         this.updateRangeRingLabels();
+
+        const radarSubmitBtn = document.getElementById("radar-submit-btn");
+        radarSubmitBtn.addEventListener("click", () => {
+            const lat = parseFloat(document.getElementById("radarLat").value);
+            const lng = parseFloat(document.getElementById("radarLon").value);
+
+            if (isNaN(lat) || isNaN(lng)) {
+                alert("Please enter valid latitude and longitude values.");
+                return;
+            }
+
+            radarLayer.submitCoverageRequest(lat, lng);
+        });
     }
 
     // Loads the radar sites from a GeoJSON file and creates markers for each site
@@ -432,6 +445,10 @@ class RadarLayer {
         });
     }
 
+    validateRadarCoordinates() {
+        
+    }
+
     showSpinner() {
         if (this.spinner) {
             this.spinner.style.display = "block";
@@ -441,6 +458,33 @@ class RadarLayer {
     hideSpinner() {
         if (this.spinner) {
             this.spinner.style.display = "none";
+        }
+    }
+
+    async submitCoverageRequest(lat, lng) {
+        if (this.isLoading) return;
+
+        const maxAlt = getInput(document.getElementById("aglThreshold-input"));
+        const towerHeight = getInput(document.getElementById("towerHeight-input"));
+
+        const unitSystem = document.getElementById("units-input").value;
+        const feetToMeters = (m) => m / 3.28084;
+
+        let alt_m = null;
+        let tower_m = null;
+        if (maxAlt !== null) {
+            alt_m = unitSystem === "metric" ? maxAlt : feetToMeters(maxAlt);
+        }
+        if (towerHeight !== null) {
+            tower_m = unitSystem === "metric" ? towerHeight : feetToMeters(towerHeight);
+        }
+
+        const angles = getCheckedElevationAngles();
+
+        try {
+            await this.getCoverage(lat, lng, alt_m, tower_m, angles);
+        } catch (err) {
+            console.error("Error in radarLayer.getCoverage", err);
         }
     }
 }

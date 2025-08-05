@@ -46,34 +46,14 @@ async function initMap() {
 
   // Event handler when user clicks on a point in the map
   map.addListener("click", async (e) => {
-    // Prevent click behavior unless radar selection mode is active
-    if (!radarLayer.isSelectModeActive || radarLayer.isLoading) return;
+      if (!radarLayer.isSelectModeActive || radarLayer.isLoading) return;
 
-    const lat = e.latLng.lat();
-    const lng = e.latLng.lng();
+      const lat = e.latLng.lat();
+      const lng = e.latLng.lng();
 
-    const maxAlt = getInput(document.getElementById("aglThreshold-input"));
-    const towerHeight = getInput(document.getElementById("towerHeight-input"));
-
-    const unitSystem = document.getElementById("units-input").value;
-    const feetToMeters = (m) => m / 3.28084;
-
-    let alt_m = null;
-    let tower_m = null;
-    if (maxAlt !== null) {
-      alt_m = unitSystem === "metric" ? maxAlt : feetToMeters(maxAlt);
-    }
-    if (towerHeight !== null) {
-      tower_m = unitSystem === "metric" ? towerHeight : feetToMeters(towerHeight);
-    }
-    const angles = getCheckedElevationAngles();
-
-    try {
-      await radarLayer.getCoverage(lat, lng, alt_m, tower_m, angles);
-    } catch (err) {
-      console.error("Error in radarLayer.getCoverage", err);
-    }
+      await radarLayer.submitCoverageRequest(lat, lng);
   });
+
 
   map.addListener("zoom_changed", () => {
     const zoom = map.getZoom();
