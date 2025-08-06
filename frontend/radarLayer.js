@@ -77,11 +77,6 @@ class RadarLayer {
             this.setPrecalculatedFolder("coverages_10k");
         });
 
-        const undoMostRecentDynamicRadarCoverage = document.getElementById("remove-most-recent-radar-coverage");
-        undoMostRecentDynamicRadarCoverage.addEventListener("click", () => {
-            this.removeMostRecentDynamicMarkerandOverlay();
-        })
-
         const radarModeCheckbox = document.getElementById("radar-mode-checkbox");
         radarModeCheckbox.addEventListener("change", (e) => {
             this.isSelectModeActive = e.target.checked;
@@ -128,6 +123,47 @@ class RadarLayer {
             }
 
             radarLayer.submitCoverageRequest(lat, lng);
+        });
+
+        // Radar show controls
+        this.dynamicRadarSiteIdText = document.getElementById("dynamic-radar-site-id");
+        this.dynamicRadarSiteLatText = document.getElementById("dynamic-radar-site-lat");
+        this.dynamicRadarSiteLngText = document.getElementById("dynamic-radar-site-lng");
+        this.dynamicRadarSiteTowerHeightText = document.getElementById("dynamic-radar-site-tower-height");
+        this.dynamicRadarSiteMaxAltText = document.getElementById("dynamic-radar-site-max-alt");
+        this.dynamicRadarSiteToggleBtn = document.getElementById("toggle-dynamic-radar");
+        this.dynamicRadarSiteToggleBtn.addEventListener("click", () => {
+            // pass the marker of the site to toggle
+            const siteID = this.dynamicRadarSiteIdText.value;
+            const marker = this.dynamicRadarSitesMarkers.getMarker(siteID);
+            const overlay = this.dynamicOverlay[siteID];
+            if (marker && overlay) {
+                if (overlay.getMap() === null) {
+                    overlay.setMap(this.map);
+                } else {
+                    overlay.setMap(null);
+                }
+                this.updateRangeCircles(siteID);
+            }
+        });
+        this.dynamicRadarSiteUpdateBtn = document.getElementById("update-dynamic-radar");
+        this.dynamicRadarSiteUpdateBtn.addEventListener("click", () => {
+
+        });
+        this.dynamicRadarSiteDeleteBtn = document.getElementById("delete-dynamic-radar");
+        this.dynamicRadarSiteDeleteBtn.addEventListener("click", () => {
+            const siteID = this.dynamicRadarSiteIdText.value;
+            const marker = this.dynamicRadarSitesMarkers.getMarker(siteID);
+            const overlay = this.dynamicOverlay[siteID];
+            if (overlay) {
+                overlay.setMap(null);
+                delete this.dynamicOverlay[siteID];
+            }
+            if (marker) {
+                marker.setMap(null);
+                delete this.dynamicRadarSitesMarkers.markers[siteID];
+                this.removeRangeCircles(siteID);
+            }
         });
     }
 
@@ -285,20 +321,25 @@ class RadarLayer {
     }
 
     dynamicRadarSiteClicked(event, marker) {
-        console.log("Dynamic radar site clicked:", marker.properties);
+        const dynamicRadarShowWindow = document.getElementById('arbitrary-radar-show');
+        if (dynamicRadarShowWindow && dynamicRadarShowWindow.style.display === 'none') {
+            toggleWindow('arbitrary-radar-show');
+        }
+        
         const siteID = marker.properties.id;
-        const overlay = this.dynamicOverlay[siteID];
-        if (!overlay) {
-            console.warn(`No overlay found for dynamic site ${siteID}`);
-            return;
-        }
-        const isVisible = overlay.getMap() !== null;
-        if (isVisible) {
-            overlay.setMap(null); // Hide
-        } else {
-            overlay.setMap(this.map); // Show again
-        }
-        this.updateRangeCircles(siteID);
+        const lat = marker.properties.lat;
+        const lng = marker.properties.lng;
+        const towerHeight = marker.properties.towerHeight;
+        const maxAlt = marker.properties.maxAlt;
+
+        console.log("Dynamic radar site clicked:", siteID, lat, lng, towerHeight, maxAlt);
+
+        // Update the dynamic radar site info in the sidebar
+        this.dynamicRadarSiteIdText.value = siteID;
+        this.dynamicRadarSiteLatText.value = lat.toFixed(4);
+        this.dynamicRadarSiteLngText.value = lng.toFixed(4);
+        this.dynamicRadarSiteTowerHeightText.value = towerHeight ? towerHeight : "N/A";
+        this.dynamicRadarSiteMaxAltText.value = maxAlt ? maxAlt : "N/A";
     }
 
     precalculatedRadarSiteHover(event, marker) {

@@ -44,7 +44,7 @@ body {
   display: none;
 }
 
-#arbitrary-radar {
+#arbitrary-radar, #arbitrary-radar-show {
   position: absolute;
   top: 7%;
   left: 7px;
