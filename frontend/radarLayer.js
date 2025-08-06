@@ -5,13 +5,13 @@ class RadarLayer {
         this.radar_sites_path = radar_sites_path;
         this.radar_coverage_path = radar_coverage_path;
 
-        this.halfExtent = window.constants.radar.halfExtent;
-
         this.precalculatedRadarSitesMarkers = new markerCollection(this.map);
         this.dynamicRadarSitesMarkers = new markerCollection(this.map);
 
         this.precalcOverlay = {};
         this.dynamicOverlay = {};
+
+        this.dynamicRadarSiteCounter = 0;
 
         this.dynamicOverlayOrder = []; // Keeps track of the order each dynamic overlay is created
 
@@ -19,8 +19,6 @@ class RadarLayer {
 
         this.spinner = null;
         this.isLoading = false;
-
-        this.geod = geodesic.Geodesic.WGS84;
 
         this.boundsData = null;
 
@@ -220,7 +218,7 @@ class RadarLayer {
         if (this.isLoading) {
             return;
         }
-        const marker = this._addDynamicMarker(lat, lng);
+        const marker = this._addDynamicMarker(lat, lng, maxAlt, towerHeight, elevationAngles);
         this.isLoading = true;
         this.showSpinner();
         try {
@@ -233,14 +231,19 @@ class RadarLayer {
         }
     }
 
-    _addDynamicMarker(lat, lng) {
+    _addDynamicMarker(lat, lng, maxAlt, towerHeight, elevationAngles) {
         // Add marker to dynamic radars marker collection
         const marker = this.dynamicRadarSitesMarkers.makeMarker(
             lat,
             lng,
             {
                 properties: {
-                    id: `${lat}${lng}`,
+                    id: ++this.dynamicRadarSiteCounter,
+                    lat: lat,
+                    lng: lng,
+                    towerHeight: towerHeight,
+                    maxAlt: maxAlt,
+                    elevationAngles: elevationAngles,
                 },
                 clickable: true
             },
@@ -282,6 +285,7 @@ class RadarLayer {
     }
 
     dynamicRadarSiteClicked(event, marker) {
+        console.log("Dynamic radar site clicked:", marker.properties);
         const siteID = marker.properties.id;
         const overlay = this.dynamicOverlay[siteID];
         if (!overlay) {
