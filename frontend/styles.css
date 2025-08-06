@@ -44,6 +44,16 @@ body {
   display: none;
 }
 
+#arbitrary-radar {
+  position: absolute;
+  top: 7%;
+  left: 7px;
+  width: 350px;
+  background: white;
+  border: 1px solid #ccc;
+  display: none;
+}
+
 .settings-input-container {
   display: flex;
   margin-top: 10px;
