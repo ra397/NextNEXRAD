@@ -188,4 +188,15 @@ class markerCollection {
         }
         return null;
     }
+
+    deleteMarker(id) {
+        for (let i = 0; i < this.markers.length; i++) {
+            if (id == this.markers[i].properties.id) {
+                this.markers[i].setMap(null);
+                this.markers.splice(i, 1);
+                return true;
+            }
+        }
+        return false;
+    }
 }

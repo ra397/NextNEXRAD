@@ -1,10 +1,9 @@
 const server = window._env_prod.SERVER_URL;
 
-window.currentUnitSystem = "imperial";
-
 let map;
 
-let radarLayer; // Radar layer for displaying radar coverage
+let existingRadarLayer;
+let customRadarLayer;
 let usgsLayer;
 let podLayer;
 let populationLayer;
@@ -28,9 +27,10 @@ async function initMap() {
     styles: window.constants.map.defaultMapStyle,
   });
 
-  radarLayer = new RadarLayer(map, 'public/data/nexrad.json', 'public/data/nexrad_coverages');
-  radarLayer.initUI();
-  await radarLayer.init();
+  existingRadarLayer = new ExistingRadarLayer(map, 'public/data/nexrad.json', 'public/data/nexrad_coverages');
+
+  customRadarLayer = new CustomRadarLayer(map);
+  customRadarLayer.initUI();
 
   usgsLayer = new UsgsLayer(map);
   await usgsLayer.init();
@@ -47,17 +47,6 @@ async function initMap() {
 
   riverLayer = new RiverNetworkLayer(map);
   riverLayer.initUI();
-
-  // Event handler when user clicks on a point in the map
-  map.addListener("click", async (e) => {
-      if (!radarLayer.isSelectModeActive || radarLayer.isLoading) return;
-
-      const lat = e.latLng.lat();
-      const lng = e.latLng.lng();
-
-      await radarLayer.submitCoverageRequest(lat, lng);
-  });
-
 
   map.addListener("zoom_changed", () => {
     const zoom = map.getZoom();
@@ -105,61 +94,10 @@ function hideSpinner() {
   spinner.style.display = "none";
 }
 
-// Returns a list of checked elevation angles
-function getCheckedElevationAngles() {
-  const checkboxes = document.querySelectorAll('#elevation-angle-checkboxes input[type="checkbox"]');
-  return Array.from(checkboxes)
-              .filter(cb => cb.checked)
-              .map(cb => parseFloat(cb.value));
-}
-
 document.getElementById("usgsSites-checkbox").addEventListener("change", function () {
   if (this.checked) {
     usgsLayer.showUsgsSites();
   } else {
     usgsLayer.hideUsgsSites();
-  }
-});
-
-// Updates labels in radar settings menu based on selected units
-document.getElementById("units-input").addEventListener("change", function () {
-  const unit = this.value;
-  window.currentUnitSystem = unit;
-  
-  const aglLabel = document.querySelector("label[for='aglThreshold-input']");
-  const towerLabel = document.querySelector("label[for='towerHeight-input']");
-  const aglInput = document.getElementById("aglThreshold-input");
-  const towerInput = document.getElementById("towerHeight-input");
-  
-  const precalculatedThresholdLabel = document.getElementById("precalculated-threshold-label");
-  const threeThousandFeetCoverage = document.getElementById("3k_coverage_label");
-  const sixThousandFeetCoverage = document.getElementById("6k_coverage_label");
-  const tenThousandFeetCoverage = document.getElementById("10k_coverage_label");
-
-
-  if (unit === "metric") {
-    aglLabel.textContent = "AGL Threshold (m):";
-    towerLabel.textContent = "Tower Height (m):";
-    aglInput.placeholder = "e.g. 914.4";
-    towerInput.placeholder = "e.g. 30.48";
-
-    precalculatedThresholdLabel.textContent = "Precalculated Coverages Threshold (m):"
-    threeThousandFeetCoverage.textContent = "914.4";
-    sixThousandFeetCoverage.textContent = "1828.8";
-    tenThousandFeetCoverage.textContent = "3048";
-  } else {
-    aglLabel.textContent = "AGL Threshold (ft):";
-    towerLabel.textContent = "Tower Height (ft):";
-    aglInput.placeholder = "e.g. 3000";
-    towerInput.placeholder = "e.g. 100";
-
-    precalculatedThresholdLabel.textContent = "Precalculated Coverages Threshold (ft):"
-    threeThousandFeetCoverage.textContent = "3k";
-    sixThousandFeetCoverage.textContent = "6k";
-    tenThousandFeetCoverage.textContent = "10k";
-  }
-
-  if (usgsLayer.updateAllLabels) {
-    usgsLayer.updateAllLabels();
   }
 });

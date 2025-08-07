@@ -70,15 +70,15 @@
                 <label for="settings-input" class="settings-label" id="precalculated-threshold-label">Precalculated Coverages Threshold (ft):</label>
                 <div class="settings-input">
                     <label>
-                        <input type="radio" id="3k_coverage" name="precalculated-threshold-radiobuttons" value="3k_tiles" checked>
+                        <input type="radio" id="3k_coverage" name="precalculated-threshold-radiobuttons" value="coverages_3k" checked>
                         <span id="3k_coverage_label">3k</span>
                     </label>
                     <label>
-                        <input type="radio" id="6k_coverage" name="precalculated-threshold-radiobuttons" value="6k_tiles">
+                        <input type="radio" id="6k_coverage" name="precalculated-threshold-radiobuttons" value="coverages_6k">
                         <span id="6k_coverage_label">6k</span>
                     </label>
                     <label>
-                        <input type="radio" id="10k_coverage" name="precalculated-threshold-radiobuttons" value="10k_tiles">
+                        <input type="radio" id="10k_coverage" name="precalculated-threshold-radiobuttons" value="coverages_10k">
                         <span id="10k_coverage_label">10k</span>
                     </label>
                 </div>
@@ -125,18 +125,18 @@
 
                 <div>
                     <input type="text" id="radarLat" class="settings-input" placeholder="lat">
-                    <input type="text" id="radarLon" class="settings-input" placeholder="lon">
+                    <input type="text" id="radarLng" class="settings-input" placeholder="lon">
                 </div>
             </div>
 
 
             <div class="settings-input-container">
-                <label for="aglThreshold-input" class="settings-label">AGL Threshold (ft):</label>
+                <label for="aglThreshold-input" class="settings-label">AGL Threshold (m):</label>
                 <input type="number" id="aglThreshold-input" class="settings-input" min="0" placeholder="e.g. 3000">
             </div>
 
             <div class="settings-input-container">
-                <label for="towerHeight-input" class="settings-label">Tower Height (ft):</label>
+                <label for="towerHeight-input" class="settings-label">Tower Height (m):</label>
                 <input type="number" id="towerHeight-input" class="settings-input" min="0" placeholder="e.g. 100">
             </div>
 
@@ -192,8 +192,25 @@
             </div>
 
             <div class="settings-input-container">
-                <label class="settings-label">Elevation Angles:</label>
-                <input type="text" id="dynamic-radar-site-elevation-angles" class="settings-input" readonly>
+                <label class="settings-label">Elevation angle(s):</label>
+                <div class="settings-input">
+                    <div id="show-elevation-angle-checkboxes">
+                        <span>0.5°</span><input type="checkbox" value="0.5" checked>
+                        <span>0.9°</span><input type="checkbox" value="0.9" checked>
+                        <span>1.3°</span><input type="checkbox" value="1.3" checked>
+                        <span>1.8°</span><input type="checkbox" value="1.8" checked><br>
+                        <span>2.4°</span><input type="checkbox" value="2.4" checked>
+                        <span>3.1°</span><input type="checkbox" value="3.1" checked>
+                        <span>4.0°</span><input type="checkbox" value="4.0" checked>
+                        <span>5.1°</span><input type="checkbox" value="5.1" checked><br>
+                        <span>6.4°</span><input type="checkbox" value="6.4" checked>
+                        <span>8.0°</span><input type="checkbox" value="8.0" checked>
+                        <span>10.0°</span><input type="checkbox" value="10.0" checked><br>
+                        <span>12.5°</span><input type="checkbox" value="12.5" checked>
+                        <span>15.6°</span><input type="checkbox" value="15.6" checked>
+                        <span>19.5°</span><input type="checkbox" value="19.5" checked>
+                    </div>
+                </div>
             </div>
 
             <div class="settings-input-container">
@@ -342,7 +359,8 @@
         <script src="canvasOverlay.js"></script>
         <script src="public/config.js"></script>
         <script src="constants.js"></script>
-        <script src="radarLayer.js"></script>
+        <script src="existingRadarLayer.js"></script>
+        <script src="customRadarLayer.js"></script>
         <script src="usgsLayer.js"></script>
         <script src="podLayer.js"></script>
         <script src="populationLayer.js"></script>
