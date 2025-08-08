@@ -1,121 +1,93 @@
-class ExistingRadarLayer {
-    constructor(map, radarSitesUrl, coveragesUrl) {
-        this.map = map;
+class ExistingRadarLayer extends BaseRadarLayer {
+    constructor(map, radarSitesUrl, coveragesUrl, boundsUrl) {
+        super(map, { markerFill: 'red', markerStroke: 'red', markerSize: 4.5 });
+        
         this.radarSitesUrl = radarSitesUrl;
         this.coveragesUrl = coveragesUrl;
-
-        this.existingOverlay = {}; // Key: radar site ID, Value: overlay object
-        this.existingRadarSitesMarkers = new markerCollection(this.map);
-        this.loadRadarSites();
-        this.existingRadarSitesMarkers.reactClick = this.existingRadarSiteClicked.bind(this);
-
+        
+        this.boundsUrl = boundsUrl;
         this.overlayBounds = {};
-        this.loadBounds();
-
-        this.initUI();
     }
 
-    initUI() {
-        this.currentAglThresholdChanged();
+    async init() {
+        await this.initMarkers();
+        await this.loadBounds();
+        await this.loadRadarSites();
+        this.reactAglThresholdChange();
     }
 
     async loadRadarSites() {
-        await this.existingRadarSitesMarkers.init({
-            marker_options: {
-                markerFill: 'red',
-                markerStroke: 'red',
-                markerSize: 4.5,
-            }
-        });
-        fetch(this.radarSitesUrl)
-            .then(response => response.json())
-            .then(radarSites => {
-                for (const radarSite of radarSites) {
-                    this.existingRadarSitesMarkers.makeMarker(
-                        radarSite.lat,
-                        radarSite.lng,
-                        {
-                            properties: {
-                                id: radarSite.id,
-                                name: radarSite.name,
-                                lat: radarSite.lat,
-                                lng: radarSite.lng,
-                                elev_ft: radarSite.elev,
-                                tower_ft: radarSite.tower,
-                            },
-                        },
-                        {
-                            clickable: true,
-                        }
-                    )
-                }
-            })
-            .catch(error => console.error('Error loading radar sites:', error));
+        const res = await fetch(this.radarSitesUrl);
+        const sites = await res.json();
+        for (const site of sites) {
+            this.markers.makeMarker(site.lat, site.lng, {
+                properties: {
+                    id: site.id,
+                    name: site.name,
+                    lat: site.lat,
+                    lng: site.lng,
+                    elev_ft: site.elev,
+                    tower_ft: site.tower,
+                },
+            },
+            { clickable: true });
+        }
     }
 
     async loadBounds() {
-        const res = await fetch("public/data/nexrad_coverages/radar_bounds.json");
+        const res = await fetch(this.boundsUrl);
         this.overlayBounds = await res.json();
     }
 
-    getCurrentAglThreshold() {
-        const radios = document.getElementsByName('precalculated-threshold-radiobuttons');
-        for (const radio of radios) {
-            if (radio.checked) {
-                return radio.value;
-            }
-        }
-        return null;
+    getCurrentAglFolder() {
+        const checked = document.querySelector(
+            'input[name="precalculated-threshold-radiobuttons"]:checked'
+        );
+        return checked?.value ?? null;
     }
 
-    currentAglThresholdChanged() {
-        const radios = document.getElementsByName('precalculated-threshold-radiobuttons');
-        radios.forEach(radio => {
+    reactAglThresholdChange() {
+        document.querySelectorAll('[name="precalculated-threshold-radiobuttons"]').forEach(radio => {
             radio.addEventListener('change', () => {
-                for (const siteId in this.existingOverlay) {
-                    this.existingOverlay[siteId].setMap(null);
-                    const overlay = this.createOverlayForExistingRadarSite(siteId);
-                    if (overlay) {
-                        this.existingOverlay[siteId] = overlay;
+                for (const siteId in this.overlays) {
+                    this.removeOverlay(siteId); // clears old image
+                    const marker = this.markers.getMarker(siteId);
+                    if (marker) {
+                        const overlay = this.createOverlayForSite(marker);
+                        if (overlay) {
+                            this.addOverlay(siteId, overlay);
+                        }
                     }
                 }
             });
         });
     }
 
-    existingRadarSiteClicked(event, marker) {
-        // Toggle the overlay for the clicked radar site
+    createOverlayForSite(marker) {
         const siteId = marker.properties.id;
-        if (this.existingOverlay[siteId]) {
-            // Overlay exists, remove it
-            this.existingOverlay[siteId].setMap(null);
-            delete this.existingOverlay[siteId];
-        } else {
-            // Create and add the overlay
-            const overlay = this.createOverlayForExistingRadarSite(siteId);
-            if (overlay) {
-                this.existingOverlay[siteId] = overlay;
-            }
-        }
-    }
+        const boundsData = this.overlayBounds[siteId];
+        if (!boundsData) return null;
 
-    createOverlayForExistingRadarSite(siteId) {
-        const imgBounds = this.overlayBounds[siteId];
-        if (!imgBounds) {
-            console.warn(`No bounds found for site ID: ${siteId}`);
-            return null;
-        }
+        const folder = this.getCurrentAglFolder();
+        const imgUrl = `${this.coveragesUrl}/${folder}/${siteId}.png`;
 
-        const aglThreshold = this.getCurrentAglThreshold();
-        const imgUrl = `${this.coveragesUrl}/${aglThreshold}/${siteId}.png`;
-
-        const sw = new google.maps.LatLng(imgBounds.south, imgBounds.west);
-        const ne = new google.maps.LatLng(imgBounds.north, imgBounds.east);
+        const sw = new google.maps.LatLng(boundsData.south, boundsData.west);
+        const ne = new google.maps.LatLng(boundsData.north, boundsData.east);
         const bounds = new google.maps.LatLngBounds(sw, ne);
 
         const overlay = customOverlay(imgUrl, bounds, this.map, 'OverlayView');
         overlay.setOpacity(0.7);
         return overlay;
+    }
+
+    onMarkerClick(event, marker) {
+        const siteId = marker.properties.id;
+        if (this.overlays[siteId]) {
+            this.toggleOverlay(siteId);
+        } else {
+            const overlay = this.createOverlayForSite(marker);
+            if (overlay) this.addOverlay(siteId, overlay);
+        }
     }
 };
 

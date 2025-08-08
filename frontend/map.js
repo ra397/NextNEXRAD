@@ -1,4 +1,4 @@
-const server = window._env_prod.SERVER_URL;
+const server = window._env_dev.SERVER_URL;
 
 let map;
 
@@ -27,10 +27,11 @@ async function initMap() {
     styles: window.constants.map.defaultMapStyle,
   });
 
-  existingRadarLayer = new ExistingRadarLayer(map, 'public/data/nexrad.json', 'public/data/nexrad_coverages');
+  existingRadarLayer = new ExistingRadarLayer(map, 'public/data/nexrad.json', 'public/data/nexrad_coverages', 'public/data/nexrad_coverages/radar_bounds.json');
+  existingRadarLayer.init();
 
-  customRadarLayer = new CustomRadarLayer(map);
-  customRadarLayer.initUI();
+  customRadarLayer = new CustomRadarLayer(map, server);
+  customRadarLayer.init();
 
   usgsLayer = new UsgsLayer(map);
   await usgsLayer.init();
