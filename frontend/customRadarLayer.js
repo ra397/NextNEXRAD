@@ -3,6 +3,7 @@ class CustomRadarLayer extends BaseRadarLayer {
         super(map, { markerFill: 'blue', markerStroke: 'blue', markerSize: 4.5 });
         this.serverUrl = serverUrl;
         this.idCounter = 0;
+        this.editSnapshot = null; // store original values for change detection
     }
 
     async init() {
@@ -11,6 +12,7 @@ class CustomRadarLayer extends BaseRadarLayer {
     }
 
     initUI() {
+        // Submit new radar
         document.getElementById("radar-submit-btn").addEventListener("click", () => {
             const params = this.readForm();
             if (!params) return;
@@ -18,16 +20,52 @@ class CustomRadarLayer extends BaseRadarLayer {
             this.fetchAndAddOverlay(marker);
         });
 
+        // Toggle
         document.getElementById("toggle-dynamic-radar").addEventListener("click", () => {
             const siteId = document.getElementById("dynamic-radar-site-id").value;
             this.toggleOverlay(siteId);
         });
 
+        // Delete
         document.getElementById("delete-dynamic-radar").addEventListener("click", () => {
             const siteId = document.getElementById("dynamic-radar-site-id").value;
             this.removeOverlay(siteId);
-            this.markers.deleteMarker(siteId);
             toggleWindow('arbitrary-radar-show');
+        });
+
+        // Update
+        const updateBtn = document.getElementById("update-dynamic-radar");
+        updateBtn.disabled = true;
+
+        const towerEl = document.getElementById("dynamic-radar-site-tower-height");
+        const altEl   = document.getElementById("dynamic-radar-site-max-alt");
+        const angleEls = document.querySelectorAll("#show-elevation-angle-checkboxes input[type='checkbox']");
+
+        // Build an array of actual elements, removing nulls if IDs are wrong
+        const watchFields = [towerEl, altEl, ...angleEls].filter(Boolean);
+
+        watchFields.forEach(el => {
+            el.addEventListener("input", () => {
+                updateBtn.disabled = !this.hasChanges();
+            });
+        });
+
+        updateBtn.addEventListener("click", () => {
+            const siteId = parseInt(document.getElementById("dynamic-radar-site-id").value, 10);
+            const lat = parseFloat(document.getElementById("dynamic-radar-site-lat").value);
+            const lng = parseFloat(document.getElementById("dynamic-radar-site-lng").value);
+            const tower = parseFloat(document.getElementById("dynamic-radar-site-tower-height").value);
+            const agl = parseFloat(document.getElementById("dynamic-radar-site-max-alt").value);
+            const angles = [...document.querySelectorAll("#show-elevation-angle-checkboxes input:checked")]
+                .map(cb => parseFloat(cb.value));
+
+            if ([tower, agl].some(v => isNaN(v)) || angles.length === 0) {
+                alert("Invalid inputs");
+                return;
+            }
+
+            this.updateRadar(siteId, { lat, lng, aglThreshold: agl, towerHeight: tower, elevationAngles: angles });
+            updateBtn.disabled = true;
         });
     }
 
@@ -43,16 +81,16 @@ class CustomRadarLayer extends BaseRadarLayer {
         return { lat, lng, agl, tower, angles };
     }
 
-    addCustomMarker(params) {
-        const id = ++this.idCounter;
+    addCustomMarker(params, idOverride = null) {
+        const id = idOverride ?? ++this.idCounter;
         return this.markers.makeMarker(params.lat, params.lng, {
             properties: {                     
-                id: id,
+                id,
                 lat: params.lat,
                 lng: params.lng,
-                aglThreshold: params.agl,
-                towerHeight: params.tower,
-                elevationAngles: params.angles
+                aglThreshold: params.agl ?? params.aglThreshold,
+                towerHeight: params.tower ?? params.towerHeight,
+                elevationAngles: params.angles ?? params.elevationAngles
             }
         }, { clickable: true });
     }
@@ -86,38 +124,68 @@ class CustomRadarLayer extends BaseRadarLayer {
         if (overlay) this.addOverlay(marker.properties.id, overlay);
     }
 
+    updateRadar(siteId, newProps) {
+        // 1. Remove old overlay and marker
+        this.removeOverlay(siteId); // this also deletes marker in CustomRadarLayer
+
+        // 2. Add new marker with same ID
+        const marker = this.addCustomMarker(newProps, siteId);
+
+        // 3. Add new overlay
+        this.fetchAndAddOverlay(marker);
+    }
+
     onMarkerClick(event, marker) {
         const panel = document.getElementById('arbitrary-radar-show');
-        // Only toggle if the panel is currently hidden
         if (panel.style.display === 'none' || getComputedStyle(panel).display === 'none') {
             toggleWindow('arbitrary-radar-show');
         }
-
         this.populateDynamicRadarPanel(marker);
     }
 
     populateDynamicRadarPanel(marker) {
         const props = marker.properties;
         
-        // Set basic fields
         document.getElementById("dynamic-radar-site-id").value = props.id || "";
         document.getElementById("dynamic-radar-site-lat").value = props.lat || "";
         document.getElementById("dynamic-radar-site-lng").value = props.lng || "";
         document.getElementById("dynamic-radar-site-tower-height").value = props.towerHeight || "";
         document.getElementById("dynamic-radar-site-max-alt").value = props.aglThreshold || "";
 
-        // Set elevation angle checkboxes
         const checkboxes = document.querySelectorAll("#show-elevation-angle-checkboxes input[type='checkbox']");
         const selectedAngles = props.elevationAngles || [];
-
         checkboxes.forEach(cb => {
             cb.checked = selectedAngles.includes(parseFloat(cb.value));
         });
+
+        // store snapshot for change detection
+        this.editSnapshot = {
+            towerHeight: props.towerHeight,
+            aglThreshold: props.aglThreshold,
+            elevationAngles: [...selectedAngles].sort()
+        };
+
+        document.getElementById("update-dynamic-radar").disabled = true;
+    }
+
+    hasChanges() {
+        if (!this.editSnapshot) return false;
+        const tower = parseFloat(document.getElementById("dynamic-radar-site-tower-height").value);
+        const agl = parseFloat(document.getElementById("dynamic-radar-site-max-alt").value);
+        const angles = [...document.querySelectorAll("#show-elevation-angle-checkboxes input:checked")]
+            .map(cb => parseFloat(cb.value))
+            .sort();
+
+        return (
+            tower !== this.editSnapshot.towerHeight ||
+            agl !== this.editSnapshot.aglThreshold ||
+            angles.length !== this.editSnapshot.elevationAngles.length ||
+            angles.some((v, i) => v !== this.editSnapshot.elevationAngles[i])
+        );
     }
 
     removeOverlay(siteId) {
         super.removeOverlay(siteId);
-        // also remove the marker for custom radars
         this.markers.deleteMarker(siteId);
     }
 };
