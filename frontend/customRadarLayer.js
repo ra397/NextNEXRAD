@@ -4,6 +4,7 @@ class CustomRadarLayer extends BaseRadarLayer {
         this.serverUrl = serverUrl;
         this.idCounter = 0;
         this.editSnapshot = null; // store original values for change detection
+        this.isLoading = false; // track loading state
     }
 
     async init() {
@@ -120,8 +121,20 @@ class CustomRadarLayer extends BaseRadarLayer {
     }
 
     async fetchAndAddOverlay(marker) {
-        const overlay = await this.createOverlayForSite(marker);
-        if (overlay) this.addOverlay(marker.properties.id, overlay);
+        if (this.isLoading) {
+            return;
+        }
+        showSpinner();
+        this.isLoading = true;
+        try {
+            const overlay = await this.createOverlayForSite(marker);
+            if (overlay) this.addOverlay(marker.properties.id, overlay);
+        } catch (error) {
+            console.error("Error fetching overlay:", error);
+        } finally {
+            hideSpinner();
+            this.isLoading = false;
+        }
     }
 
     updateRadar(siteId, newProps) {

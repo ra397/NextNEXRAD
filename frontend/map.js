@@ -85,14 +85,20 @@ function getInput(input) {
   return value;
 }
 
-const spinner = document.getElementById("loading-spinner");
-
 function showSpinner() {
-  spinner.style.display = "block";
+    const spinner = document.getElementById("loading-spinner");
+    if (spinner) {
+        spinner.style.display = "block";
+    }
+    this.isLoading = true;
 }
 
 function hideSpinner() {
-  spinner.style.display = "none";
+    const spinner = document.getElementById("loading-spinner");
+    if (spinner) {
+        spinner.style.display = "none";
+    }
+    this.isLoading = false;
 }
 
 document.getElementById("usgsSites-checkbox").addEventListener("change", function () {
