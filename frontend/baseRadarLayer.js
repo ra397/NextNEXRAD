@@ -75,11 +75,6 @@ class BaseRadarLayer {
             return;
         }
 
-        // Check if master checkbox is enabled
-        if (!masterCheckbox || !masterCheckbox.checked) {
-            return;
-        }
-
         // Get marker position (don't require overlay to be visible)
         const marker = this.markers.getMarker(siteId);
         if (!marker) {
