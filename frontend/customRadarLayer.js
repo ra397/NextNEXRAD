@@ -154,6 +154,13 @@ class CustomRadarLayer extends BaseRadarLayer {
             toggleWindow('arbitrary-radar-show');
         }
         this.populateDynamicRadarPanel(marker);
+        
+        // Initialize range ring controls for this site
+        this.initSiteRangeRingControls(
+            marker.properties.id, 
+            'dynamic-radar-range-checkbox', 
+            'dynamic-range-checkbox'
+        );
     }
 
     populateDynamicRadarPanel(marker) {
@@ -201,5 +208,6 @@ class CustomRadarLayer extends BaseRadarLayer {
         super.removeOverlay(siteId);
         this.markers.deleteMarker(siteId);
     }
-};
+}
+
 window.CustomRadarLayer = CustomRadarLayer;

@@ -89,23 +89,6 @@
 
                 <input type="checkbox" id="show-all-coverage-checkbox">
             </div>
-
-            <div class="settings-input-container">
-                <label class="settings-label">
-                    Radar Range Rings
-                </label>
-                <div class="settings-input">
-                    <input type="checkbox" id="radar-range-checkbox" unchecked>
-                    <label for="radar-range-checkbox">Show Range Rings</label>
-                    <div style="margin-left: 1em; margin-top: 0.25em;">
-                    <label><input type="checkbox" class="range-checkbox" data-distance="50000" checked> 50 km</label><br>
-                    <label><input type="checkbox" class="range-checkbox" data-distance="100000" checked> 100 km</label><br>
-                    <label><input type="checkbox" class="range-checkbox" data-distance="150000" checked> 150 km</label><br>
-                    <label><input type="checkbox" class="range-checkbox" data-distance="200000" checked> 200 km</label><br>
-                    <label><input type="checkbox" class="range-checkbox" data-distance="230000" checked> 230 km</label>
-                    </div>
-                </div>
-            </div>
             
             <hr>
 
@@ -214,6 +197,23 @@
             </div>
 
             <div class="settings-input-container">
+                <label class="settings-label">
+                    Radar Range Rings
+                </label>
+                <div class="settings-input">
+                    <input type="checkbox" id="dynamic-radar-range-checkbox">
+                    <label for="dynamic-radar-range-checkbox">Show Range Rings</label>
+                    <div style="margin-left: 1em; margin-top: 0.25em;">
+                        <label><input type="checkbox" class="dynamic-range-checkbox" data-distance="50000" checked> 50 km</label><br>
+                        <label><input type="checkbox" class="dynamic-range-checkbox" data-distance="100000" checked> 100 km</label><br>
+                        <label><input type="checkbox" class="dynamic-range-checkbox" data-distance="150000" checked> 150 km</label><br>
+                        <label><input type="checkbox" class="dynamic-range-checkbox" data-distance="200000" checked> 200 km</label><br>
+                        <label><input type="checkbox" class="dynamic-range-checkbox" data-distance="230000" checked> 230 km</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-input-container">
                 <button id="toggle-dynamic-radar" class="settings-input">Toggle</button>
                 <button id="update-dynamic-radar" class="settings-input">Update</button>
                 <button id="delete-dynamic-radar" class="settings-input">Delete</button>
@@ -269,6 +269,23 @@
                         <span>12.5°</span><input type="checkbox" value="12.5" checked>
                         <span>15.6°</span><input type="checkbox" value="15.6" checked>
                         <span>19.5°</span><input type="checkbox" value="19.5" checked>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-input-container">
+                <label class="settings-label">
+                    Radar Range Rings
+                </label>
+                <div class="settings-input">
+                    <input type="checkbox" id="existing-radar-range-checkbox">
+                    <label for="existing-radar-range-checkbox">Show Range Rings</label>
+                    <div style="margin-left: 1em; margin-top: 0.25em;">
+                        <label><input type="checkbox" class="existing-range-checkbox" data-distance="50000" checked> 50 km</label><br>
+                        <label><input type="checkbox" class="existing-range-checkbox" data-distance="100000" checked> 100 km</label><br>
+                        <label><input type="checkbox" class="existing-range-checkbox" data-distance="150000" checked> 150 km</label><br>
+                        <label><input type="checkbox" class="existing-range-checkbox" data-distance="200000" checked> 200 km</label><br>
+                        <label><input type="checkbox" class="existing-range-checkbox" data-distance="230000" checked> 230 km</label>
                     </div>
                 </div>
             </div>

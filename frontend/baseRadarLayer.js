@@ -5,7 +5,8 @@ class BaseRadarLayer {
         this.overlays = {}; // siteId -> overlay
         this.rings = {}; // siteId -> array of circle overlays
         this.markerOptions = markerOptions;
-        this.initRangeRingControls();
+        this.currentSiteId = null; // track which site's panel is currently open
+        this.rangeRingStates = {}; // siteId -> {masterChecked: boolean, distances: []}
     }
 
     async initMarkers() {
@@ -13,67 +14,79 @@ class BaseRadarLayer {
         this.markers.reactClick = this.onMarkerClick.bind(this);
     }
 
-    initRangeRingControls() {
-        const masterCheckbox = document.getElementById('radar-range-checkbox');
-        const rangeCheckboxes = document.querySelectorAll('.range-checkbox');
+    // Initialize range ring controls for a specific site's panel
+    initSiteRangeRingControls(siteId, masterCheckboxId, rangeCheckboxClass) {
+        this.currentSiteId = siteId;
+        
+        // Get or create state for this site
+        if (!this.rangeRingStates[siteId]) {
+            this.rangeRingStates[siteId] = {
+                masterChecked: false,
+                distances: [50000, 100000, 150000, 200000, 230000] // default checked distances
+            };
+        }
+        
+        const state = this.rangeRingStates[siteId];
+        
+        const masterCheckbox = document.getElementById(masterCheckboxId);
+        const rangeCheckboxes = document.querySelectorAll(`.${rangeCheckboxClass}`);
 
+        // Set master checkbox based on saved state
         if (masterCheckbox) {
-            masterCheckbox.addEventListener('change', () => {
-                this.updateAllRangeRings();
+            masterCheckbox.checked = state.masterChecked;
+            // Remove old event listeners by cloning the element
+            const newMasterCheckbox = masterCheckbox.cloneNode(true);
+            masterCheckbox.parentNode.replaceChild(newMasterCheckbox, masterCheckbox);
+            
+            newMasterCheckbox.addEventListener('change', () => {
+                this.updateSiteRangeRings(siteId, masterCheckboxId, rangeCheckboxClass);
             });
         }
 
+        // Set distance checkboxes based on saved state
         rangeCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', () => {
-                this.updateAllRangeRings();
+            const distance = parseInt(checkbox.dataset.distance, 10);
+            checkbox.checked = state.distances.includes(distance);
+            // Remove old event listeners by cloning the element
+            const newCheckbox = checkbox.cloneNode(true);
+            checkbox.parentNode.replaceChild(newCheckbox, checkbox);
+            
+            newCheckbox.addEventListener('change', () => {
+                this.updateSiteRangeRings(siteId, masterCheckboxId, rangeCheckboxClass);
             });
         });
-
     }
 
-    updateAllRangeRings() {
-        for (const siteId in this.overlays) {
-            const overlay = this.overlays[siteId];
-            if (overlay && overlay.getMap()) {
-                this.updateRangeRings(siteId);
-            }
-        }
-    }
+    updateSiteRangeRings(siteId, masterCheckboxId, rangeCheckboxClass) {
+        // Remove existing rings for this site (but don't update state yet)
+        this.removeRangeRings(siteId, false);
 
-    updateAllRangeRings() {
-        // Update rings for all sites that have visible overlays
-        for (const siteId in this.overlays) {
-            const overlay = this.overlays[siteId];
-            if (overlay && overlay.getMap()) {
-                this.updateRangeRings(siteId);
-            }
-        }
-    }
-
-    updateRangeRings(siteId) {
-        // Remove existing rings
-        this.removeRangeRings(siteId);
+        // Save current state first
+        const masterCheckbox = document.getElementById(masterCheckboxId);
+        const rangeCheckboxes = document.querySelectorAll(`.${rangeCheckboxClass}:checked`);
+        
+        this.rangeRingStates[siteId] = {
+            masterChecked: masterCheckbox ? masterCheckbox.checked : false,
+            distances: Array.from(rangeCheckboxes).map(cb => parseInt(cb.dataset.distance, 10))
+        };
 
         // Check if master checkbox is enabled
-        const masterCheckbox = document.getElementById('radar-range-checkbox');
         if (!masterCheckbox || !masterCheckbox.checked) {
             return;
         }
 
-        // Check if overlay is visible
-        const overlay = this.overlays[siteId];
-        if (!overlay || !overlay.getMap()) {
+        // Check if master checkbox is enabled
+        if (!masterCheckbox || !masterCheckbox.checked) {
             return;
         }
 
-        // Get marker position
+        // Get marker position (don't require overlay to be visible)
         const marker = this.markers.getMarker(siteId);
         if (!marker) {
             return;
         }
 
         // Create rings for checked distances
-        const rangeCheckboxes = document.querySelectorAll('.range-checkbox:checked');
         const rings = [];
 
         rangeCheckboxes.forEach(checkbox => {
@@ -99,8 +112,6 @@ class BaseRadarLayer {
             this.rings[siteId].forEach(ring => {
                 ring.setMap(this.map);
             });
-        } else {
-            this.updateRangeRings(siteId);
         }
     }
 
@@ -112,12 +123,17 @@ class BaseRadarLayer {
         }
     }
 
-    removeRangeRings(siteId) {
+    removeRangeRings(siteId, updateState = true) {
         if (this.rings[siteId]) {
             this.rings[siteId].forEach(ring => {
                 ring.setMap(null);
             });
             delete this.rings[siteId];
+        }
+        
+        // Only update state if explicitly requested
+        if (updateState && this.rangeRingStates[siteId]) {
+            this.rangeRingStates[siteId].masterChecked = false;
         }
     }
 
@@ -137,9 +153,7 @@ class BaseRadarLayer {
 
     addOverlay(siteId, overlay) {
         this.overlays[siteId] = overlay;
-        if (overlay.getMap()) {
-            this.showRangeRings(siteId);
-        }
+        // Don't automatically show rings - wait for user to enable them in the panel
     }
 
     removeOverlay(siteId) {
@@ -151,6 +165,12 @@ class BaseRadarLayer {
         this.removeRangeRings(siteId);
     }
 
+    // Clean up state when a site is completely removed
+    cleanupSiteState(siteId) {
+        delete this.rangeRingStates[siteId];
+        this.removeRangeRings(siteId);
+    }
+
     // Subclasses implement how to get overlay for a given marker/site
     createOverlayForSite(marker) {
         throw new Error("Not implemented");
@@ -159,6 +179,6 @@ class BaseRadarLayer {
     onMarkerClick(event, marker) {
         throw new Error("Not implemented");
     }
-};
+}
 
 window.BaseRadarLayer = BaseRadarLayer;

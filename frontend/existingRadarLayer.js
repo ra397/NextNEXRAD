@@ -132,6 +132,13 @@ class ExistingRadarLayer extends BaseRadarLayer {
             toggleWindow('existing-radar-show');
         }
         this.populateDynamicRadarPanel(marker);
+        
+        // Initialize range ring controls for this site
+        this.initSiteRangeRingControls(
+            marker.properties.id, 
+            'existing-radar-range-checkbox', 
+            'existing-range-checkbox'
+        );
     }
 
     populateDynamicRadarPanel(marker) {
@@ -189,6 +196,6 @@ class ExistingRadarLayer extends BaseRadarLayer {
             angles.some((v, i) => v != this.editSnapshot.elevationAngles[i])
         );
     }
-};
+}
 
 window.ExistingRadarLayer = ExistingRadarLayer;
