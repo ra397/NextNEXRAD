@@ -27,11 +27,11 @@ async function initMap() {
     styles: window.constants.map.defaultMapStyle,
   });
 
-  existingRadarLayer = new ExistingRadarLayer(map, 'public/data/nexrad.json', 'public/data/nexrad_coverages', 'public/data/nexrad_coverages/radar_bounds.json');
-  existingRadarLayer.init();
-
   customRadarLayer = new CustomRadarLayer(map, server);
   customRadarLayer.init();
+
+  existingRadarLayer = new ExistingRadarLayer(map, 'public/data/nexrad.json', 'public/data/nexrad_coverages', 'public/data/nexrad_coverages/radar_bounds.json', customRadarLayer);
+  existingRadarLayer.init();
 
   usgsLayer = new UsgsLayer(map);
   await usgsLayer.init();
@@ -99,6 +99,16 @@ function hideSpinner() {
         spinner.style.display = "none";
     }
     this.isLoading = false;
+}
+
+// Convert feet to meters
+function ft2m(feet) {
+  return (feet * 0.3048).toFixed(2);
+}
+
+// Convert meters to feet
+function m2ft(meters) {
+  return (meters * 3.28084).toFixed(2);
 }
 
 document.getElementById("usgsSites-checkbox").addEventListener("change", function () {

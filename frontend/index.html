@@ -220,6 +220,64 @@
             </div>
         </div>
 
+        <div id="existing-radar-show" class="sidebar-window">
+            <div class="settings-input-container">
+                <label class="settings-label">Site ID:</label>
+                <input type="text" id="existing-radar-site-id" class="settings-input" readonly>
+            </div>
+
+            <div class="settings-input-container">
+                <label class="settings-label">Name:</label>
+                <input type="text" id="existing-radar-site-name" class="settings-input" readonly>
+            </div>
+
+            <div class="settings-input-container">
+                <label class="settings-label">Lat:</label>
+                <input type="text" id="existing-radar-site-lat" class="settings-input" readonly>
+            </div>
+
+            <div class="settings-input-container">
+                <label class="settings-label">Lng:</label>
+                <input type="text" id="existing-radar-site-lng" class="settings-input" readonly>
+            </div>
+
+            <div class="settings-input-container">
+                <label class="settings-label">Tower Height (m):</label>
+                <input type="text" id="existing-radar-site-tower-height" class="settings-input">
+            </div>
+
+            <div class="settings-input-container">
+                <label class="settings-label">Max Altitude (m):</label>
+                <input type="text" id="existing-radar-site-max-alt" class="settings-input">
+            </div>
+
+            <div class="settings-input-container">
+                <label class="settings-label">Elevation angle(s):</label>
+                <div class="settings-input">
+                    <div id="existing-elevation-angle-checkboxes">
+                        <span>0.5°</span><input type="checkbox" value="0.5" checked>
+                        <span>0.9°</span><input type="checkbox" value="0.9" checked>
+                        <span>1.3°</span><input type="checkbox" value="1.3" checked>
+                        <span>1.8°</span><input type="checkbox" value="1.8" checked><br>
+                        <span>2.4°</span><input type="checkbox" value="2.4" checked>
+                        <span>3.1°</span><input type="checkbox" value="3.1" checked>
+                        <span>4.0°</span><input type="checkbox" value="4.0" checked>
+                        <span>5.1°</span><input type="checkbox" value="5.1" checked><br>
+                        <span>6.4°</span><input type="checkbox" value="6.4" checked>
+                        <span>8.0°</span><input type="checkbox" value="8.0" checked>
+                        <span>10.0°</span><input type="checkbox" value="10.0" checked><br>
+                        <span>12.5°</span><input type="checkbox" value="12.5" checked>
+                        <span>15.6°</span><input type="checkbox" value="15.6" checked>
+                        <span>19.5°</span><input type="checkbox" value="19.5" checked>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="settings-input-container">
+                <button id="update-existing-radar" class="settings-input">Update</button>
+            </div>
+        </div>
+
         <div id="population-settings" class="sidebar-window">
             <div class="window-title-container">
                 <h3>Population Settings</h3>
