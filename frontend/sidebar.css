@@ -1,0 +1,82 @@
+
+.sidebar {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 0.25rem;
+    padding: 0.3rem 0.5rem;
+    /*box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);*/
+    flex-direction: column;
+    /*opacity: 0.2;*/
+}
+
+.sidebar-icon {
+    --icon-radar:       url(./public/icons/nexrad-icon-gry-bold.svg);
+    --icon-cloud:       url(./public/icons/rain-heavy-svgrepo-com.svg);
+    --icon-control:     url(./public/icons/map-control.svg);
+    --icon-info:        url(./public/icons/info.svg);
+    width: 4rem;
+    height: 4rem;
+    margin: .25rem 0;
+    background-color: white;
+    background-repeat: no-repeat;
+    background-position: center center;
+    border-radius: inherit;
+    outline: 1.5px solid #236715;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+
+}
+
+.sidebar-icon:hover {
+    outline-width: 4px;
+    outline-offset: -2px;
+    outline-color: #499b37;
+    transition: all 0.23s ease-in-out;
+}
+
+.sidebar-icon.active {
+    outline-color: #236715;
+    outline-width: 4px;
+    outline-offset: -2px;
+}
+
+.sidebar-icon.radar{
+    background-image: var(--icon-radar);
+    background-size: 95%;
+}
+.sidebar-icon.add-radar{
+    background-image: var(--icon-add-radar);
+    background-size: 95%;
+}
+
+.sidebar-icon.population{
+    background-image: var(--icon-popul);
+    background-size: 45%;
+}
+
+.sidebar-icon.river{
+    background-image: var(--icon-river);
+    background-size: 50%;
+}
+
+.sidebar-icon.cloud{
+    background-image: var(--icon-cloud);
+    background-size: 60%;
+}
+
+.sidebar-icon.setting{
+    background-image: var(--icon-setting);
+    background-size: 60%;
+}
+
+.sidebar-icon.control{
+    background-image: var(--icon-control);
+    background-size: 60%;
+}
+
+.sidebar-icon.info{
+    background-image: var(--icon-info);
+    background-size: 60%;
+}

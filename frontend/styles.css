@@ -1,14 +1,30 @@
 body {
-    /* Disallow scroll wheel*/
-    overflow: hidden;
-    font-family: 'Open Sans', sans-serif;
+  font-size: 14px;
+  font-family: Arial,serif;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  border: none;
+  background: gray;
+  overflow: hidden;
+}
+
+select {
+  font-size: medium;
+  text-align-last: center;
+  outline: none;
+}
+
+select option {
+  background: rgba(73, 155, 55, 0.57);
+  color: white;
 }
 
 #map {
-    width: 100vw;
-    height: 100vh;
-    margin: 0;
-    padding: 0;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
 }
 
 .gm-style img {
@@ -37,7 +53,7 @@ body {
 .sidebar-window {
   position: absolute;
   top: 1%;
-  right: 72px;
+  right: 100px;
   width: 350px;
   background: white;
   border: 1px solid #ccc;
