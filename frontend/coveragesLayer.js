@@ -10,14 +10,27 @@ class CoveragesLayer {
     this.currentThreshold = "3k_tiles";
 
     this.showAllCheckbox = null;
-    this.radioButtons = [];
+    this.rangeSlider = null;
+    
+    // Mapping slider values to coverage keys
+    this.sliderMapping = {
+      0: { key: "3k_tiles", value: "coverages_3k" },
+      1: { key: "6k_tiles", value: "coverages_6k" },
+      2: { key: "10k_tiles", value: "coverages_10k" }
+    };
   }
 
   initUI() {
     this.showAllCheckbox = document.getElementById("show-all-coverage-checkbox");
     this.showAllCheckbox.checked = false;
 
-    this.radioButtons = Array.from(document.querySelectorAll('input[name="precalculated-threshold-radiobuttons"]'));
+    // Get the range slider element
+    this.rangeSlider = document.querySelector('input[type="range"]');
+    
+    if (!this.rangeSlider) {
+      console.error("Range slider not found");
+      return;
+    }
 
     this.showAllCheckbox.addEventListener('change', () => {
       if (this.showAllCheckbox.checked) {
@@ -27,30 +40,38 @@ class CoveragesLayer {
       }
     });
 
-    this.radioButtons.forEach(radio => {
-      radio.addEventListener('change', () => {
-        if (this.showAllCheckbox.checked) {
-          this.loadAndShowSelectedCoverage();
-        }
-      });
+    this.rangeSlider.addEventListener('input', () => {
+      if (this.showAllCheckbox.checked) {
+        this.loadAndShowSelectedCoverage();
+      }
     });
   }
 
   getSelectedThresholdKey() {
-    const selected = this.radioButtons.find(r => r.checked).value;
-    if (selected == "coverages_3k") {
-      return "3k_tiles";
-    } else if (selected == "coverages_6k") {
-      return "6k_tiles";
-    } else if (selected == "coverages_10k") {
-      return "10k_tiles";
+    const sliderValue = parseInt(this.rangeSlider.value);
+    const mapping = this.sliderMapping[sliderValue];
+    
+    if (mapping) {
+      return mapping.key;
     } else {
-      return "3k_tiles";
+      return "3k_tiles"; // default fallback
+    }
+  }
+
+  getSelectedCoverageValue() {
+    const sliderValue = parseInt(this.rangeSlider.value);
+    const mapping = this.sliderMapping[sliderValue];
+    
+    if (mapping) {
+      return mapping.value;
+    } else {
+      return "coverages_3k"; // default fallback
     }
   }
 
   loadAndShowSelectedCoverage() {
     const key = this.getSelectedThresholdKey();
+    const coverageValue = this.getSelectedCoverageValue();
     this.currentThreshold = key;
 
     console.log(this.currentThreshold);
@@ -58,8 +79,8 @@ class CoveragesLayer {
     // Remove all layers first
     this.clear();
 
-    if (!this.tileLayers[key]) {
-      this.tileLayers[key] = new google.maps.ImageMapType({
+    if (!this.tileLayers[coverageValue]) {
+      this.tileLayers[coverageValue] = new google.maps.ImageMapType({
         getTileUrl: (coord, zoom) => {
           return `public/data/nexrad_coverages/${key}/${zoom}/${coord.x}/${coord.y}.png`; // adjust path as needed
         },
@@ -72,7 +93,7 @@ class CoveragesLayer {
     }
 
     this.tileLayerIndex = this.map.overlayMapTypes.getLength();
-    this.map.overlayMapTypes.insertAt(this.tileLayerIndex, this.tileLayers[key]);
+    this.map.overlayMapTypes.insertAt(this.tileLayerIndex, this.tileLayers[coverageValue]);
   }
 
   clear() {

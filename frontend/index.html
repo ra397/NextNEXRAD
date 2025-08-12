@@ -42,7 +42,7 @@
         <div class="sidebar">
             <div class="sidebar-icon radar" onclick="toggleWindow('radar-settings')" data-target="radar-settings"></div>
             <div class="sidebar-icon cloud" onclick="toggleWindow('pod-settings')" data-target="pod-settings"></div>
-            <div class="sidebar-icon control" onclick="toggleWindow('usgs-settings')" data-target="usgs-settings"></div>
+            <div class="sidebar-icon control" onclick="toggleWindow('map-control')" data-target="usgs-settings"></div>
             <div class="sidebar-icon info" onclick="toggleWindow('information')" data-target="information"></div>
         </div>
 
@@ -54,21 +54,15 @@
             <span class="close-btn" onclick="this.parentElement.style.display='none'">×</span>
 
             <div class="settings-input-container">
-                <label for="settings-input" class="settings-label" id="precalculated-threshold-label">Precalculated Coverages Threshold (ft):</label>
-                <div class="settings-input">
-                    <label>
-                        <input type="radio" id="3k_coverage" name="precalculated-threshold-radiobuttons" value="coverages_3k" checked>
-                        <span id="3k_coverage_label">3k</span>
-                    </label>
-                    <label>
-                        <input type="radio" id="6k_coverage" name="precalculated-threshold-radiobuttons" value="coverages_6k">
-                        <span id="6k_coverage_label">6k</span>
-                    </label>
-                    <label>
-                        <input type="radio" id="10k_coverage" name="precalculated-threshold-radiobuttons" value="coverages_10k">
-                        <span id="10k_coverage_label">10k</span>
-                    </label>
-                </div>
+                <label for="settings-input" class="settings-label" id="precalculated-threshold-label">AGL Threshold (ft):</label>
+                <span>
+                    <input type="range" min="0" max="2" value="0" style="width: 90%;margin-left: 5%;"/>
+                    <div class="tick-labels">
+                        <span>3K</span>
+                        <span>&nbsp;6K</span>
+                        <span>10K</span>
+                    </div>
+                </span>
             </div>
 
             <div class="settings-input-container">
@@ -282,7 +276,7 @@
             </div>
         </div>
 
-        <div id="usgs-settings" class="sidebar-window">
+        <div id="map-control" class="sidebar-window">
             <div class="window-title-container">
                 <h3>USGS Settings</h3>
             </div>
