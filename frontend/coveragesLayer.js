@@ -37,14 +37,23 @@ class CoveragesLayer {
   }
 
   getSelectedThresholdKey() {
-    const selected = this.radioButtons.find(r => r.checked);
-    if (!selected) return "3k_tiles";
-    return selected.value;
+    const selected = this.radioButtons.find(r => r.checked).value;
+    if (selected == "coverages_3k") {
+      return "3k_tiles";
+    } else if (selected == "coverages_6k") {
+      return "6k_tiles";
+    } else if (selected == "coverages_10k") {
+      return "10k_tiles";
+    } else {
+      return "3k_tiles";
+    }
   }
 
   loadAndShowSelectedCoverage() {
     const key = this.getSelectedThresholdKey();
     this.currentThreshold = key;
+
+    console.log(this.currentThreshold);
 
     // Remove all layers first
     this.clear();
