@@ -1,9 +1,8 @@
 class ExistingRadarLayer extends BaseRadarLayer {
-    constructor(map, radarSitesUrl, coveragesUrl, boundsUrl, customRadarHelper) {
+    constructor(map, radarSitesUrl, boundsUrl, customRadarHelper) {
         super(map, { markerFill: 'red', markerStroke: 'red', markerSize: 4.5 });
         
         this.radarSitesUrl = radarSitesUrl;
-        this.coveragesUrl = coveragesUrl;
         
         this.boundsUrl = boundsUrl;
         this.overlayBounds = {};
@@ -15,9 +14,7 @@ class ExistingRadarLayer extends BaseRadarLayer {
 
     async init() {
         await this.initMarkers();
-        await this.loadBounds();
         await this.loadRadarSites();
-        this.reactAglThresholdChange();
         this.initUI();
     }
 
@@ -80,52 +77,6 @@ class ExistingRadarLayer extends BaseRadarLayer {
         }
     }
 
-    async loadBounds() {
-        const res = await fetch(this.boundsUrl);
-        this.overlayBounds = await res.json();
-    }
-
-    getCurrentAglFolder() {
-        const checked = document.querySelector(
-            'input[name="precalculated-threshold-radiobuttons"]:checked'
-        );
-        return checked?.value ?? null;
-    }
-
-    reactAglThresholdChange() {
-        document.querySelectorAll('[name="precalculated-threshold-radiobuttons"]').forEach(radio => {
-            radio.addEventListener('change', () => {
-                for (const siteId in this.overlays) {
-                    this.removeOverlay(siteId); // clears old image
-                    const marker = this.markers.getMarker(siteId);
-                    if (marker) {
-                        const overlay = this.createOverlayForSite(marker);
-                        if (overlay) {
-                            this.addOverlay(siteId, overlay);
-                        }
-                    }
-                }
-            });
-        });
-    }
-
-    createOverlayForSite(marker) {
-        const siteId = marker.properties.id;
-        const boundsData = this.overlayBounds[siteId];
-        if (!boundsData) return null;
-
-        const folder = this.getCurrentAglFolder();
-        const imgUrl = `${this.coveragesUrl}/${folder}/${siteId}.png`;
-
-        const sw = new google.maps.LatLng(boundsData.south, boundsData.west);
-        const ne = new google.maps.LatLng(boundsData.north, boundsData.east);
-        const bounds = new google.maps.LatLngBounds(sw, ne);
-
-        const overlay = customOverlay(imgUrl, bounds, this.map, 'OverlayView');
-        overlay.setOpacity(0.7);
-        return overlay;
-    }
-
     onMarkerClick(event, marker) {
         const panel = document.getElementById('existing-radar-show');
             if (panel.style.display === 'none' || getComputedStyle(panel).display === 'none') {
@@ -144,7 +95,7 @@ class ExistingRadarLayer extends BaseRadarLayer {
     populateDynamicRadarPanel(marker) {
         const props = marker.properties;
 
-        const aglThreshold = ft2m(this.getCurrentAglThresholdInFeet())
+        const aglThreshold = this.getCurrentThresholdInMeters();
 
         document.getElementById("existing-radar-site-id").value = props.id || "";
         document.getElementById("existing-radar-site-name").value = props.name || "";
@@ -168,16 +119,14 @@ class ExistingRadarLayer extends BaseRadarLayer {
         document.getElementById("update-existing-radar").disabled = true;
     }
 
-    getCurrentAglThresholdInFeet() {
-        const folder = this.getCurrentAglFolder();
-        if (folder == "coverages_3k") {
-            return 3_000;
-        } else if (folder == "coverages_6k") {
-            return 6_000;
-        } else if (folder == "coverages_10k") {
-            return 10_000;
+    getCurrentThresholdInMeters() {
+        const threshold_folder = CoveragesLayer.getSelectedThreshold();
+        if (threshold_folder == "3k_tiles") {
+            return ft2m(3_000);
+        } else if (threshold_folder == "6k_tiles") {
+            return ft2m(6_000);
         } else {
-            return null;
+            return ft2m(10_000);
         }
     }
 

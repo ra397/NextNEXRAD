@@ -1,30 +1,35 @@
 class CoveragesLayer {
+  static thresholds = ["3k_tiles", "6k_tiles", "10k_tiles"];
+  
+  static getSelectedThreshold(rangeSlider = null) {
+    // If no slider passed, try to find it in the DOM by ID first, then by type
+    const slider = rangeSlider || 
+                   document.getElementById("threshold-range-slider") || 
+                   document.querySelector('input[type="range"]');
+    
+    if (!slider) {
+      console.warn("Range slider not found, returning default threshold");
+      return "3k_tiles";
+    }
+    
+    const sliderValue = parseInt(slider.value);
+    return this.thresholds[sliderValue] || "3k_tiles";
+  }
+
   constructor(map) {
     this.map = map;
-    this.tileLayers = {
-      coverages_3k: null,
-      coverages_6k: null,
-      coverages_10k: null
-    };
+    this.tileLayers = {};
     this.tileLayerIndex = 0;
     this.currentThreshold = "3k_tiles";
 
     this.showAllCheckbox = null;
     this.rangeSlider = null;
-    
-    // Mapping slider values to coverage keys
-    this.sliderMapping = {
-      0: { key: "3k_tiles", value: "coverages_3k" },
-      1: { key: "6k_tiles", value: "coverages_6k" },
-      2: { key: "10k_tiles", value: "coverages_10k" }
-    };
   }
 
   initUI() {
     this.showAllCheckbox = document.getElementById("show-all-coverage-checkbox");
     this.showAllCheckbox.checked = false;
 
-    // Get the range slider element
     this.rangeSlider = document.querySelector('input[type="range"]');
     
     if (!this.rangeSlider) {
@@ -47,53 +52,33 @@ class CoveragesLayer {
     });
   }
 
-  getSelectedThresholdKey() {
-    const sliderValue = parseInt(this.rangeSlider.value);
-    const mapping = this.sliderMapping[sliderValue];
-    
-    if (mapping) {
-      return mapping.key;
-    } else {
-      return "3k_tiles"; // default fallback
-    }
-  }
-
-  getSelectedCoverageValue() {
-    const sliderValue = parseInt(this.rangeSlider.value);
-    const mapping = this.sliderMapping[sliderValue];
-    
-    if (mapping) {
-      return mapping.value;
-    } else {
-      return "coverages_3k"; // default fallback
-    }
+  getSelectedThreshold() {
+    return CoveragesLayer.getSelectedThreshold(this.rangeSlider);
   }
 
   loadAndShowSelectedCoverage() {
-    const key = this.getSelectedThresholdKey();
-    const coverageValue = this.getSelectedCoverageValue();
-    this.currentThreshold = key;
+    const threshold = this.getSelectedThreshold();
+    this.currentThreshold = threshold;
 
     console.log(this.currentThreshold);
 
-    // Remove all layers first
     this.clear();
 
-    if (!this.tileLayers[coverageValue]) {
-      this.tileLayers[coverageValue] = new google.maps.ImageMapType({
+    if (!this.tileLayers[threshold]) {
+      this.tileLayers[threshold] = new google.maps.ImageMapType({
         getTileUrl: (coord, zoom) => {
-          return `public/data/nexrad_coverages/${key}/${zoom}/${coord.x}/${coord.y}.png`; // adjust path as needed
+          return `public/data/nexrad_coverages/${threshold}/${zoom}/${coord.x}/${coord.y}.png`;
         },
         tileSize: new google.maps.Size(256, 256),
         maxZoom: 12,
         minZoom: 5,
-        name: key,
+        name: threshold,
         opacity: 0.4
       });
     }
 
     this.tileLayerIndex = this.map.overlayMapTypes.getLength();
-    this.map.overlayMapTypes.insertAt(this.tileLayerIndex, this.tileLayers[coverageValue]);
+    this.map.overlayMapTypes.insertAt(this.tileLayerIndex, this.tileLayers[threshold]);
   }
 
   clear() {
