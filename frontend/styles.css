@@ -218,3 +218,10 @@ select option {
 #radar-submit-container {
   width: 100%;
 }
+
+.tick-labels {
+    display: flex;
+    justify-content: space-between;
+    margin: 0;
+    font-size: small;
+}
