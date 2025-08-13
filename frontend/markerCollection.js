@@ -4,6 +4,8 @@ class markerCollection {
     markers = [];
     isAdvancedMarker = !1;
 
+    highlightedMarker = null;
+
     markerFill = 'white';
     markerStroke = 'green';
     markerSize = 6;
@@ -198,5 +200,22 @@ class markerCollection {
             }
         }
         return false;
+    }
+
+    highlightMarker(marker) {
+        // Unhighlight the previously highlighted marker (we only want one highlighted marker at a time)
+        if (this.highlightedMarker) {  // Changed from this.highlightMarker to this.highlightedMarker
+            this.highlightedMarker.setIcon(this.markerIcon());
+        }
+
+        // Highlight the new marker
+        this.highlightedMarker = marker;  // Changed from this.highlightMarker to this.highlightedMarker
+        const highlightIcon = {
+            url: `data:image/svg+xml;base64,${btoa(`<svg stroke-width="1" fill="yellow" stroke="orange" width="${this.markerSize * 2}" height="${this.markerSize * 2}" xmlns="http://www.w3.org/2000/svg"><rect x="11%" y="11%" width="78%" height="78%" rx="50%" ry="50%"/></svg>`)}`,
+            size: new google.maps.Size(this.markerSize * 2, this.markerSize * 2),
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(this.markerSize, this.markerSize)
+        };
+        marker.setIcon(highlightIcon);
     }
 }

@@ -78,6 +78,10 @@ class ExistingRadarLayer extends BaseRadarLayer {
     }
 
     onMarkerClick(event, marker) {
+        // Highlight the marker that was clicked
+        this.markers.highlightMarker(marker);
+
+        // Open existing radar show menu, populate with marker.properties
         const panel = document.getElementById('existing-radar-show');
             if (panel.style.display === 'none' || getComputedStyle(panel).display === 'none') {
             toggleWindow('existing-radar-show');
