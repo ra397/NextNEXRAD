@@ -5,6 +5,11 @@ class CustomRadarLayer extends BaseRadarLayer {
         this.idCounter = 0;
         this.editSnapshot = null; // store original values for change detection
         this.isLoading = false; // track loading state
+        
+        // Map click selection state
+        this.isSelectingLocation = false;
+        this.mapClickListener = null;
+        this.originalCursor = null;
     }
 
     async init() {
@@ -13,6 +18,11 @@ class CustomRadarLayer extends BaseRadarLayer {
     }
 
     initUI() {
+        // Select location using map click
+        document.getElementById('select-location-btn').addEventListener("click", () => {
+            this.startLocationSelection();
+        });
+
         // Submit new radar
         document.getElementById("radar-submit-btn").addEventListener("click", () => {
             const params = this.readForm();
@@ -68,6 +78,101 @@ class CustomRadarLayer extends BaseRadarLayer {
             this.updateRadar(siteId, { lat, lng, aglThreshold: agl, towerHeight: tower, elevationAngles: angles });
             updateBtn.disabled = true;
         });
+    }
+
+    startLocationSelection() {
+        if (this.isSelectingLocation) {
+            // Already in selection mode, cancel it
+            this.cancelLocationSelection();
+            return;
+        }
+
+        this.isSelectingLocation = true;
+        
+        // Store original cursor and change to crosshair
+        this.originalCursor = this.map.get('draggableCursor');
+        this.map.set('draggableCursor', 'crosshair');
+        this.map.set('draggingCursor', 'crosshair');
+        
+        // Update button text to indicate active state
+        const btn = document.getElementById('select-location-btn');
+        const originalText = btn.textContent;
+        btn.textContent = 'Click on map (ESC to cancel)';
+        btn.style.backgroundColor = '#007bff';
+        btn.style.color = 'white';
+        
+        // Add map click listener
+        this.mapClickListener = this.map.addListener('click', (event) => {
+            this.handleMapClick(event);
+        });
+
+        // Add escape key listener to cancel
+        this.escapeListener = (event) => {
+            if (event.key === 'Escape') {
+                this.cancelLocationSelection();
+            }
+        };
+        document.addEventListener('keydown', this.escapeListener);
+    }
+
+    handleMapClick(event) {
+        if (!this.isSelectingLocation) return;
+
+        const lat = event.latLng.lat();
+        const lng = event.latLng.lng();
+
+        // Validate coordinates (basic check - you might want more specific validation)
+        if (this.isValidLocation(lat, lng)) {
+            // Fill out the form fields
+            document.getElementById("radarLat").value = lat.toFixed(4);
+            document.getElementById("radarLng").value = lng.toFixed(4);            
+            // Exit location selection mode
+            this.endLocationSelection();
+        } else {
+            alert("Invalid location selected. Please click on a valid map area.");
+        }
+    }
+
+    isValidLocation(lat, lng) {
+        // Basic validation - check if coordinates are within reasonable bounds
+        // You can customize this based on your specific requirements
+        return (
+            lat >= -90 && lat <= 90 &&
+            lng >= -180 && lng <= 180 &&
+            !isNaN(lat) && !isNaN(lng)
+        );
+    }
+
+    cancelLocationSelection() {
+        this.endLocationSelection();
+    }
+
+    endLocationSelection() {
+        if (!this.isSelectingLocation) return;
+
+        this.isSelectingLocation = false;
+        
+        // Remove map click listener
+        if (this.mapClickListener) {
+            google.maps.event.removeListener(this.mapClickListener);
+            this.mapClickListener = null;
+        }
+        
+        // Remove escape key listener
+        if (this.escapeListener) {
+            document.removeEventListener('keydown', this.escapeListener);
+            this.escapeListener = null;
+        }
+        
+        // Restore original cursor
+        this.map.set('draggableCursor', this.originalCursor);
+        this.map.set('draggingCursor', this.originalCursor);
+        
+        // Restore button appearance
+        const btn = document.getElementById('select-location-btn');
+        btn.textContent = 'Select Location on Map';
+        btn.style.backgroundColor = '';
+        btn.style.color = '';
     }
 
     readForm() {
@@ -149,6 +254,9 @@ class CustomRadarLayer extends BaseRadarLayer {
     }
 
     handleMarkerClick(event, marker) {
+        // If we're in location selection mode, don't handle marker clicks
+        if (this.isSelectingLocation) return;
+        
         const panel = document.getElementById('arbitrary-radar-show');
         if (panel.style.display === 'none' || getComputedStyle(panel).display === 'none') {
             toggleWindow('arbitrary-radar-show');
