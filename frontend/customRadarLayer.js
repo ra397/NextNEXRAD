@@ -148,7 +148,7 @@ class CustomRadarLayer extends BaseRadarLayer {
         this.fetchAndAddOverlay(marker);
     }
 
-    onMarkerClick(event, marker) {
+    handleMarkerClick(event, marker) {
         const panel = document.getElementById('arbitrary-radar-show');
         if (panel.style.display === 'none' || getComputedStyle(panel).display === 'none') {
             toggleWindow('arbitrary-radar-show');

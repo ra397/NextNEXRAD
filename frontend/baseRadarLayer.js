@@ -172,7 +172,12 @@ class BaseRadarLayer {
     }
 
     onMarkerClick(event, marker) {
-        throw new Error("Not implemented");
+        this.markers.highlightMarker(marker);
+        this.handleMarkerClick(event, marker);
+    }
+
+    handleMarkerClick(event, marker) {
+        throw new Error("handleMarkerClick must be implemented by child classes");
     }
 }
 

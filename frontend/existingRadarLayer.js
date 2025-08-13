@@ -39,7 +39,7 @@ class ExistingRadarLayer extends BaseRadarLayer {
             // Gather data
             console.log(this.readForm());
 
-            const marker = this.customRadarHelper.addCustomMarker(this.readForm());
+            const marker = this.customRadarHelper.addCustomMarker(this.readForm(), "KDMX_01");
             this.customRadarHelper.fetchAndAddOverlay(marker);
 
             updateBtn.disabled = true;
@@ -77,10 +77,7 @@ class ExistingRadarLayer extends BaseRadarLayer {
         }
     }
 
-    onMarkerClick(event, marker) {
-        // Highlight the marker that was clicked
-        this.markers.highlightMarker(marker);
-
+    handleMarkerClick(event, marker) {
         // Open existing radar show menu, populate with marker.properties
         const panel = document.getElementById('existing-radar-show');
             if (panel.style.display === 'none' || getComputedStyle(panel).display === 'none') {
