@@ -9,6 +9,10 @@ class UsgsLayer {
         this.basinLayers = {};
 
         this._lastMarkerSize = null;
+        
+        // Hover timing control
+        this.hoverDelay = 366; // milliseconds to wait before showing hover label
+        this.hoverTimeouts = new Map(); // Store timeout IDs per marker
     }
 
     async init() {
@@ -20,6 +24,8 @@ class UsgsLayer {
             }
         });
         this.usgsSitesMarkers.reactClick = this.usgsSiteClicked.bind(this);
+        this.usgsSitesMarkers.reactMouseOver = this.usgsSiteHover.bind(this);
+        this.usgsSitesMarkers.reactMouseOut = this.usgsSiteHoverEnd.bind(this);
         this.loadUsgsSites();
         this.loadPopulationPerBasin();
     }
@@ -47,8 +53,8 @@ class UsgsLayer {
                     },
                     {
                         clickable: true,
-                        mouseOver: false,
-                        mouseOut: false
+                        mouseOver: true,
+                        mouseOut: true
                     }
                 );
             }
@@ -82,10 +88,22 @@ class UsgsLayer {
                 marker.customLabel.remove();
             }
             delete marker.customLabel;
+            delete marker._isHoverLabel;
+            delete marker._usgsData;
         }
+        
+        // Clear all hover timeouts
+        this.hoverTimeouts.clear();
     }
 
     usgsSiteClicked(event, marker) {
+        // Clear any pending hover timeout since we're clicking
+        const existingTimeout = this.hoverTimeouts.get(marker);
+        if (existingTimeout) {
+            clearTimeout(existingTimeout);
+            this.hoverTimeouts.delete(marker);
+        }
+
         const props = marker.properties || marker.content?.dataset || {};
         const usgsId = props.usgs_id;
         const area = props.drainage_area;
@@ -99,13 +117,80 @@ class UsgsLayer {
             if (marker.customLabel && marker.customLabel.remove) {
                 marker.customLabel.remove();       // Remove label from map
             }
-            delete marker.customLabel; 
+            delete marker.customLabel;
+            delete marker._isHoverLabel;
+            delete marker._usgsData;
             return;
         }
 
         // Otherwise, load and show basin and label
+        // Remove any existing label first (hover or click)
+        if (marker.customLabel && marker.customLabel.remove) {
+            marker.customLabel.remove();
+            delete marker.customLabel;
+            delete marker._isHoverLabel;
+            delete marker._usgsData;
+        }
+        
         this.showLabel(marker, usgsId, area, population);
+        // Mark as click label (not hover label)
+        delete marker._isHoverLabel;
         this.loadBasin(usgsId);
+    }
+
+    usgsSiteHover(event, marker) {
+        // Don't show hover label if marker already has a click label
+        if (marker.customLabel && !marker._isHoverLabel) return;
+
+        // Clear any existing timeout for this marker
+        const existingTimeout = this.hoverTimeouts.get(marker);
+        if (existingTimeout) {
+            clearTimeout(existingTimeout);
+        }
+
+        // Set a timeout to show the hover label after delay
+        const timeoutId = setTimeout(() => {
+            // Double-check that we still don't have a click label
+            if (marker.customLabel && !marker._isHoverLabel) return;
+
+            // Clean up any existing hover label first
+            if (marker.customLabel && marker._isHoverLabel) {
+                marker.customLabel.remove();
+                delete marker.customLabel;
+                delete marker._isHoverLabel;
+                delete marker._usgsData;
+            }
+
+            const usgsId = marker.properties.usgs_id;
+            const area = marker.properties.drainage_area;
+            const population = this.populationPerBasinMap?.[usgsId] ?? null;
+
+            this.showLabel(marker, usgsId, area, population);
+            marker._isHoverLabel = true; // Mark this as a hover label
+            
+            // Clean up the timeout reference
+            this.hoverTimeouts.delete(marker);
+        }, this.hoverDelay);
+
+        // Store the timeout ID
+        this.hoverTimeouts.set(marker, timeoutId);
+    }
+
+    usgsSiteHoverEnd(event, marker) {
+        // Clear any pending hover timeout
+        const existingTimeout = this.hoverTimeouts.get(marker);
+        if (existingTimeout) {
+            clearTimeout(existingTimeout);
+            this.hoverTimeouts.delete(marker);
+        }
+
+        // Only remove the label if it exists AND it's a hover label (not a click label)
+        if (marker.customLabel && marker._isHoverLabel && marker.customLabel.remove) {
+            marker.customLabel.remove();
+            delete marker.customLabel;
+            delete marker._isHoverLabel;
+            delete marker._usgsData;
+        }
     }
 
     async loadBasin(usgsId) {
@@ -141,9 +226,8 @@ class UsgsLayer {
         div.classList.add(use_class);
         div.setAttribute('style', 'position:absolute; will-change: left, top;');
 
-        const useMetric = (window.currentUnitSystem === "metric");
-        const displayArea = useMetric ? Math.round(area_km2) : Math.round(area_km2 * 0.386102);
-        const unit = useMetric ? "km²" : "mi²";
+        const displayArea = Math.round(area_km2);
+        const unit = "km²";
 
         let html = `ID: ${site_id}<br>Area: ${displayArea} ${unit}`;
         if (population !== null) {
