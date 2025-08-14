@@ -97,44 +97,13 @@ class UsgsLayer {
     }
 
     usgsSiteClicked(event, marker) {
-        // Clear any pending hover timeout since we're clicking
-        const existingTimeout = this.hoverTimeouts.get(marker);
-        if (existingTimeout) {
-            clearTimeout(existingTimeout);
-            this.hoverTimeouts.delete(marker);
-        }
-
-        const props = marker.properties || marker.content?.dataset || {};
-        const usgsId = props.usgs_id;
-        const area = props.drainage_area;
-        const population = this.populationPerBasinMap?.[usgsId] ?? null;
-
+        const usgsId = marker.properties.usgs_id;
         // If the basin is already shown, remove it and the label
         if (this.basinLayers[usgsId]) {
             this.basinLayers[usgsId].setMap(null); // Remove basin from map
             delete this.basinLayers[usgsId];       // Delete reference
-
-            if (marker.customLabel && marker.customLabel.remove) {
-                marker.customLabel.remove();       // Remove label from map
-            }
-            delete marker.customLabel;
-            delete marker._isHoverLabel;
-            delete marker._usgsData;
             return;
         }
-
-        // Otherwise, load and show basin and label
-        // Remove any existing label first (hover or click)
-        if (marker.customLabel && marker.customLabel.remove) {
-            marker.customLabel.remove();
-            delete marker.customLabel;
-            delete marker._isHoverLabel;
-            delete marker._usgsData;
-        }
-        
-        this.showLabel(marker, usgsId, area, population);
-        // Mark as click label (not hover label)
-        delete marker._isHoverLabel;
         this.loadBasin(usgsId);
     }
 
