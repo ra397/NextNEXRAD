@@ -29,6 +29,13 @@ class CustomRadarLayer extends BaseRadarLayer {
             if (!params) return;
             const marker = this.addCustomMarker(params);
             this.fetchAndAddOverlay(marker);
+
+            // Take them to arbitrary radar show
+            this.populateDynamicRadarPanel(marker);
+            toggleWindow('arbitrary-radar-show');
+
+            // Highlight newly created marker
+            this.markers.highlightMarker(marker);
         });
 
         // Toggle
@@ -77,6 +84,13 @@ class CustomRadarLayer extends BaseRadarLayer {
 
             this.updateRadar(siteId, { lat, lng, aglThreshold: agl, towerHeight: tower, elevationAngles: angles });
             updateBtn.disabled = true;
+        });
+
+        // Close window
+        const closeBtn = document.getElementById("arbitrary-radar-show-close-btn");
+        closeBtn.addEventListener('click', () => {
+            this.markers.unhighlightMarkers();
+            closeBtn.parentElement.style.display='none';             
         });
     }
 
@@ -248,6 +262,8 @@ class CustomRadarLayer extends BaseRadarLayer {
 
         // 2. Add new marker with same ID
         const marker = this.addCustomMarker(newProps, siteId);
+
+        this.markers.highlightMarker(marker);
 
         // 3. Add new overlay
         this.fetchAndAddOverlay(marker);

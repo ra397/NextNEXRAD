@@ -39,11 +39,21 @@ class ExistingRadarLayer extends BaseRadarLayer {
             // Gather data
             console.log(this.readForm());
 
-            const marker = this.customRadarHelper.addCustomMarker(this.readForm(), "KDMX_01");
+            const marker = this.customRadarHelper.addCustomMarker(this.readForm());
+            this.markers.highlightMarker(marker);
             this.customRadarHelper.fetchAndAddOverlay(marker);
 
             updateBtn.disabled = true;
+
+            this.customRadarHelper.populateDynamicRadarPanel(marker);
+            toggleWindow('arbitrary-radar-show');
         });
+
+        const closeBtn = document.getElementById("existing-radar-show-close-btn");
+        closeBtn.addEventListener("click", () => {
+            this.markers.unhighlightMarkers();
+            closeBtn.parentElement.style.display='none';     
+        })
     }
 
     readForm() {

@@ -4,8 +4,6 @@ class markerCollection {
     markers = [];
     isAdvancedMarker = !1;
 
-    highlightedMarker = null;
-
     markerFill = 'white';
     markerStroke = 'green';
     markerSize = 6;
@@ -223,5 +221,12 @@ class markerCollection {
             anchor: new google.maps.Point(this.markerSize, this.markerSize)
         };
         marker.setIcon(highlightIcon);
+    }
+
+    unhighlightMarkers() {
+        if (window.globalHighlightedMarker) {
+            window.globalHighlightedMarker.setIcon(window.globalHighlightedMarker._originalIcon);
+            window.globalHighlightedMarker = null;
+        }
     }
 }
