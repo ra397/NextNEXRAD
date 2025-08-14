@@ -40,7 +40,9 @@ class ExistingRadarLayer extends BaseRadarLayer {
             console.log(this.readForm());
 
             const marker = this.customRadarHelper.addCustomMarker(this.readForm());
-            this.markers.highlightMarker(marker);
+            setTimeout(() => {
+                this.markers.highlightMarker(marker);
+            }, 10);
             this.customRadarHelper.fetchAndAddOverlay(marker);
 
             updateBtn.disabled = true;
@@ -49,11 +51,42 @@ class ExistingRadarLayer extends BaseRadarLayer {
             toggleWindow('arbitrary-radar-show');
         });
 
+
         const closeBtn = document.getElementById("existing-radar-show-close-btn");
+        const existingWindow = closeBtn.parentElement;
+
+        // Track the previous visibility state
+        let wasVisible = window.getComputedStyle(existingWindow).display !== 'none';
+
+        // Watch for changes to the existingWindow's style attribute
+        const existingObserver = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                    const isCurrentlyVisible = existingWindow.style.display !== 'none' && 
+                                            window.getComputedStyle(existingWindow).display !== 'none';
+                    
+                    // Only trigger if it was visible before and is now hidden
+                    if (wasVisible && !isCurrentlyVisible) {
+                        console.log("Existing window became invisible - unhighlighting markers");
+                        this.markers.unhighlightMarkers();
+                    }
+                    
+                    // Update the tracking variable
+                    wasVisible = isCurrentlyVisible;
+                }
+            });
+        });
+
+        // Start observing the existingWindow for style changes
+        existingObserver.observe(existingWindow, {
+            attributes: true,
+            attributeFilter: ['style']
+        });
+
+        // Close button only handles hiding the window
         closeBtn.addEventListener("click", () => {
-            this.markers.unhighlightMarkers();
-            closeBtn.parentElement.style.display='none';     
-        })
+            existingWindow.style.display = 'none';
+        });
     }
 
     readForm() {
@@ -94,6 +127,9 @@ class ExistingRadarLayer extends BaseRadarLayer {
             toggleWindow('existing-radar-show');
         }
         this.populateDynamicRadarPanel(marker);
+        setTimeout(() => {
+            this.markers.highlightMarker(marker);
+        }, 10);
         
         // Initialize range ring controls for this site
         this.initSiteRangeRingControls(

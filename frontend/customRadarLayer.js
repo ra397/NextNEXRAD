@@ -10,6 +10,7 @@ class CustomRadarLayer extends BaseRadarLayer {
         this.isSelectingLocation = false;
         this.mapClickListener = null;
         this.originalCursor = null;
+        this.mapClickTempMarker = null;
     }
 
     async init() {
@@ -86,11 +87,66 @@ class CustomRadarLayer extends BaseRadarLayer {
             updateBtn.disabled = true;
         });
 
-        // Close window
-        const closeBtn = document.getElementById("arbitrary-radar-show-close-btn");
-        closeBtn.addEventListener('click', () => {
-            this.markers.unhighlightMarkers();
-            closeBtn.parentElement.style.display='none';             
+        // For the create window
+        const createCloseBtn = document.getElementById("arbitrary-radar-create-close-btn");
+        const createWindow = createCloseBtn.parentElement;
+
+        let createWasVisible = window.getComputedStyle(createWindow).display !== 'none';
+
+        const createObserver = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                    const isCurrentlyVisible = createWindow.style.display !== 'none' && 
+                                            window.getComputedStyle(createWindow).display !== 'none';
+                    
+                    if (createWasVisible && !isCurrentlyVisible) {
+                        console.log("Create window became invisible - deleting temp marker");
+                        this.markers.deleteMarker("temp");
+                    }
+                    
+                    createWasVisible = isCurrentlyVisible;
+                }
+            });
+        });
+
+        createObserver.observe(createWindow, {
+            attributes: true,
+            attributeFilter: ['style']
+        });
+
+        createCloseBtn.addEventListener('click', () => {
+            createWindow.style.display = 'none';
+        });
+
+        // For the show window
+        const showCloseBtn = document.getElementById("arbitrary-radar-show-close-btn");
+        const showWindow = showCloseBtn.parentElement;
+
+        let showWasVisible = window.getComputedStyle(showWindow).display !== 'none';
+
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                    const isCurrentlyVisible = showWindow.style.display !== 'none' && 
+                                            window.getComputedStyle(showWindow).display !== 'none';
+                    
+                    if (showWasVisible && !isCurrentlyVisible) {
+                        console.log("Window became invisible - unhighlighting markers");
+                        this.markers.unhighlightMarkers();
+                    }
+                    
+                    showWasVisible = isCurrentlyVisible;
+                }
+            });
+        });
+
+        observer.observe(showWindow, {
+            attributes: true,
+            attributeFilter: ['style']
+        });
+
+        showCloseBtn.addEventListener('click', () => {
+            showWindow.style.display = 'none';
         });
     }
 
@@ -134,6 +190,13 @@ class CustomRadarLayer extends BaseRadarLayer {
 
         const lat = event.latLng.lat();
         const lng = event.latLng.lng();
+
+
+        // Delete previous temporary marker
+        this.markers.deleteMarker("temp");
+        // Add a temporary marker 
+        this.mapClickTempMarker = this.addCustomMarker({lat: lat, lng:lng}, "temp");
+        console.log(this.mapClickTempMarker.properties);
 
         // Validate coordinates (basic check - you might want more specific validation)
         if (this.isValidLocation(lat, lng)) {
@@ -278,6 +341,9 @@ class CustomRadarLayer extends BaseRadarLayer {
             toggleWindow('arbitrary-radar-show');
         }
         this.populateDynamicRadarPanel(marker);
+        setTimeout(() => {
+            this.markers.highlightMarker(marker);
+        }, 10);
         
         // Initialize range ring controls for this site
         this.initSiteRangeRingControls(
@@ -291,8 +357,8 @@ class CustomRadarLayer extends BaseRadarLayer {
         const props = marker.properties;
         
         document.getElementById("dynamic-radar-site-id").value = props.id || "";
-        document.getElementById("dynamic-radar-site-lat").value = props.lat || "";
-        document.getElementById("dynamic-radar-site-lng").value = props.lng || "";
+        document.getElementById("dynamic-radar-site-lat").value = props.lat.toFixed(4) || "";
+        document.getElementById("dynamic-radar-site-lng").value = props.lng.toFixed(4) || "";
         document.getElementById("dynamic-radar-site-tower-height").value = props.towerHeight || "";
         document.getElementById("dynamic-radar-site-max-alt").value = props.aglThreshold || "";
 
