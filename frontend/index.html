@@ -312,8 +312,7 @@
 
             <div class="settings-input-container">
                 <label for="pod-year-select" class="settings-label">Year:</label>
-                <select id="pod-year-select" class="settings-input" required>
-                    <option value="" disabled selected>Select Year</option>
+                <select id="pod-year-select" class="settings-input" multiple required>
                     <option value="2017">2017</option>
                     <option value="2018">2018</option>
                     <option value="2019">2019</option>
@@ -370,7 +369,7 @@
             </div>
 
             <div class="settings-input-container">
-                <label for="clear-pod-layer" class="settings-label"></label>
+                <button id="submit-pod-layer" class="settings-input">Submit</button>
                 <button id="clear-pod-layer" class="settings-input">Clear</button>
             </div>
         </div>
@@ -405,7 +404,6 @@
 
         <script src="markerCollection.js"></script>
         <script src="infoTool.js"></script>
-        <script src="pod.js"></script>
         <script src="dynaImg.js"></script>
         <script src="customOverlay.js"></script>
         <script src="canvasOverlay.js"></script>

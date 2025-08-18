@@ -112,6 +112,9 @@ class dynaImg {
         if (!this.mask || this.mask.lengt == 0)
             this.mask = [...Array(this.width*this.height).keys()].map( v=> !0);
         this.clrs_mask = [];
+
+        console.log(this.clrs);
+
         this.clrs.forEach((c, i) => {const _c = [...c]; _c[3] = i == 0 ? 0 : 167, this.clrs_mask.push(_c)});
         this.histogramStops =  [0].concat([...Array(this.stops).keys()].map(v => {return Math.round((v) * dlt_value - use_min)}));
         this.histogramCount = [0].concat([...Array(this.stops).keys()].map( v=> 0))
@@ -167,6 +170,18 @@ class dynaImg {
 
     _getArrayBuffer(url) {
         return fetch(url).then(response => response.arrayBuffer());
+    }
+
+    loadFromArrayBuffer(arrayBuffer) {
+        const res = arrayBuffer;
+        let w, h, s
+        this.values = null;
+        this.values = new Uint16Array(res.slice(12,));
+        [w, h, s] = new Int32Array(res.slice(0, 12));
+
+        this.setSize(w,h)
+        this.scale = s;
+        return this.redraw();
     }
 }
 

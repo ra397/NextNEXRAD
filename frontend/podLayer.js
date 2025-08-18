@@ -4,23 +4,20 @@ class PodLayer {
 
     this.podOverlay = null;
     this.di = null;
-    this.currentURL = null;
-
+    
     this.settings = {
-      year: null,
-      season: 'All',
+      years: [],
+      season: "All",
       stops: 32,
       vmin: 0,
       vmax: 50,
       palette: 'Spectral',
       opacity: 1.0
     };
-  }
 
-  initUI() {
-    // Range slider
-    const podRangeSlider = document.getElementById('pod-range-slider');
-    noUiSlider.create(podRangeSlider, {
+    // Initialize POD range slider (2-way slider)
+    this.podRangeSlider = document.getElementById('pod-range-slider');
+    noUiSlider.create(this.podRangeSlider, {
       start: [this.settings.vmin, this.settings.vmax],
       connect: true,
       range: { min: 0, max: 100 },
@@ -30,41 +27,54 @@ class PodLayer {
         from: v => Number(v)
       }
     });
+  }
 
-    podRangeSlider.noUiSlider.on('update', vals => {
+  initUI() {
+    // FETCH AND REDRAW
+    // Years selection listener, updates this.settings.years live
+    document.getElementById("pod-year-select").addEventListener("change", () => {
+      this.settings.years = this.getSelectedYears();
+    });    
+
+    // Sesaon selection listener, updates this.settings.season live
+    document.getElementById("pod-season-select").addEventListener("change", (event) => {
+      this.settings.season = event.target.value || "All";
+    });
+
+    // Submit btn
+    document.getElementById("submit-pod-layer").addEventListener("click", () => {
+      this.fetchAndDraw(this.getSeasonDates(this.settings.years, this.settings.season));
+    });
+
+    // Clear btn
+    document.getElementById("clear-pod-layer").addEventListener("click", () => {
+      if (this.podOverlay) {
+        this.podOverlay.remove();
+        this.podOverlay = null;
+      }
+    })
+
+    // REDRAW STYLING ONLY
+    // Number of colors listener, updates this.settings.stops live
+    document.getElementById("pod-color-count").addEventListener("change", (event) => {
+      this.settings.stops = parseInt(event.target.value);
+      this.redrawStylingOnly();
+    });
+
+    // Min-Max listener, updates this.settings.vmin and this.settings.vmax live
+    this.podRangeSlider.noUiSlider.on('update', vals => {
       this.settings.vmin = +vals[0];
       this.settings.vmax = +vals[1];
     });
-    podRangeSlider.noUiSlider.on('set', () => this.redrawStylingOnly());
+    this.podRangeSlider.noUiSlider.on('set', () => {
+      this.redrawStylingOnly();
+    });
 
-    // Year selector
-    document.getElementById('pod-year-select')
-      .addEventListener('change', e => {
-        const y = parseInt(e.target.value, 10);
-        this.settings.year = isNaN(y) ? null : y;
-        if (this.settings.year) this.fetchAndDraw();
-      });
-
-    // Season selector
-    document.getElementById('pod-season-select')
-      .addEventListener('change', e => {
-        this.settings.season = e.target.value || 'All';
-        if (this.settings.year) this.fetchAndDraw();
-      });
-
-    // Stops
-    document.getElementById('pod-color-count')
-      .addEventListener('change', e => {
-        this.settings.stops = +e.target.value;
-        this.redrawStylingOnly();
-      });
-
-    // Palette
-    document.querySelectorAll('input[name="palette"]')
-      .forEach(r => r.addEventListener('change', e => {
-        this.settings.palette = e.target.value.replace('-', '');
-        this.redrawStylingOnly();
-      }));
+    // Color Palette 
+    document.querySelectorAll('input[name="palette"]').forEach(r => r.addEventListener('change', e => {
+      this.settings.palette = e.target.value.replace('-', '');
+      this.redrawStylingOnly();
+    }));
 
     // Opacity
     const opacitySlider = document.getElementById('pod-opacity');
@@ -75,60 +85,74 @@ class PodLayer {
       this.settings.opacity = pct / 100;
       if (this.podOverlay) this.podOverlay.setOpacity(this.settings.opacity);
     });
-
-    // Clear button
-    document.getElementById("clear-pod-layer").addEventListener('click', () => {
-      this.clear();
-    });
   }
 
-  clear() {
-    if (this.podOverlay) {
-      this.podOverlay.remove();
-      this.podOverlay = null;
-    }
+  getSelectedYears() {
+    const selectElement = document.getElementById('pod-year-select');
+    return [...selectElement.selectedOptions].map(option => option.value);
   }
 
-  getSeasonDates(year, season) {
-    let start, end;
-    switch (season) {
-      case 'Winter': start = new Date(year, 0, 1);  end = new Date(year, 2, 31); break;
-      case 'Spring': start = new Date(year, 3, 1);  end = new Date(year, 5, 30); break;
-      case 'Summer': start = new Date(year, 6, 1);  end = new Date(year, 8, 30); break;
-      case 'Fall':   start = new Date(year, 9, 1);  end = new Date(year, 11, 31); break;
-      default:       start = new Date(year, 0, 1);  end = new Date(year, 11, 31);
-    }
-    return { start, end };
+  getSeasonDates(years, season) {
+      const output = [];
+      
+      // Define season mappings
+      const seasonRanges = {
+          "All": { begin: "010101", end: "123123" },
+          "Winter": { begin: "010101", end: "033123" },
+          "Spring": { begin: "040101", end: "063023" },
+          "Summer": { begin: "070101", end: "093023" },
+          "Fall": { begin: "100101", end: "123123" }
+      };
+      
+      // Check if season is valid
+      if (!seasonRanges[season]) {
+          throw new Error(`Invalid season: ${season}. Must be one of: All, Winter, Spring, Summer, Fall`);
+      }
+      
+      // Process each year
+      for (const year of years) {
+          const range = seasonRanges[season];
+          
+          output.push({
+              "begin": `${year}${range.begin}`,
+              "end": `${year}${range.end}`
+          });
+      }
+      
+      return output;
   }
 
-  async fetchAndDraw() {
-    showSpinner(); isLoading = true;
+  async fetchAndDraw(dateRanges) {
+    showSpinner();
 
-    const { start, end } = this.getSeasonDates(this.settings.year, this.settings.season);
-    const url = new POD().getUrl(start, end);
+    const url = "https://s-iihr80.iihr.uiowa.edu/hyddatapp";
+    const payload = {
+      "product": "pod",
+      "method": "aggregate",
+      "datetime": dateRanges
+    };
 
-    if (url === this.currentURL && this.di) {
-      isLoading = false;
-      hideSpinner();
-      return this.redrawStylingOnly();
-    }
-
-    this.currentURL = url;
-
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload)
+    });    
+    const arrayBuffer = await response.arrayBuffer();
     if (!this.di) {
       this.di = new dynaImg();
       this.di.image = new Image();
       this.di.image.crossOrigin = '';
     }
-
     this.applyStyling();
-    const blob = await this.di.load(url);
+    const blob = await this.di.loadFromArrayBuffer(arrayBuffer);
 
     if (this.podOverlay) this.podOverlay.remove();
     this.podOverlay = customOverlay(blob, window.constants.pod.POD_BBOX, this.map, 'OverlayView');
     this.podOverlay.setOpacity(this.settings.opacity);
 
-    isLoading = false; hideSpinner();
+    hideSpinner();
   }
 
   async redrawStylingOnly() {
@@ -143,6 +167,6 @@ class PodLayer {
     this.di.setRange(this.settings.vmin / 100, this.settings.vmax / 100);
     this.di.setColors(this.settings.palette, window.constants.pod.POD_COLORS[this.settings.palette]);
   }
-}
+};
 
 window.PodLayer = PodLayer;
