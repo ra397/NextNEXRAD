@@ -34,7 +34,12 @@ class PodLayer {
     // Years selection listener, updates this.settings.years live
     document.getElementById("pod-year-select").addEventListener("change", () => {
       this.settings.years = this.getSelectedYears();
-    });    
+      // Update selected years display
+      const yearTags = this.getSelectedYears().map(year => 
+          `<span class="year-tag">${year}</span>`
+      ).join('');
+      document.getElementById("selected-years-display").innerHTML = `<div class="year-tags">${yearTags}</div>`;
+    });
 
     // Sesaon selection listener, updates this.settings.season live
     document.getElementById("pod-season-select").addEventListener("change", (event) => {
