@@ -80,13 +80,13 @@ class CustomRadarLayer extends BaseRadarLayer {
 
         // Toggle
         document.getElementById("toggle-dynamic-radar").addEventListener("click", () => {
-            const siteId = document.getElementById("dynamic-radar-site-id").value;
+            const siteId = document.getElementById("dynamic-radar-site-id").textContent;
             this.toggleOverlay(siteId);
         });
 
         // Delete
         document.getElementById("delete-dynamic-radar").addEventListener("click", () => {
-            const siteId = document.getElementById("dynamic-radar-site-id").value;
+            const siteId = document.getElementById("dynamic-radar-site-id").textContent;
             this.removeOverlay(siteId);
             toggleWindow('arbitrary-radar-show');
         });
@@ -133,7 +133,7 @@ class CustomRadarLayer extends BaseRadarLayer {
 
         // For the create window
         const createCloseBtn = document.getElementById("arbitrary-radar-create-close-btn");
-        const createWindow = createCloseBtn.parentElement;
+        const createWindow = createCloseBtn.parentElement.parentElement;
 
         let createWasVisible = window.getComputedStyle(createWindow).display !== 'none';
 
@@ -164,7 +164,7 @@ class CustomRadarLayer extends BaseRadarLayer {
 
         // For the show window
         const showCloseBtn = document.getElementById("arbitrary-radar-show-close-btn");
-        const showWindow = showCloseBtn.parentElement;
+        const showWindow = showCloseBtn.parentElement.parentElement;
 
         let showWasVisible = window.getComputedStyle(showWindow).display !== 'none';
 

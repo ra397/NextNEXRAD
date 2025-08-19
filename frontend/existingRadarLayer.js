@@ -80,7 +80,7 @@ class ExistingRadarLayer extends BaseRadarLayer {
 
 
         const closeBtn = document.getElementById("existing-radar-show-close-btn");
-        const existingWindow = closeBtn.parentElement;
+        const existingWindow = closeBtn.parentElement.parentElement;
 
         // Track the previous visibility state
         let wasVisible = window.getComputedStyle(existingWindow).display !== 'none';
