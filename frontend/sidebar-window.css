@@ -1,0 +1,74 @@
+.window-title-container {
+    display: flex;
+    background-color: rgb(46, 143, 46);
+
+    padding: 5px;
+}
+
+.window-title {
+    flex: 1;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: white;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.window-exit {
+    flex: 0;
+    color: white;
+    justify-content: right;
+    padding: 10px;
+
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+.window-exit:hover {
+    cursor: pointer;
+}
+
+.window-items-container {
+    display: grid;
+    grid-template-columns: 125px 1fr;
+
+    justify-content: center;
+    align-items: center;
+}
+
+.settings-label {
+    text-align: center;
+    padding: 10px;
+}
+
+.settings-input {
+    text-align: center;
+    padding: 10px;
+}
+
+.location-input {
+    padding: 2px;
+}
+
+.elevation-slider {
+    padding: 35px;
+}
+
+#radar-submit-btn {
+    grid-column: 1 / span 2;
+    justify-self: center;
+
+    margin: 0.25rem auto 0.85rem auto;
+    padding: 0.25rem 0.5rem;
+    border-radius: .75rem;
+    background-color: rgb(46, 143, 46);
+    color: white;
+    cursor: pointer;
+    outline: 1px solid green;
+}
+
+#radar-submit-btn:hover {
+    background-color: rgb(77, 168, 77);
+}

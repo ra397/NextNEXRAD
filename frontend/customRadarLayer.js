@@ -11,6 +11,29 @@ class CustomRadarLayer extends BaseRadarLayer {
         this.mapClickListener = null;
         this.originalCursor = null;
         this.mapClickTempMarker = null;
+
+        const steps = [0.5, 0.9, 1.3, 1.8, 2.4, 3.1, 4.0, 5.1, 6.4, 8.0, 10.0, 12.5, 15.6, 19.5]
+        const range = { min: steps[0], max: steps[steps.length - 1] };
+        steps.forEach((val, i) => {
+            const pct = (i / (steps.length - 1)) * 100;
+            range[`${pct}%`] = val;
+        });
+
+        this.elevationAnglesSlider = document.getElementById('elevation-angles-slider');
+        noUiSlider.create(this.elevationAnglesSlider, {
+            start: [steps[0], steps[steps.length - 1]],
+            connect: true,
+            range: range,
+            snap: true,
+            tooltips: [
+                { to: v => `${parseFloat(v).toFixed(1)}`, from: v => Number(v) },
+                { to: v => `${parseFloat(v).toFixed(1)}`, from: v => Number(v) }
+            ],
+            format: {
+                to: v=> parseFloat(v).toFixed(1),
+                from: v => Number(v)
+            }
+        });
     }
 
     async init() {
@@ -58,7 +81,7 @@ class CustomRadarLayer extends BaseRadarLayer {
 
         const towerEl = document.getElementById("dynamic-radar-site-tower-height");
         const altEl   = document.getElementById("dynamic-radar-site-max-alt");
-        const angleEls = document.querySelectorAll("#show-elevation-angle-checkboxes input[type='checkbox']");
+        //const angleEls = document.querySelectorAll("#show-elevation-angle-checkboxes input[type='checkbox']");
 
         // Build an array of actual elements, removing nulls if IDs are wrong
         const watchFields = [towerEl, altEl, ...angleEls].filter(Boolean);
@@ -75,8 +98,8 @@ class CustomRadarLayer extends BaseRadarLayer {
             const lng = parseFloat(document.getElementById("dynamic-radar-site-lng").value);
             const tower = parseFloat(document.getElementById("dynamic-radar-site-tower-height").value);
             const agl = parseFloat(document.getElementById("dynamic-radar-site-max-alt").value);
-            const angles = [...document.querySelectorAll("#show-elevation-angle-checkboxes input:checked")]
-                .map(cb => parseFloat(cb.value));
+            // const angles = [...document.querySelectorAll("#show-elevation-angle-checkboxes input:checked")]
+            //     .map(cb => parseFloat(cb.value));
 
             if ([tower, agl].some(v => isNaN(v)) || angles.length === 0) {
                 alert("Invalid inputs");
@@ -362,11 +385,11 @@ class CustomRadarLayer extends BaseRadarLayer {
         document.getElementById("dynamic-radar-site-tower-height").value = props.towerHeight || "";
         document.getElementById("dynamic-radar-site-max-alt").value = props.aglThreshold || "";
 
-        const checkboxes = document.querySelectorAll("#show-elevation-angle-checkboxes input[type='checkbox']");
-        const selectedAngles = props.elevationAngles || [];
-        checkboxes.forEach(cb => {
-            cb.checked = selectedAngles.includes(parseFloat(cb.value));
-        });
+        // const checkboxes = document.querySelectorAll("#show-elevation-angle-checkboxes input[type='checkbox']");
+        // const selectedAngles = props.elevationAngles || [];
+        // checkboxes.forEach(cb => {
+        //     cb.checked = selectedAngles.includes(parseFloat(cb.value));
+        // });
 
         // store snapshot for change detection
         this.editSnapshot = {
@@ -382,9 +405,9 @@ class CustomRadarLayer extends BaseRadarLayer {
         if (!this.editSnapshot) return false;
         const tower = parseFloat(document.getElementById("dynamic-radar-site-tower-height").value);
         const agl = parseFloat(document.getElementById("dynamic-radar-site-max-alt").value);
-        const angles = [...document.querySelectorAll("#show-elevation-angle-checkboxes input:checked")]
-            .map(cb => parseFloat(cb.value))
-            .sort();
+        // const angles = [...document.querySelectorAll("#show-elevation-angle-checkboxes input:checked")]
+        //     .map(cb => parseFloat(cb.value))
+        //     .sort();
 
         return (
             tower !== this.editSnapshot.towerHeight ||

@@ -1,4 +1,3 @@
-
 .sidebar {
     position: fixed;
     top: 1rem;
@@ -14,6 +13,7 @@
 
 .sidebar-icon {
     --icon-radar:       url(./public/icons/nexrad-icon-gry-bold.svg);
+    --icon-add-radar:   url(./public/icons/nexrad-gry-build.svg);
     --icon-cloud:       url(./public/icons/rain-heavy-svgrepo-com.svg);
     --icon-control:     url(./public/icons/map-control.svg);
     --icon-info:        url(./public/icons/info.svg);

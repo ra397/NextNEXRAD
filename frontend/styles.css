@@ -27,29 +27,6 @@ select option {
   padding: 0;
 }
 
-.gm-style img {
-  image-rendering: pixelated;
-}
-
-.window-title-container {
-  border: 1px solid transparent;
-  background-color: green;
-  color: white;
-}
-.sidebar {
-  /* Display on the right side of the map */
-  position: absolute;
-  right: 10px;
-  top: 1%;
-
-  /* Display vertically */
-  display: flex;
-  flex-direction: column;
-
-  background: white;
-  border: 1px solid #ccc;
-}
-
 .sidebar-window {
   position: absolute;
   top: 1%;
@@ -58,31 +35,6 @@ select option {
   background: white;
   border: 1px solid #ccc;
   display: none;
-}
-
-#arbitrary-radar, #arbitrary-radar-show, #existing-radar-show {
-  position: absolute;
-  top: 7%;
-  left: 7px;
-  width: 350px;
-  background: white;
-  border: 1px solid #ccc;
-  display: none;
-}
-
-.settings-input-container {
-  display: flex;
-  margin-top: 10px;
-}
-
-.settings-label {
-    /* Fixed size for labels, that way the text inputs are aligned top to bottom */
-    width: 140px;
-
-}
-
-.settings-input {
-  margin-left: 5px;
 }
 
 #loading-spinner {
@@ -156,72 +108,8 @@ select option {
     pointer-events: none;
 }
 
-
-#pod-range-slider-container {
-  margin-top: 40px;
-}
-
-#pod-range-slider {
-    width: 50%;
-}
-
-#pod-year-select {
-  height: 120px;
-  width: 120px;
-}
-
-#popThreshold-slider {
-  width: 100%;
-}
-
 #pop-canvas, #coverage-canvas {
   image-rendering: pixelated;
-}
-
-.close-btn {
-  position: absolute;
-  top: 8px;
-  right: 12px;
-  font-size: 20px;
-  font-weight: bold;
-  color: white;
-  cursor: pointer;
-  z-index: 1000;
-}
-
-.close-btn:hover {
-  color: #000;
-}
-
-.sidebar {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: rgba(255, 255, 255, 0.85);
-  border-radius: 8px;
-  padding: 6px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-}
-
-.sidebar-btn {
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.sidebar-icon {
-  width: 48px;
-  height: 48px;
-}
-
-#radarLat {
-  margin-bottom: 5px;
-}
-
-#radar-submit-container {
-  width: 100%;
 }
 
 .tick-labels {
