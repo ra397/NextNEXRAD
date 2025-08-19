@@ -76,7 +76,7 @@
         <div id="arbitrary-radar" class="sidebar-window">
             <div class="window-title-container">
                 <span class="window-title">Build a Radar</span>
-                <span class="window-exit">&times;</span>
+                <span class="window-exit" id="arbitrary-radar-create-close-btn">&times;</span>
             </div>
             <div class="window-items-container">
                 <div class="settings-label">Select Location with Map Click</div>
@@ -118,62 +118,51 @@
                 <button id="radar-submit-btn">Get Coverage</button>
             </div>
         </div>
-        
+
         <div id="arbitrary-radar-show" class="sidebar-window">
-            <span class="close-btn" style="color: green;" id="arbitrary-radar-show-close-btn">×</span>
-            <div class="settings-input-container">
-                <label class="settings-label">Site ID:</label>
-                <input type="text" id="dynamic-radar-site-id" class="settings-input" readonly>
+            <div class="window-title-container">
+                <span class="window-title">Custom Radar Info</span>
+                <span class="window-exit" id="arbitrary-radar-show-close-btn">&times;</span>
             </div>
 
-            <div class="settings-input-container">
-                <label class="settings-label">Lat:</label>
-                <input type="text" id="dynamic-radar-site-lat" class="settings-input" readonly>
-            </div>
-
-            <div class="settings-input-container">
-                <label class="settings-label">Lng:</label>
-                <input type="text" id="dynamic-radar-site-lng" class="settings-input" readonly>
-            </div>
-
-            <div class="settings-input-container">
-                <label class="settings-label">Tower Height (m):</label>
-                <input type="text" id="dynamic-radar-site-tower-height" class="settings-input">
-            </div>
-
-            <div class="settings-input-container">
-                <label class="settings-label">Max Altitude (m):</label>
-                <input type="text" id="dynamic-radar-site-max-alt" class="settings-input">
-            </div>
-
-            <div class="settings-input-container">
-                <label class="settings-label">Elevation angle(s):</label>
+            <div class="window-items-container">
+                <span class="settings-label">Site ID:</span>
                 <div class="settings-input">
-                    <div id="show-elevation-angle-checkboxes">
-                        <span>0.5°</span><input type="checkbox" value="0.5" checked>
-                        <span>0.9°</span><input type="checkbox" value="0.9" checked>
-                        <span>1.3°</span><input type="checkbox" value="1.3" checked>
-                        <span>1.8°</span><input type="checkbox" value="1.8" checked><br>
-                        <span>2.4°</span><input type="checkbox" value="2.4" checked>
-                        <span>3.1°</span><input type="checkbox" value="3.1" checked>
-                        <span>4.0°</span><input type="checkbox" value="4.0" checked>
-                        <span>5.1°</span><input type="checkbox" value="5.1" checked><br>
-                        <span>6.4°</span><input type="checkbox" value="6.4" checked>
-                        <span>8.0°</span><input type="checkbox" value="8.0" checked>
-                        <span>10.0°</span><input type="checkbox" value="10.0" checked><br>
-                        <span>12.5°</span><input type="checkbox" value="12.5" checked>
-                        <span>15.6°</span><input type="checkbox" value="15.6" checked>
-                        <span>19.5°</span><input type="checkbox" value="19.5" checked>
+                    <span id="dynamic-radar-site-id"></span>
+                </div>
+
+                <span class="settings-label">Latitude:</span>
+                <div class="settings-input">
+                    <span id="dynamic-radar-site-lat"></span>
+                </div>
+
+                <span class="settings-label">Longitude:</span>
+                <div class="settings-input">
+                    <span id="dynamic-radar-site-lng"></span>
+                </div>
+
+                <div class="settings-label">
+                    Tower Height (m):
+                </div>
+                <input typ="text" id="dynamic-radar-site-tower-height">
+
+                <div class="settings-label">
+                    Max Altitude (m):
+                </div>
+                <input type="text" id="dynamic-radar-site-max-alt">
+
+                <div class="settings-label">
+                    Elevation Angle(s):
+                </div>
+                <div class="settings-input">
+                    <div class="settings-input double-slider">
+                        <div id="arbitrary-radar-show-elevation-angles-slider"></div>
                     </div>
                 </div>
-            </div>
 
-            <div class="settings-input-container">
-                <label class="settings-label">
-                    Radar Range Rings
-                </label>
+                <span class="settings-label">Radar Range Rings</span>
                 <div class="settings-input">
-                    <input type="checkbox" id="dynamic-radar-range-checkbox">
+                    <input type="checkbox" id="existing-radar-range-checkbox">
                     <label for="dynamic-radar-range-checkbox">Show Range Rings</label>
                     <div style="margin-left: 1em; margin-top: 0.25em;">
                         <label><input type="checkbox" class="dynamic-range-checkbox" data-distance="50000" checked> 50 km</label><br>
@@ -184,96 +173,17 @@
                     </div>
                 </div>
             </div>
-
             <div class="settings-input-container">
                 <button id="toggle-dynamic-radar" class="settings-input">Toggle</button>
                 <button id="update-dynamic-radar" class="settings-input">Update</button>
                 <button id="delete-dynamic-radar" class="settings-input">Delete</button>
             </div>
         </div>
-
-        <!-- <div id="existing-radar-show" class="sidebar-window">
-            <span class="close-btn" style="color: green;" id="existing-radar-show-close-btn">×</span>
-            <div class="settings-input-container">
-                <label class="settings-label">Site ID:</label>
-                <input type="text" id="existing-radar-site-id" class="settings-input" readonly>
-            </div>
-
-            <div class="settings-input-container">
-                <label class="settings-label">Name:</label>
-                <input type="text" id="existing-radar-site-name" class="settings-input" readonly>
-            </div>
-
-            <div class="settings-input-container">
-                <label class="settings-label">Lat:</label>
-                <input type="text" id="existing-radar-site-lat" class="settings-input" readonly>
-            </div>
-
-            <div class="settings-input-container">
-                <label class="settings-label">Lng:</label>
-                <input type="text" id="existing-radar-site-lng" class="settings-input" readonly>
-            </div>
-
-            <div class="settings-input-container">
-                <label class="settings-label">Tower Height (m):</label>
-                <input type="text" id="existing-radar-site-tower-height" class="settings-input">
-            </div>
-
-            <div class="settings-input-container">
-                <label class="settings-label">Max Altitude (m):</label>
-                <input type="text" id="existing-radar-site-max-alt" class="settings-input">
-            </div>
-
-            <div class="settings-input-container">
-                <label class="settings-label">Elevation angle(s):</label>
-                <div class="settings-input">
-                    <div id="existing-elevation-angle-checkboxes">
-                        <span>0.5°</span><input type="checkbox" value="0.5" checked>
-                        <span>0.9°</span><input type="checkbox" value="0.9" checked>
-                        <span>1.3°</span><input type="checkbox" value="1.3" checked>
-                        <span>1.8°</span><input type="checkbox" value="1.8" checked><br>
-                        <span>2.4°</span><input type="checkbox" value="2.4" checked>
-                        <span>3.1°</span><input type="checkbox" value="3.1" checked>
-                        <span>4.0°</span><input type="checkbox" value="4.0" checked>
-                        <span>5.1°</span><input type="checkbox" value="5.1" checked><br>
-                        <span>6.4°</span><input type="checkbox" value="6.4" checked>
-                        <span>8.0°</span><input type="checkbox" value="8.0" checked>
-                        <span>10.0°</span><input type="checkbox" value="10.0" checked><br>
-                        <span>12.5°</span><input type="checkbox" value="12.5" checked>
-                        <span>15.6°</span><input type="checkbox" value="15.6" checked>
-                        <span>19.5°</span><input type="checkbox" value="19.5" checked>
-                    </div>
-                </div>
-            </div>
-
-            <div class="settings-input-container">
-                <label class="settings-label">
-                    Radar Range Rings
-                </label>
-                <div class="settings-input">
-                    <input type="checkbox" id="existing-radar-range-checkbox">
-                    <label for="existing-radar-range-checkbox">Show Range Rings</label>
-                    <div style="margin-left: 1em; margin-top: 0.25em;">
-                        <label><input type="checkbox" class="existing-range-checkbox" data-distance="50000" checked> 50 km</label><br>
-                        <label><input type="checkbox" class="existing-range-checkbox" data-distance="100000" checked> 100 km</label><br>
-                        <label><input type="checkbox" class="existing-range-checkbox" data-distance="150000" checked> 150 km</label><br>
-                        <label><input type="checkbox" class="existing-range-checkbox" data-distance="200000" checked> 200 km</label><br>
-                        <label><input type="checkbox" class="existing-range-checkbox" data-distance="230000" checked> 230 km</label>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="settings-input-container">
-                <button id="update-existing-radar" class="settings-input">Update</button>
-            </div>
-        </div> -->
-
-        
         
         <div id="existing-radar-show" class="sidebar-window">
             <div class="window-title-container">
                 <span class="window-title" id="existing-radar-site-name"></span>
-                <span class="window-exit">&times;</span>
+                <span class="window-exit" id="existing-radar-show-close-btn">&times;</span>
             </div>
             <div class="window-items-container">
                 <div class="settings-label">
@@ -300,17 +210,35 @@
                 <div class="settings-label">
                     Tower Height (m):
                 </div>
-                <div class="settings-input" id="existing-radar-site-tower-height"></div>
+                <input type="text" id="existing-radar-site-tower-height"></input>
 
                 <div class="settings-label">
                     Max Altitude (m):
                 </div>
-                <div class="settings-input" id="existing-radar-site-max-alt"></div>
+                <input type="text" id="existing-radar-site-max-alt"></input>
+
 
                 <div class="settings-label">
                     Elevation Angle(s):
                 </div>
-                <div class="settings-input"></div>
+                <div class="settings-input">
+                    <div class="settings-input double-slider">
+                        <div id="existing-radar-show-elevation-angles-slider"></div>
+                    </div>
+                </div>
+
+                <span class="settings-label">Radar Range Rings</span>
+                <div class="settings-input">
+                    <input type="checkbox" id="existing-radar-range-checkbox">
+                    <label for="existing-radar-range-checkbox">Show Range Rings</label>
+                    <div style="margin-left: 1em; margin-top: 0.25em;">
+                        <label><input type="checkbox" class="existing-range-checkbox" data-distance="50000" checked> 50 km</label><br>
+                        <label><input type="checkbox" class="existing-range-checkbox" data-distance="100000" checked> 100 km</label><br>
+                        <label><input type="checkbox" class="existing-range-checkbox" data-distance="150000" checked> 150 km</label><br>
+                        <label><input type="checkbox" class="existing-range-checkbox" data-distance="200000" checked> 200 km</label><br>
+                        <label><input type="checkbox" class="existing-range-checkbox" data-distance="230000" checked> 230 km</label>
+                    </div>
+                </div>
 
                 <button id="update-existing-radar">Update</button>
             </div>

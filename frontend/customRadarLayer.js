@@ -12,16 +12,32 @@ class CustomRadarLayer extends BaseRadarLayer {
         this.originalCursor = null;
         this.mapClickTempMarker = null;
 
-        const steps = [0.5, 0.9, 1.3, 1.8, 2.4, 3.1, 4.0, 5.1, 6.4, 8.0, 10.0, 12.5, 15.6, 19.5]
-        const range = { min: steps[0], max: steps[steps.length - 1] };
-        steps.forEach((val, i) => {
-            const pct = (i / (steps.length - 1)) * 100;
+        this.steps = [0.5, 0.9, 1.3, 1.8, 2.4, 3.1, 4.0, 5.1, 6.4, 8.0, 10.0, 12.5, 15.6, 19.5]
+        const range = { min: this.steps[0], max: this.steps[this.steps.length - 1] };
+        this.steps.forEach((val, i) => {
+            const pct = (i / (this.steps.length - 1)) * 100;
             range[`${pct}%`] = val;
         });
 
         this.elevationAnglesSlider = document.getElementById('elevation-angles-slider');
         noUiSlider.create(this.elevationAnglesSlider, {
-            start: [steps[0], steps[steps.length - 1]],
+            start: [this.steps[0], this.steps[this.steps.length - 1]],
+            connect: true,
+            range: range,
+            snap: true,
+            tooltips: [
+                { to: v => `${parseFloat(v).toFixed(1)}`, from: v => Number(v) },
+                { to: v => `${parseFloat(v).toFixed(1)}`, from: v => Number(v) }
+            ],
+            format: {
+                to: v=> parseFloat(v).toFixed(1),
+                from: v => Number(v)
+            }
+        });
+
+        this.elevationAnglesSlider_showRadar = document.getElementById('arbitrary-radar-show-elevation-angles-slider');
+        noUiSlider.create(this.elevationAnglesSlider_showRadar, {
+            start: [this.steps[0], this.steps[this.steps.length - 1]],
             connect: true,
             range: range,
             snap: true,
@@ -81,10 +97,12 @@ class CustomRadarLayer extends BaseRadarLayer {
 
         const towerEl = document.getElementById("dynamic-radar-site-tower-height");
         const altEl   = document.getElementById("dynamic-radar-site-max-alt");
-        //const angleEls = document.querySelectorAll("#show-elevation-angle-checkboxes input[type='checkbox']");
-
         // Build an array of actual elements, removing nulls if IDs are wrong
-        const watchFields = [towerEl, altEl, ...angleEls].filter(Boolean);
+        const watchFields = [towerEl, altEl].filter(Boolean);
+
+        this.elevationAnglesSlider_showRadar.noUiSlider.on('update', () => {
+            updateBtn.disabled = !this.hasChanges();
+        });
 
         watchFields.forEach(el => {
             el.addEventListener("input", () => {
@@ -93,13 +111,16 @@ class CustomRadarLayer extends BaseRadarLayer {
         });
 
         updateBtn.addEventListener("click", () => {
-            const siteId = parseInt(document.getElementById("dynamic-radar-site-id").value, 10);
-            const lat = parseFloat(document.getElementById("dynamic-radar-site-lat").value);
-            const lng = parseFloat(document.getElementById("dynamic-radar-site-lng").value);
+            const siteId = parseInt(document.getElementById("dynamic-radar-site-id").textContent, 10);
+            const lat = parseFloat(document.getElementById("dynamic-radar-site-lat").textContent);
+            const lng = parseFloat(document.getElementById("dynamic-radar-site-lng").textContent);
             const tower = parseFloat(document.getElementById("dynamic-radar-site-tower-height").value);
             const agl = parseFloat(document.getElementById("dynamic-radar-site-max-alt").value);
-            // const angles = [...document.querySelectorAll("#show-elevation-angle-checkboxes input:checked")]
-            //     .map(cb => parseFloat(cb.value));
+
+            const selectedRange = this.elevationAnglesSlider_showRadar.noUiSlider.get();
+            const minSelected = parseFloat(selectedRange[0]);
+            const maxSelected = parseFloat(selectedRange[1]);
+            const angles = this.steps.filter(step => step >= minSelected && step <= maxSelected);
 
             if ([tower, agl].some(v => isNaN(v)) || angles.length === 0) {
                 alert("Invalid inputs");
@@ -280,8 +301,14 @@ class CustomRadarLayer extends BaseRadarLayer {
         const lng = parseFloat(document.getElementById("radarLng").value);
         const agl = parseFloat(document.getElementById("aglThreshold-input").value);
         const tower = parseFloat(document.getElementById("towerHeight-input").value);
-        const angles = [...document.querySelectorAll('#elevation-angle-checkboxes input:checked')]
-            .map(cb => parseFloat(cb.value));
+
+        const selectedRange = this.elevationAnglesSlider.noUiSlider.get();
+        const minSelected = parseFloat(selectedRange[0]);
+        const maxSelected = parseFloat(selectedRange[1]);
+        const angles = this.steps.filter(step => step >= minSelected && step <= maxSelected);
+
+
+        console.log(lat, lng, tower, agl, angles);
 
         if ([lat, lng, agl, tower].some(v => isNaN(v)) || angles.length === 0) return null;
         return { lat, lng, agl, tower, angles };
@@ -379,17 +406,18 @@ class CustomRadarLayer extends BaseRadarLayer {
     populateDynamicRadarPanel(marker) {
         const props = marker.properties;
         
-        document.getElementById("dynamic-radar-site-id").value = props.id || "";
-        document.getElementById("dynamic-radar-site-lat").value = props.lat.toFixed(4) || "";
-        document.getElementById("dynamic-radar-site-lng").value = props.lng.toFixed(4) || "";
+        document.getElementById("dynamic-radar-site-id").textContent = props.id || "";
+        document.getElementById("dynamic-radar-site-lat").textContent = props.lat.toFixed(4) || "";
+        document.getElementById("dynamic-radar-site-lng").textContent = props.lng.toFixed(4) || "";
         document.getElementById("dynamic-radar-site-tower-height").value = props.towerHeight || "";
         document.getElementById("dynamic-radar-site-max-alt").value = props.aglThreshold || "";
 
-        // const checkboxes = document.querySelectorAll("#show-elevation-angle-checkboxes input[type='checkbox']");
-        // const selectedAngles = props.elevationAngles || [];
-        // checkboxes.forEach(cb => {
-        //     cb.checked = selectedAngles.includes(parseFloat(cb.value));
-        // });
+        const selectedAngles = props.elevationAngles || [];
+        if (selectedAngles.length > 0) {
+            const minAngle = Math.min(...selectedAngles);
+            const maxAngle = Math.max(...selectedAngles);
+            this.elevationAnglesSlider_showRadar.noUiSlider.set([minAngle, maxAngle]);
+        }
 
         // store snapshot for change detection
         this.editSnapshot = {
@@ -405,9 +433,11 @@ class CustomRadarLayer extends BaseRadarLayer {
         if (!this.editSnapshot) return false;
         const tower = parseFloat(document.getElementById("dynamic-radar-site-tower-height").value);
         const agl = parseFloat(document.getElementById("dynamic-radar-site-max-alt").value);
-        // const angles = [...document.querySelectorAll("#show-elevation-angle-checkboxes input:checked")]
-        //     .map(cb => parseFloat(cb.value))
-        //     .sort();
+
+        const selectedRange = this.elevationAnglesSlider_showRadar.noUiSlider.get();
+        const minSelected = parseFloat(selectedRange[0]);
+        const maxSelected = parseFloat(selectedRange[1]);
+        const angles = this.steps.filter(step => step >= minSelected && step <= maxSelected).sort();
 
         return (
             tower !== this.editSnapshot.towerHeight ||
