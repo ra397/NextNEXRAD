@@ -30,6 +30,11 @@ class PodLayer {
   }
 
   initUI() {
+    // Exit btn
+    document.getElementById("pod-settings-window-exit-btn").addEventListener("click", () => {
+      document.getElementById("pod-settings-window-exit-btn").parentElement.parentElement.style.display = 'none';
+    })
+
     // FETCH AND REDRAW
     // Years selection listener, updates this.settings.years live
     document.getElementById("pod-year-select").addEventListener("change", () => {

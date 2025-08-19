@@ -20,7 +20,7 @@ class UsgsLayer {
             marker_options: {
                 markerFill: "green",
                 markerStroke: "green",
-                markerSize: 3.0
+                markerSize: 3.5
             }
         });
         this.usgsSitesMarkers.reactClick = this.usgsSiteClicked.bind(this);
@@ -226,9 +226,9 @@ class UsgsLayer {
 
         if (zoom >= 8 && zoom <= 12) {
             const zoomBin = Math.floor(zoom);
-            size = Math.max(2.5, Math.min(8, 0.5 * zoomBin));
+            size = Math.max(3.5, Math.min(8, 0.5 * zoomBin));
         } else {
-            size = 3.0; // default size when zoomed out or too far in
+            size = 3.5; // default size when zoomed out or too far in
         }
 
         if (this._lastMarkerSize === size) return;

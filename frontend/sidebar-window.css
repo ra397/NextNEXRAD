@@ -135,3 +135,83 @@
     text-align: left;
     padding-left: 65px;
 }
+
+#update-existing-radar-container {
+    display: flex;
+    justify-content: center;
+}
+
+#update-existing-radar {
+    margin-bottom: 10px;
+    padding: 0.25rem 0.5rem;
+    border-radius: .75rem;
+    background-color: rgb(46, 143, 46);
+    color: white;
+    cursor: pointer;
+    outline: 1px solid green;
+}
+
+#update-existing-radar {
+    background-color: rgb(77, 168, 77);
+}
+
+#custom-radar-show-btns-container {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+
+#toggle-dynamic-radar {
+    margin: 0.25rem auto 0.85rem auto;
+    padding: 0.25rem 0.5rem;
+    border-radius: .75rem;
+    background-color: rgb(46, 143, 46);
+    color: white;
+    cursor: pointer;
+    outline: 1px solid green;
+}
+
+#update-dynamic-radar {
+    margin: 0.25rem auto 0.85rem auto;
+    padding: 0.25rem 0.5rem;
+    border-radius: .75rem;
+    background-color: #0d6efd;
+    color: white;
+    cursor: pointer;
+    outline: 1px solid #0d6efd;
+}
+
+#delete-dynamic-radar {
+    margin: 0.25rem auto 0.85rem auto;
+    padding: 0.25rem 0.5rem;
+    border-radius: .75rem;
+    background-color: rgb(177, 15, 15);
+    color: white;
+    cursor: pointer;
+    outline: 1px solid rgb(177, 15, 15);
+}
+
+#pod-btns-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+#submit-pod-layer {
+    margin: 0.25rem auto 0.85rem auto;
+    padding: 0.25rem 0.5rem;
+    border-radius: .75rem;
+    background-color: rgb(46, 143, 46);
+    color: white;
+    cursor: pointer;
+    outline: 1px solid green;
+}
+
+#clear-pod-layer {
+    margin: 0.25rem auto 0.85rem auto;
+    padding: 0.25rem 0.5rem;
+    border-radius: .75rem;
+    background-color: rgb(177, 15, 15);
+    color: white;
+    cursor: pointer;
+    outline: 1px solid rgb(177, 15, 15);
+}

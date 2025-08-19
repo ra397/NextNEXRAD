@@ -52,7 +52,7 @@
         <div id="radar-settings" class="sidebar-window">
             <div class="window-title-container">
                 <span class="window-title">Radar Settings</span>
-                <span class="window-exit">&times;</span>
+                <span class="window-exit" id="radar-settings-window-exit-btn">&times;</span>
             </div>
             <div class="window-items-container">
                 <div class="settings-label">AGL Threshold (ft):</div>
@@ -144,12 +144,16 @@
                 <div class="settings-label">
                     Tower Height (m):
                 </div>
-                <input typ="text" id="dynamic-radar-site-tower-height">
+                <div class="settings-input">
+                    <input typ="text" id="dynamic-radar-site-tower-height">
+                </div>
 
                 <div class="settings-label">
                     Max Altitude (m):
                 </div>
-                <input type="text" id="dynamic-radar-site-max-alt">
+                <div class="settings-input">
+                    <input type="text" id="dynamic-radar-site-max-alt">
+                </div>
 
                 <div class="settings-label">
                     Elevation Angle(s):
@@ -173,12 +177,13 @@
                     </div>
                 </div>
             </div>
-            <div class="settings-input-container">
+            <div id="custom-radar-show-btns-container">
                 <button id="toggle-dynamic-radar" class="settings-input">Toggle</button>
                 <button id="update-dynamic-radar" class="settings-input">Update</button>
                 <button id="delete-dynamic-radar" class="settings-input">Delete</button>
             </div>
         </div>
+
         
         <div id="existing-radar-show" class="sidebar-window">
             <div class="window-title-container">
@@ -210,13 +215,16 @@
                 <div class="settings-label">
                     Tower Height (m):
                 </div>
-                <input type="text" id="existing-radar-site-tower-height"></input>
+                <div class="settings-input">
+                    <input type="text" id="existing-radar-site-tower-height"></input>
+                </div>
 
                 <div class="settings-label">
                     Max Altitude (m):
                 </div>
-                <input type="text" id="existing-radar-site-max-alt"></input>
-
+                <div class="settings-input">
+                    <input type="text" id="existing-radar-site-max-alt"></input>
+                </div>
 
                 <div class="settings-label">
                     Elevation Angle(s):
@@ -239,7 +247,8 @@
                         <label><input type="checkbox" class="existing-range-checkbox" data-distance="230000" checked> 230 km</label>
                     </div>
                 </div>
-
+            </div>
+            <div id="update-existing-radar-container">
                 <button id="update-existing-radar">Update</button>
             </div>
         </div>
@@ -247,7 +256,7 @@
         <div id="map-control" class="sidebar-window">
             <div class="window-title-container">
                 <span class="window-title">Map Controls</span>
-                <span class="window-exit">&times;</span>
+                <span class="window-exit" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
             </div>
             <div class="window-items-container">
                 <div class="settings-label">USGS Stream Gages</div>
@@ -278,7 +287,7 @@
         <div id="pod-settings" class="sidebar-window">
             <div class="window-title-container">
                 <span class="window-title">POD</span>
-                <span class="window-exit">&times;</span>
+                <span class="window-exit" id="pod-settings-window-exit-btn">&times;</span>
             </div>
 
             <div class="window-items-container">
@@ -342,9 +351,10 @@
                     <input type="range" id="pod-opacity" min="0" max="100" value="100">
                     <div><span id="pod-opacity-value">100%</span></div>
                 </div>
-
-                <button class="settings-input" id="submit-pod-layer">Submit</button>
-                <button class="settings-input" id="clear-pod-layer">Clear</button>
+            </div>
+            <div id="pod-btns-container">
+                <button id="submit-pod-layer">Submit</button>
+                <button id="clear-pod-layer">Clear</button>
             </div>
         </div>
 

@@ -50,6 +50,10 @@ class CoveragesLayer {
         this.loadAndShowSelectedCoverage();
       }
     });
+
+    document.getElementById("radar-settings-window-exit-btn").addEventListener("click", () => {
+      document.getElementById("radar-settings-window-exit-btn").parentElement.parentElement.style.display = 'none';
+    })
   }
 
   getSelectedThreshold() {
