@@ -52,8 +52,8 @@
     padding: 2px;
 }
 
-.elevation-slider {
-    padding: 35px;
+.double-slider {
+    padding: 35px 25px 25px 25px;
 }
 
 #radar-submit-btn {
@@ -71,4 +71,67 @@
 
 #radar-submit-btn:hover {
     background-color: rgb(77, 168, 77);
+}
+
+#submit-pod-layer {
+    justify-self: right;
+
+    margin: 0.25rem auto 0.85rem 100px;
+    padding: 0.25rem 0.5rem;
+    border-radius: .75rem;
+    background-color: rgb(46, 143, 46);
+    color: white;
+    cursor: pointer;
+    outline: 1px solid green;
+}
+
+#submit-pod-layer:hover {
+    background-color: rgb(77, 168, 77);
+}
+
+#clear-pod-layer {
+    justify-self: left;
+
+    margin: 0.25rem auto 0.85rem auto;
+    padding: 0.25rem 0.5rem;
+    border-radius: .75rem;
+    background-color: rgb(177, 15, 15);
+    color: white;
+    cursor: pointer;
+    outline: 1px solid green;
+}
+
+#clear-pod-layer:hover {
+    background-color: rgb(255,0, 0);
+}
+
+.pop-settings-container {
+  display: grid;
+  grid-template-columns: 75px 250px 25px; /* label small, input expands, button auto */
+  align-items: center;
+  width: 100%;
+}
+
+.pop-settings-container .settings-label {
+  text-align: center; /* center label text */
+}
+
+.pop-settings-container .settings-input {
+  width: 250px;
+}
+
+.pop-settings-container #clear-pop-layer {
+  justify-self: end;
+  cursor: pointer;
+  white-space: nowrap;
+  padding: 15px;
+}
+
+#pod-year-select {
+    width: 100px;
+}
+
+.pod-color-palette {
+    text-align: left;
+    padding-left: 65px;
 }

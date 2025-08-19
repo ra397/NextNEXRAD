@@ -94,8 +94,8 @@ class ExistingRadarLayer extends BaseRadarLayer {
         const lng = parseFloat(document.getElementById("existing-radar-site-lng").value);
         const agl = parseFloat(document.getElementById("existing-radar-site-max-alt").value);
         const tower = parseFloat(document.getElementById("existing-radar-site-tower-height").value);
-        const angles = [...document.querySelectorAll('#existing-elevation-angle-checkboxes input:checked')]
-            .map(cb => parseFloat(cb.value));
+        // const angles = [...document.querySelectorAll('#existing-elevation-angle-checkboxes input:checked')]
+        //     .map(cb => parseFloat(cb.value));
 
         if ([lat, lng, agl, tower].some(v => isNaN(v)) || angles.length === 0) return null;
         return { lat, lng, agl, tower, angles };
@@ -144,23 +144,23 @@ class ExistingRadarLayer extends BaseRadarLayer {
 
         const aglThreshold = this.getCurrentThresholdInMeters();
 
-        document.getElementById("existing-radar-site-id").value = props.id || "";
-        document.getElementById("existing-radar-site-name").value = props.name || "";
-        document.getElementById("existing-radar-site-lat").value = props.lat || "";
-        document.getElementById("existing-radar-site-lng").value = props.lng || "";
-        document.getElementById("existing-radar-site-tower-height").value = ft2m(props.tower_ft) || "";
-        document.getElementById("existing-radar-site-max-alt").value = aglThreshold || "";
+        document.getElementById("existing-radar-site-id").textContent = props.id || "";
+        document.getElementById("existing-radar-site-name").textContent = props.name || "";
+        document.getElementById("existing-radar-site-lat").textContent = props.lat || "";
+        document.getElementById("existing-radar-site-lng").textContent = props.lng || "";
+        document.getElementById("existing-radar-site-tower-height").textContent = ft2m(props.tower_ft) || "";
+        document.getElementById("existing-radar-site-max-alt").textContent = aglThreshold || "";
 
-        const checkboxes = document.querySelectorAll("#existing-elevation-angle-checkboxes input[type='checkbox']");
-        const selectedAngles = props.elevationAngles || [];
-        checkboxes.forEach(cb => {
-            cb.checked = selectedAngles.includes(parseFloat(cb.value));
-        });
+        // const checkboxes = document.querySelectorAll("#existing-elevation-angle-checkboxes input[type='checkbox']");
+        // const selectedAngles = props.elevationAngles || [];
+        // checkboxes.forEach(cb => {
+        //     cb.checked = selectedAngles.includes(parseFloat(cb.value));
+        // });
 
         this.editSnapshot = {
             towerHeight: ft2m(props.tower_ft),
             aglThreshold: aglThreshold,
-            elevationAngles: [...selectedAngles].sort()
+            //elevationAngles: [...selectedAngles].sort()
         }
 
         document.getElementById("update-existing-radar").disabled = true;
@@ -181,9 +181,9 @@ class ExistingRadarLayer extends BaseRadarLayer {
         if (!this.editSnapshot) return false;
         const tower = parseFloat(document.getElementById("existing-radar-site-tower-height").value);
         const agl = parseFloat(document.getElementById("existing-radar-site-max-alt").value);
-        const angles = [...document.querySelectorAll("#existing-elevation-angle-checkboxes input:checked")]
-            .map(cb => parseFloat(cb.value))
-            .sort();
+        // const angles = [...document.querySelectorAll("#existing-elevation-angle-checkboxes input:checked")]
+        //     .map(cb => parseFloat(cb.value))
+        //     .sort();
 
         return (
             tower != this.editSnapshot.towerHeight ||
