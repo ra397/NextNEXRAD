@@ -76,6 +76,7 @@ class CustomRadarLayer extends BaseRadarLayer {
 
             // Highlight newly created marker
             this.markers.highlightMarker(marker);
+            this.handleMarkerClick(null, marker);
         });
 
         // Toggle
@@ -126,6 +127,8 @@ class CustomRadarLayer extends BaseRadarLayer {
                 alert("Invalid inputs");
                 return;
             }
+
+            document.getElementById("dynamic-radar-range-checkbox").checked = false;
 
             this.updateRadar(siteId, { lat, lng, aglThreshold: agl, towerHeight: tower, elevationAngles: angles });
             updateBtn.disabled = true;

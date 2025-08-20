@@ -63,8 +63,10 @@ class ExistingRadarLayer extends BaseRadarLayer {
         });
 
         updateBtn.addEventListener("click", () => {
-            // Gather data
-            console.log(this.readForm());
+            const currentSiteId = document.getElementById("existing-radar-site-id").textContent;
+            
+            this.removeRangeRings(currentSiteId, true); // Remove rings and update state
+            this.cleanupSiteState(currentSiteId); // Clean up the state tracking
 
             const marker = this.customRadarHelper.addCustomMarker(this.readForm());
             setTimeout(() => {
@@ -76,6 +78,7 @@ class ExistingRadarLayer extends BaseRadarLayer {
 
             this.customRadarHelper.populateDynamicRadarPanel(marker);
             toggleWindow('arbitrary-radar-show');
+            this.customRadarHelper.handleMarkerClick(null, marker);
         });
 
 
