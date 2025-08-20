@@ -20,6 +20,7 @@ async function initMap() {
   map = new google.maps.Map(document.getElementById("map"), {
     zoom: window.constants.map.defaultZoom,
     center: window.constants.map.centerUSA,
+    gestureHandling: "greedy",
     minZoom: 5,
     maxZoom: 12,
     fullscreenControl: false,
