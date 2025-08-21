@@ -236,6 +236,11 @@ class UsgsLayer {
 
         this.usgsSitesMarkers.updateIcons({ markerSize: size });
     }
+
+    reset() {
+        this.hideUsgsSites();
+        document.getElementById("usgsSites-checkbox").checked = false;
+    }
 }
 
 window.UsgsLayer = UsgsLayer;

@@ -111,7 +111,7 @@ document.getElementById("usgsSites-checkbox").addEventListener("change", functio
 
 function reset() {
   customRadarLayer.reset();
-  usgsLayer.hideUsgsSites();
+  usgsLayer.reset();
   podLayer.reset();
   populationLayer.clear();
   coveragesLayer.reset();
