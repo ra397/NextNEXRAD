@@ -1,0 +1,31 @@
+.noUi-connect {
+    background: transparent;
+}
+
+.noUi-tooltip {
+    border: none;
+    bottom: 80% !important;
+    background: transparent;
+}
+
+.noUi-handle {
+    cursor: pointer;
+
+    width: 24px !important;    /* Default is usually 28px */
+    height: 24px !important;   /* Default is usually 28px */
+    border: none !important;
+    background: none !important;
+    outline: none !important;
+}
+
+.noUi-touch-area {
+    border-radius: 50%;
+    background: green;
+
+    border: 1px solid black;
+}
+
+.noUi-handle:before,
+.noUi-handle:after {
+    display: none !important;
+}
