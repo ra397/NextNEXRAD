@@ -58,17 +58,6 @@ async function initMap() {
   })
 }
 
-// Toggle the visibility of a sidebar window
-function toggleWindow(id) {
-  // Close other windows
-  document.querySelectorAll('.sidebar-window').forEach(w => {
-    if (w.id !== id) w.style.display = 'none';
-  });
-
-  const el = document.getElementById(id);
-  el.style.display = (el.style.display === 'block') ? 'none' : 'block';
-}
-
 // Given an html input element, get the value
 // Returns value if value is valid, null otherwise
 function getInput(input) {
