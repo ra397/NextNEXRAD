@@ -63,5 +63,10 @@ class RiverNetworkLayer {
         if (this.tileLayer) {
             this.tileLayer.hide();
         }
-    }   
+    }
+
+    reset() {
+        this.hide();
+        document.getElementById("riverNetwork-checkbox").checked = false;
+    }
 }

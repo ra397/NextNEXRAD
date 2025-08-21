@@ -108,3 +108,30 @@ document.getElementById("usgsSites-checkbox").addEventListener("change", functio
     usgsLayer.hideUsgsSites();
   }
 });
+
+function reset() {
+  customRadarLayer.reset();
+  usgsLayer.hideUsgsSites();
+  podLayer.reset();
+  populationLayer.clear();
+  coveragesLayer.reset();
+  riverLayer.reset();
+  closeAllWindows();
+}
+
+function closeAllWindows() {
+  const windows = [
+    'arbitrary-radar',
+    'arbitrary-radar-show', 
+    'existing-radar-show',
+    'pod-settings',
+    'radar-settings',
+    'map-control'
+  ];
+  windows.forEach(windowId => {
+    const window = document.getElementById(windowId);
+    if (window) {
+      window.style.display = 'none';
+    }
+  });
+}

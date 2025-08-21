@@ -207,6 +207,38 @@ class PodLayer {
     this.di.setRange(this.settings.vmin / 100, this.settings.vmax / 100);
     this.di.setColors(this.settings.palette, window.constants.pod.POD_COLORS[this.settings.palette]);
   }
+
+  reset() {
+    if (this.podOverlay) {
+      this.podOverlay.remove();
+      this.podOverlay = null;
+    }
+    // Reset POD settings to defaults
+    podLayer.settings = {
+      years: [],
+      season: "All",
+      stops: 32,
+      vmin: 0,
+      vmax: 50,
+      palette: 'Spectral',
+      opacity: 1.0
+    };
+    // Reset POD form controls
+    document.getElementById("pod-year-select").selectedIndex = -1;
+    document.getElementById("pod-season-select").value = "All";
+    document.getElementById("pod-color-count").value = "32";
+    document.getElementById("pod-opacity").value = "100";
+    document.getElementById("pod-opacity-value").textContent = "100%";
+    document.getElementById("selected-years-display").innerHTML = '';
+    // Reset POD range slider
+    if (podLayer.podRangeSlider?.noUiSlider) {
+      podLayer.podRangeSlider.noUiSlider.set([0, 50]);
+    }
+    // Reset palette radio buttons
+    document.querySelectorAll('input[name="palette"]').forEach(radio => {
+      radio.checked = radio.value === 'Spectral';
+    });
+  }
 };
 
 window.PodLayer = PodLayer;

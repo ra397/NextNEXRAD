@@ -90,6 +90,17 @@ class CoveragesLayer {
       this.map.overlayMapTypes.removeAt(this.tileLayerIndex);
     }
   }
+
+  reset() {
+    coveragesLayer.clear();
+    // Reset coverage controls
+    document.getElementById("show-all-coverage-checkbox").checked = false;
+    // Reset threshold range slider to first position (3k)
+    const thresholdSlider = document.querySelector('input[type="range"]');
+    if (thresholdSlider) {
+      thresholdSlider.value = "0";
+    }
+  }
 }
 
 window.CoveragesLayer = CoveragesLayer;

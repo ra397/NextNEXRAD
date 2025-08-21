@@ -16,6 +16,7 @@
     --icon-add-radar:   url(./public/icons/nexrad-gry-build.svg);
     --icon-cloud:       url(./public/icons/rain-heavy-svgrepo-com.svg);
     --icon-control:     url(./public/icons/map-control.svg);
+    --icon-reset:       url(./public/icons/reset.svg);
     --icon-info:        url(./public/icons/info.svg);
     width: 4rem;
     height: 4rem;
@@ -34,6 +35,10 @@
     outline-offset: -2px;
     outline-color: #499b37;
     transition: all 0.23s ease-in-out;
+}
+
+.sidebar-icon.reset:hover {
+    outline-color: red;
 }
 
 .sidebar-icon.active {
@@ -73,6 +78,11 @@
 
 .sidebar-icon.control{
     background-image: var(--icon-control);
+    background-size: 60%;
+}
+
+.sidebar-icon.reset{
+    background-image: var(--icon-reset);
     background-size: 60%;
 }
 

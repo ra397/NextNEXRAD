@@ -453,6 +453,38 @@ class CustomRadarLayer extends BaseRadarLayer {
         super.removeOverlay(siteId);
         this.markers.deleteMarker(siteId);
     }
+
+    reset() {
+        // remove all markers and overlays
+        for (const siteId in this.overlays) {
+            this.removeOverlay(siteId);
+        }
+
+        // Reset form inputs for custom radar
+        document.getElementById("radarLat").value = '';
+        document.getElementById("radarLng").value = '';
+        document.getElementById("aglThreshold-input").value = '';
+        document.getElementById("towerHeight-input").value = '';
+        // Reset elevation angles slider to full range
+        if (this.elevationAnglesSlider?.noUiSlider) {
+        const steps = this.steps;
+        this.elevationAnglesSlider.noUiSlider.set([steps[0], steps[steps.length - 1]]);
+        }
+        if (this.elevationAnglesSlider_showRadar?.noUiSlider) {
+        const steps = this.steps;
+        this.elevationAnglesSlider_showRadar.noUiSlider.set([steps[0], steps[steps.length - 1]]);
+        }
+        // Cancel any location selection mode
+        if (customRadarLayer.isSelectingLocation) {
+        this.cancelLocationSelection();
+        }
+        // Delete temporary marker
+        this.markers.deleteMarker("temp");
+        // Unhighlight all markers
+        this.markers.unhighlightMarkers();
+        // Reset counter
+        this.idCounter = 0;
+    }
 }
 
 window.CustomRadarLayer = CustomRadarLayer;
