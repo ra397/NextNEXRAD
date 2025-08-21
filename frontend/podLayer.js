@@ -39,11 +39,7 @@ class PodLayer {
     // Years selection listener, updates this.settings.years live
     document.getElementById("pod-year-select").addEventListener("change", () => {
       this.settings.years = this.getSelectedYears();
-      // Update selected years display
-      const yearTags = this.getSelectedYears().map(year => 
-          `<span class="year-tag">${year}</span>`
-      ).join('');
-      document.getElementById("selected-years-display").innerHTML = `<div class="year-tags">${yearTags}</div>`;
+      this.updateSelectedYearsDisplay();
     });
 
     // Sesaon selection listener, updates this.settings.season live
@@ -102,6 +98,38 @@ class PodLayer {
     return [...selectElement.selectedOptions].map(option => option.value);
   }
 
+  updateSelectedYearsDisplay() {
+    const yearTags = this.settings.years.map(year => 
+        `<span class="year-tag" data-year="${year}">${year} <span class="year-tag-close">×</span></span>`
+    ).join('');
+    document.getElementById("selected-years-display").innerHTML = `<div class="year-tags">${yearTags}</div>`;
+    
+    // Add click event listeners to the close buttons
+    document.querySelectorAll('.year-tag-close').forEach(closeBtn => {
+      closeBtn.addEventListener('click', (event) => {
+        event.stopPropagation(); // Prevent event bubbling
+        const yearTag = event.target.parentElement;
+        const yearToRemove = yearTag.dataset.year;
+        this.removeYear(yearToRemove);
+      });
+    });
+  }
+
+  removeYear(yearToRemove) {
+    // Remove from settings
+    this.settings.years = this.settings.years.filter(year => year !== yearToRemove);
+    
+    // Update the select element to reflect the change
+    const selectElement = document.getElementById('pod-year-select');
+    const optionToDeselect = selectElement.querySelector(`option[value="${yearToRemove}"]`);
+    if (optionToDeselect) {
+      optionToDeselect.selected = false;
+    }
+    
+    // Update the display
+    this.updateSelectedYearsDisplay();
+  }
+
   getSeasonDates(years, season) {
       const output = [];
       
@@ -141,6 +169,8 @@ class PodLayer {
       "method": "aggregate",
       "datetime": dateRanges
     };
+
+    console.log("Sending request to POD server: ", payload);
 
     const response = await fetch(url, {
       method: "POST",

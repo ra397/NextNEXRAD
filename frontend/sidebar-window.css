@@ -219,3 +219,7 @@
 #pod-opacity {
     width: 100%;
 }
+
+.year-tag-close {
+    cursor: pointer;
+}
