@@ -6,7 +6,9 @@ class BaseRadarLayer {
         this.rings = {}; // siteId -> array of circle overlays
         this.markerOptions = markerOptions;
         this.currentSiteId = null; // track which site's panel is currently open
-        this.rangeRingStates = {}; // siteId -> {masterChecked: boolean, distances: []}
+        this.rangeRingStates = {}; // siteId -> {sliderValue: number}
+        this.rangeDistances = [0, 50000, 100000, 150000, 200000, 230000]; // slider index -> distance in meters
+        this.rangeLabels = ['None', '50', '100', '150', '200', '230']; // slider index -> label
     }
 
     async initMarkers() {
@@ -14,78 +16,72 @@ class BaseRadarLayer {
         this.markers.reactClick = this.onMarkerClick.bind(this);
     }
 
-    // Initialize range ring controls for a specific site's panel
-    initSiteRangeRingControls(siteId, masterCheckboxId, rangeCheckboxClass) {
+    // Initialize range ring slider controls for a specific site's panel
+    initSiteRangeRingControls(siteId, rangeSliderId) {
         this.currentSiteId = siteId;
         
         // Get or create state for this site
         if (!this.rangeRingStates[siteId]) {
             this.rangeRingStates[siteId] = {
-                masterChecked: false,
-                distances: [50000, 100000, 150000, 200000, 230000] // default checked distances
+                sliderValue: 0 // Default to "None"
             };
         }
         
         const state = this.rangeRingStates[siteId];
         
-        const masterCheckbox = document.getElementById(masterCheckboxId);
-        const rangeCheckboxes = document.querySelectorAll(`.${rangeCheckboxClass}`);
+        const rangeSlider = document.getElementById(rangeSliderId);
 
-        // Set master checkbox based on saved state
-        if (masterCheckbox) {
-            masterCheckbox.checked = state.masterChecked;
-            // Remove old event listeners by cloning the element
-            const newMasterCheckbox = masterCheckbox.cloneNode(true);
-            masterCheckbox.parentNode.replaceChild(newMasterCheckbox, masterCheckbox);
-            
-            newMasterCheckbox.addEventListener('change', () => {
-                this.updateSiteRangeRings(siteId, masterCheckboxId, rangeCheckboxClass);
-            });
-        }
-
-        // Set distance checkboxes based on saved state
-        rangeCheckboxes.forEach(checkbox => {
-            const distance = parseInt(checkbox.dataset.distance, 10);
-            checkbox.checked = state.distances.includes(distance);
-            // Remove old event listeners by cloning the element
-            const newCheckbox = checkbox.cloneNode(true);
-            checkbox.parentNode.replaceChild(newCheckbox, checkbox);
-            
-            newCheckbox.addEventListener('change', () => {
-                this.updateSiteRangeRings(siteId, masterCheckboxId, rangeCheckboxClass);
-            });
-        });
-    }
-
-    updateSiteRangeRings(siteId, masterCheckboxId, rangeCheckboxClass) {
-        // Remove existing rings for this site (but don't update state yet)
-        this.removeRangeRings(siteId, false);
-
-        // Save current state first
-        const masterCheckbox = document.getElementById(masterCheckboxId);
-        const rangeCheckboxes = document.querySelectorAll(`.${rangeCheckboxClass}:checked`);
-        
-        this.rangeRingStates[siteId] = {
-            masterChecked: masterCheckbox ? masterCheckbox.checked : false,
-            distances: Array.from(rangeCheckboxes).map(cb => parseInt(cb.dataset.distance, 10))
-        };
-
-        // Check if master checkbox is enabled
-        if (!masterCheckbox || !masterCheckbox.checked) {
+        if (!rangeSlider) {
+            console.warn(`Range slider element not found: ${rangeSliderId}`);
             return;
         }
 
-        // Get marker position (don't require overlay to be visible)
+        // Set slider based on saved state
+        rangeSlider.value = state.sliderValue;
+
+        // Remove old event listeners by cloning the element
+        const newRangeSlider = rangeSlider.cloneNode(true);
+        rangeSlider.parentNode.replaceChild(newRangeSlider, rangeSlider);
+        
+        // Add new event listener
+        newRangeSlider.addEventListener('input', () => {
+            this.updateSiteRangeRings(siteId, rangeSliderId);
+        });
+    }
+
+    updateSiteRangeRings(siteId, rangeSliderId) {
+        // Remove existing rings for this site
+        this.removeRangeRings(siteId, false);
+
+        // Get current slider value
+        const rangeSlider = document.getElementById(rangeSliderId);
+        
+        if (!rangeSlider) {
+            return;
+        }
+
+        const sliderValue = parseInt(rangeSlider.value, 10);
+        
+        // Save current state
+        this.rangeRingStates[siteId] = {
+            sliderValue: sliderValue
+        };
+
+        // If slider is at "None" (0), don't show any rings
+        if (sliderValue === 0) {
+            return;
+        }
+
+        // Get marker position
         const marker = this.markers.getMarker(siteId);
         if (!marker) {
             return;
         }
 
-        // Create rings for checked distances
+        // Create rings for all distances up to the selected value
         const rings = [];
-
-        rangeCheckboxes.forEach(checkbox => {
-            const distance = parseInt(checkbox.dataset.distance, 10);
+        for (let i = 1; i <= sliderValue; i++) {
+            const distance = this.rangeDistances[i];
             const circle = new google.maps.Circle({
                 strokeColor: '#000000ff',
                 strokeOpacity: 0.5,
@@ -97,7 +93,7 @@ class BaseRadarLayer {
                 clickable: false,
             });
             rings.push(circle);
-        });
+        }
 
         this.rings[siteId] = rings;
     }
@@ -128,7 +124,7 @@ class BaseRadarLayer {
         
         // Only update state if explicitly requested
         if (updateState && this.rangeRingStates[siteId]) {
-            this.rangeRingStates[siteId].masterChecked = false;
+            this.rangeRingStates[siteId].sliderValue = 0;
         }
     }
 
@@ -148,7 +144,7 @@ class BaseRadarLayer {
 
     addOverlay(siteId, overlay) {
         this.overlays[siteId] = overlay;
-        // Don't automatically show rings - wait for user to enable them in the panel
+        // Don't automatically show rings - wait for user to enable them via slider
     }
 
     removeOverlay(siteId) {
@@ -164,6 +160,13 @@ class BaseRadarLayer {
     cleanupSiteState(siteId) {
         delete this.rangeRingStates[siteId];
         this.removeRangeRings(siteId);
+    }
+
+    // Helper method to get the current range setting for a site (for debugging/status)
+    getCurrentRangeSetting(siteId) {
+        const state = this.rangeRingStates[siteId];
+        if (!state) return 'None';
+        return this.rangeLabels[state.sliderValue];
     }
 
     // Subclasses implement how to get overlay for a given marker/site

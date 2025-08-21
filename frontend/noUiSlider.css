@@ -1,5 +1,5 @@
 .noUi-connect {
-    background: transparent;
+    background: lightgrey;
 }
 
 .noUi-tooltip {
@@ -21,8 +21,6 @@
 .noUi-touch-area {
     border-radius: 50%;
     background: green;
-
-    border: 1px solid black;
 }
 
 .noUi-handle:before,

@@ -128,7 +128,7 @@ class CustomRadarLayer extends BaseRadarLayer {
                 return;
             }
 
-            document.getElementById("dynamic-radar-range-checkbox").checked = false;
+            document.getElementById("dynamic-radar-range-slider").value = 0;
 
             this.updateRadar(siteId, { lat, lng, aglThreshold: agl, towerHeight: tower, elevationAngles: angles });
             updateBtn.disabled = true;
@@ -401,8 +401,7 @@ class CustomRadarLayer extends BaseRadarLayer {
         // Initialize range ring controls for this site
         this.initSiteRangeRingControls(
             marker.properties.id, 
-            'dynamic-radar-range-checkbox', 
-            'dynamic-range-checkbox'
+            'dynamic-radar-range-slider', 
         );
     }
 

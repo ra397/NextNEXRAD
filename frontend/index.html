@@ -9,6 +9,7 @@
         <link rel="stylesheet" href="sidebar.css">
         <link rel="stylesheet" href="sidebar-window.css">
         <link rel="stylesheet" href="toggle-switch.css">
+        <link rel="stylesheet" href="slider.css">
 
         <!-- Proj4js for reprojection -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.8.1/proj4.js"></script>
@@ -58,7 +59,7 @@
             <div class="window-items-container">
                 <div class="settings-label">AGL Threshold (ft):</div>
                 <div class="settings-input">
-                    <input id="threshold-range-slider" type="range" min="0" max="2" value="0" style="width: 90%;margin-left: 5%;"/>
+                    <input id="threshold-range-slider" class="styled-range-slider" type="range" min="0" max="2" value="0"/>
                     <div class="tick-labels">
                         <span>3K</span>
                         <span>&nbsp;6K</span>
@@ -167,14 +168,14 @@
 
                 <span class="settings-label">Radar Range Rings (km)</span>
                 <div class="settings-input">
-                    <input type="checkbox" id="dynamic-radar-range-checkbox">
-                    <label for="dynamic-radar-range-checkbox">Show Range Rings</label>
-                    <div style="margin-left: 1em; margin-top: 0.25em;">
-                        <label><input type="checkbox" class="dynamic-range-checkbox" data-distance="50000" checked> 50</label><br>
-                        <label><input type="checkbox" class="dynamic-range-checkbox" data-distance="100000" checked> 100</label><br>
-                        <label><input type="checkbox" class="dynamic-range-checkbox" data-distance="150000" checked> 150</label><br>
-                        <label><input type="checkbox" class="dynamic-range-checkbox" data-distance="200000" checked> 200</label><br>
-                        <label><input type="checkbox" class="dynamic-range-checkbox" data-distance="230000" checked> 230</label>
+                    <input type="range" class="styled-range-slider" id="dynamic-radar-range-slider" min="0" max="5" value="0" step="1">
+                    <div class="range-slider-labels">
+                        <span>None</span>
+                        <span>50</span>
+                        <span>100</span>
+                        <span>150</span>
+                        <span>200</span>
+                        <span>230</span>
                     </div>
                 </div>
             </div>
@@ -238,14 +239,14 @@
 
                 <span class="settings-label">Radar Range Rings (km)</span>
                 <div class="settings-input">
-                    <input type="checkbox" id="existing-radar-range-checkbox">
-                    <label for="existing-radar-range-checkbox">Show Range Rings</label>
-                    <div style="margin-left: 1em; margin-top: 0.25em;">
-                        <label><input type="checkbox" class="existing-range-checkbox" data-distance="50000" checked> 50</label><br>
-                        <label><input type="checkbox" class="existing-range-checkbox" data-distance="100000" checked> 100</label><br>
-                        <label><input type="checkbox" class="existing-range-checkbox" data-distance="150000" checked> 150</label><br>
-                        <label><input type="checkbox" class="existing-range-checkbox" data-distance="200000" checked> 200</label><br>
-                        <label><input type="checkbox" class="existing-range-checkbox" data-distance="230000" checked> 230</label>
+                    <input type="range" class="styled-range-slider" id="existing-radar-range-slider" min="0" max="5" value="0" step="1">
+                    <div class="range-slider-labels">
+                        <span>None</span>
+                        <span>50</span>
+                        <span>100</span>
+                        <span>150</span>
+                        <span>200</span>
+                        <span>230</span>
                     </div>
                 </div>
             </div>
@@ -277,7 +278,7 @@
                 <div class="pop-settings-container">
                     <div class="settings-label">Population Threshold</div>
                     <div class="settings-input">
-                        <input type="range" id="popThreshold-slider" min="0" max="25000" value="7500" step="25"><br>
+                        <input type="range" class="styled-range-slider" id="popThreshold-slider" min="0" max="25000" value="7500" step="25"><br>
                         <span id="popThreshold-value">7,500 people / 25 km²</span>
                     </div>
                     <span id="clear-pop-layer">🔄</span>
@@ -349,7 +350,7 @@
 
                 <span class="settings-label">Opacity</span>
                 <div class="settings-input">
-                    <input type="range" id="pod-opacity" min="0" max="100" value="100">
+                    <input type="range" class="styled-range-slider" id="pod-opacity" min="0" max="100" value="100">
                     <div><span id="pod-opacity-value">100%</span></div>
                 </div>
             </div>

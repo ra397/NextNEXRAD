@@ -112,7 +112,7 @@ select option {
   image-rendering: pixelated;
 }
 
-.tick-labels {
+.tick-labels, .range-slider-labels {
     display: flex;
     justify-content: space-between;
     margin: 0;

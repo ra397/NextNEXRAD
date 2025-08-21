@@ -215,3 +215,7 @@
     cursor: pointer;
     outline: 1px solid rgb(177, 15, 15);
 }
+
+#pod-opacity {
+    width: 100%;
+}

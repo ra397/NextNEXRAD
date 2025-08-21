@@ -166,8 +166,7 @@ class ExistingRadarLayer extends BaseRadarLayer {
         // Initialize range ring controls for this site
         this.initSiteRangeRingControls(
             marker.properties.id, 
-            'existing-radar-range-checkbox', 
-            'existing-range-checkbox'
+            'existing-radar-range-slider', 
         );
     }
 
