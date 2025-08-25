@@ -10,8 +10,9 @@ from PIL import Image
 import numpy as np
 from io import BytesIO
 import base64
+from recolor import COLOR_MAP
 
-def get_blockage(easting, northing, elevation_angles_deg=None, tower_m=None, agl_threshold_m=None):
+def get_blockage(easting, northing, elevation_angles_deg=None, tower_m=None, agl_threshold_m=None, color='green'):
     if elevation_angles_deg is None:
         elevation_angles_deg = VCP12
     if tower_m is None:
@@ -55,8 +56,12 @@ def get_blockage(easting, northing, elevation_angles_deg=None, tower_m=None, agl
 
     height, width = array.shape
     rgba = np.zeros((height, width, 4), dtype=np.uint8)
-    rgba[..., 0] = 255  # Red
-    rgba[..., 3] = np.where(array == 1, 255, 0)  # Alpha
+    # Apply user-specified color
+    r, g, b = COLOR_MAP[color]
+    rgba[..., 0] = np.where(array == 1, r, 0)  # Red channel
+    rgba[..., 1] = np.where(array == 1, g, 0)  # Green channel
+    rgba[..., 2] = np.where(array == 1, b, 0)  # Blue channel
+    rgba[..., 3] = np.where(array == 1, 255, 0)
 
     img = Image.fromarray(rgba, mode="RGBA")
     buf = BytesIO()

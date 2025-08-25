@@ -1,4 +1,4 @@
-const server = window._env_prod.SERVER_URL;
+const server = window._env_dev.SERVER_URL;
 
 let map;
 

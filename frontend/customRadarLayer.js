@@ -337,7 +337,8 @@ class CustomRadarLayer extends BaseRadarLayer {
         const body = {
             easting: x5070, northing: y5070,
             max_alt_m: p.aglThreshold, tower_m: p.towerHeight,
-            elevation_angles: p.elevationAngles
+            elevation_angles: p.elevationAngles,
+            color: "purple"
         };
 
         const res = await fetch(`${this.serverUrl}/calculate_blockage`, {

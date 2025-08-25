@@ -67,17 +67,27 @@ class CoveragesLayer {
     console.log(this.currentThreshold);
 
     this.clear();
+    this.map.overlayMapTypes.clear();
 
     if (!this.tileLayers[threshold]) {
       this.tileLayers[threshold] = new google.maps.ImageMapType({
         getTileUrl: (coord, zoom) => {
-          return `public/data/nexrad_coverages/${threshold}/${zoom}/${coord.x}/${coord.y}.png`;
+          // Call backend instead of direct file access
+          const params = new URLSearchParams({
+            layer_threshold: threshold,
+            z: zoom,
+            x: coord.x,
+            y: coord.y,
+            color: 'green',
+          });
+          
+          return `${ window._env_dev.SERVER_URL}/tiles?${params.toString()}`;
         },
         tileSize: new google.maps.Size(256, 256),
         maxZoom: 12,
         minZoom: 5,
         name: threshold,
-        opacity: 0.4
+        opacity: 0.7
       });
     }
 
@@ -92,7 +102,7 @@ class CoveragesLayer {
   }
 
   reset() {
-    coveragesLayer.clear();
+    this.clear();
     // Reset coverage controls
     document.getElementById("show-all-coverage-checkbox").checked = false;
     // Reset threshold range slider to first position (3k)
