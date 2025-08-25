@@ -17,6 +17,7 @@
     --icon-cloud:       url(./public/icons/rain-heavy-svgrepo-com.svg);
     --icon-control:     url(./public/icons/map-control.svg);
     --icon-reset:       url(./public/icons/reset.svg);
+    --icon-settings:    url(./public/icons/settings.svg);
     --icon-info:        url(./public/icons/info.svg);
     width: 4rem;
     height: 4rem;
@@ -71,11 +72,6 @@
     background-size: 60%;
 }
 
-.sidebar-icon.setting{
-    background-image: var(--icon-setting);
-    background-size: 60%;
-}
-
 .sidebar-icon.control{
     background-image: var(--icon-control);
     background-size: 60%;
@@ -89,4 +85,8 @@
 .sidebar-icon.info{
     background-image: var(--icon-info);
     background-size: 60%;
+}
+
+.sidebar-icon.settings {
+    background-image: var(--icon-settings);
 }

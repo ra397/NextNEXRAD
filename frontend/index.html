@@ -50,6 +50,7 @@
             <div class="sidebar-icon add-radar" onclick="toggleWindow('arbitrary-radar')" data-target="arbitrary-radar"></div>
             <div class="sidebar-icon cloud" onclick="toggleWindow('pod-settings')" data-target="pod-settings"></div>
             <div class="sidebar-icon control" onclick="toggleWindow('map-control')" data-target="usgs-settings"></div>
+            <div class="sidebar-icon settings" onclick="toggleWindow('settings-window')" data-target="settings-window"></div>
             <div class="sidebar-icon reset" onclick="reset()"></div>
             <!-- <div class="sidebar-icon info" onclick="toggleWindow('information')" data-target="information"></div> -->
         </div>
@@ -373,6 +374,22 @@
             </div>
         </div>
 
+        <div id="settings-window" class="sidebar-window">
+            <div class="window-title-container">
+                <span class="window-title">Settings</span>
+                <span class="window-exit">&times;</span>
+            </div>
+            <div class="window-items-container">
+                <div class="settings-label">Radar Coverage Color</div>
+                <div class="settings-input">
+                    <span class="color-option" data-color="green" style="background-color: rgb(82, 182, 82);"></span>
+                    <span class="color-option" data-color="purple" style="background-color: rgb(82, 82, 182);"></span>
+                    <span class="color-option" data-color="gray" style="background-color: rgb(172, 172, 172);"></span>
+                    <span class="color-option" data-color="yellow" style="background-color: rgb(255, 222, 32);"></span>
+                </div>
+            </div>
+        </div>
+
         <!-- <div id="information" class="sidebar-window">
             <div class="window-title-container">
                 <h3>Information</h3>
@@ -406,6 +423,7 @@
         <script src="riverNetworkLayer.js"></script>
         <script src="draggable.js"></script>
         <script src="podLegend.js"></script>
+        <script src="settings.js"></script>
         <script src="map.js"></script>
         <script>
             window.onload = function () {

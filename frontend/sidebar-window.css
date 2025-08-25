@@ -223,3 +223,23 @@
 .year-tag-close {
     cursor: pointer;
 }
+
+.color-option {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin: 0 5px;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: border-color 0.2s ease;
+}
+
+.color-option:hover {
+    border-color: #ffffff;
+}
+
+.color-option.selected {
+    border-color: #000000;
+    border-width: 3px;
+}

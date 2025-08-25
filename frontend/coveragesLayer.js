@@ -78,7 +78,7 @@ class CoveragesLayer {
             z: zoom,
             x: coord.x,
             y: coord.y,
-            color: 'green',
+            color: window.overlay_color,
           });
           
           return `${ window._env_dev.SERVER_URL}/tiles?${params.toString()}`;

@@ -46,6 +46,7 @@ async function initMap() {
 
   coveragesLayer = new CoveragesLayer(map);
   coveragesLayer.initUI();
+  window.coveragesLayer = coveragesLayer; // So i can access this variable in settings.js
 
   riverLayer = new RiverNetworkLayer(map);
   riverLayer.initUI();
