@@ -11,6 +11,7 @@
         <link rel="stylesheet" href="toggle-switch.css">
         <link rel="stylesheet" href="slider.css">
         <link rel="stylesheet" href="drag.css">
+        <link rel="stylesheet" href="podLegend.css">
 
         <!-- Proj4js for reprojection -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.8.1/proj4.js"></script>
@@ -362,6 +363,16 @@
             </div>
         </div>
 
+        <div id="pod-legend-window">
+            <div id="pod-legend-container">
+
+            </div>
+            <div id="pod-legend-label-container">
+                <span id="pod-legend-min">0</span>
+                <span id="pod-legend-max">50</span>
+            </div>
+        </div>
+
         <!-- <div id="information" class="sidebar-window">
             <div class="window-title-container">
                 <h3>Information</h3>
@@ -394,6 +405,7 @@
         <script src="riverNetworkHelper.js"></script>
         <script src="riverNetworkLayer.js"></script>
         <script src="draggable.js"></script>
+        <script src="podLegend.js"></script>
         <script src="map.js"></script>
         <script>
             window.onload = function () {

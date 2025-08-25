@@ -94,6 +94,8 @@ class dynaImg {
     }
 
     async redraw (){
+        console.log("dynaImg.redraw() called from:");
+        console.trace();
         const
             use_min = Math.floor(this.vmin * this.scale),
             use_max = Math.floor(this.vmax * this.scale);
@@ -113,7 +115,19 @@ class dynaImg {
             this.mask = [...Array(this.width*this.height).keys()].map( v=> !0);
         this.clrs_mask = [];
 
-        console.log(this.clrs);
+        // Redraw legend
+        const legend = new PodLegend(400, 50);
+        legend.destroy();
+        const legendContainer = document.getElementById("pod-legend-container");
+        const legendWindow = document.getElementById("pod-legend-window");
+        legend.setColors(this.clrs);
+        legend.draw().then(blobUrl => {
+            const legendElement = legend.createImageElement();
+            legendContainer.appendChild(legendElement);
+            if (legendWindow) {
+                legendWindow.style.display = 'block';
+            }
+        });
 
         this.clrs.forEach((c, i) => {const _c = [...c]; _c[3] = i == 0 ? 0 : 167, this.clrs_mask.push(_c)});
         this.histogramStops =  [0].concat([...Array(this.stops).keys()].map(v => {return Math.round((v) * dlt_value - use_min)}));

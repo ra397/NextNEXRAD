@@ -112,7 +112,7 @@ select option {
   image-rendering: pixelated;
 }
 
-.tick-labels, .range-slider-labels {
+.tick-labels, .range-slider-labels, #pod-legend-label-container {
     display: flex;
     justify-content: space-between;
     margin: 0;

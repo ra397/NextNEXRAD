@@ -1,0 +1,17 @@
+#pod-legend-window {
+    display: none;
+
+    position: absolute;
+    bottom: 5%;
+    right: 50%;
+
+    border: 1px solid white;
+
+    background: white;
+
+    /* Add these for better dragging */
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}

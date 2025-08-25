@@ -49,7 +49,11 @@ class PodLayer {
 
     // Submit btn
     document.getElementById("submit-pod-layer").addEventListener("click", () => {
-      this.fetchAndDraw(this.getSeasonDates(this.settings.years, this.settings.season));
+      if (this.settings.years.length > 0) {
+        this.fetchAndDraw(this.getSeasonDates(this.settings.years, this.settings.season));
+      } else {
+        alert("You must select years.");
+      }
     });
 
     // Clear btn
@@ -58,9 +62,12 @@ class PodLayer {
         this.podOverlay.remove();
         this.podOverlay = null;
       }
+      this.clearLegend();
     })
 
     // REDRAW STYLING ONLY
+    this.updateLegendLabels();
+
     // Number of colors listener, updates this.settings.stops live
     document.getElementById("pod-color-count").addEventListener("change", (event) => {
       this.settings.stops = parseInt(event.target.value);
@@ -196,11 +203,31 @@ class PodLayer {
   }
 
   async redrawStylingOnly() {
-    if (!this.di) return;
+    if (!this.di || !this.podOverlay) return;
     this.applyStyling();
     const blob = await this.di.redraw();
     if (this.podOverlay) this.podOverlay.setSource(blob);
+
+    this.updateLegendLabels();
   }
+
+  updateLegendLabels() {
+      const minLabel = document.getElementById('pod-legend-min');
+      const maxLabel = document.getElementById('pod-legend-max');
+      const legendWindow = document.getElementById('pod-legend-window');
+      const legendContainer = document.getElementById('pod-legend-container');
+      
+      if (minLabel && maxLabel) {
+          minLabel.textContent = this.settings.vmin.toString();
+          maxLabel.textContent = this.settings.vmax.toString();
+      }
+      
+      // Show/hide entire legend window based on whether legend exists
+      if (legendWindow && legendContainer) {
+          const hasLegend = legendContainer.querySelector('img') !== null;
+          legendWindow.style.display = hasLegend ? 'block' : 'none';
+      }
+}
 
   applyStyling() {
     this.di.setStops(this.settings.stops);
@@ -208,36 +235,58 @@ class PodLayer {
     this.di.setColors(this.settings.palette, window.constants.pod.POD_COLORS[this.settings.palette]);
   }
 
+  clearLegend() {
+      // Clear legend and hide entire legend window
+      const legendContainer = document.getElementById("pod-legend-container");
+      const legendWindow = document.getElementById("pod-legend-window");
+      
+      if (legendContainer) {
+          while (legendContainer.firstChild) {
+              legendContainer.removeChild(legendContainer.firstChild);
+          }
+      }
+      
+      if (legendWindow) {
+          legendWindow.style.display = 'none';
+      }
+  }
+
   reset() {
-    if (this.podOverlay) {
-      this.podOverlay.remove();
-      this.podOverlay = null;
-    }
-    // Reset POD settings to defaults
-    podLayer.settings = {
-      years: [],
-      season: "All",
-      stops: 32,
-      vmin: 0,
-      vmax: 50,
-      palette: 'Spectral',
-      opacity: 1.0
-    };
-    // Reset POD form controls
-    document.getElementById("pod-year-select").selectedIndex = -1;
-    document.getElementById("pod-season-select").value = "All";
-    document.getElementById("pod-color-count").value = "32";
-    document.getElementById("pod-opacity").value = "100";
-    document.getElementById("pod-opacity-value").textContent = "100%";
-    document.getElementById("selected-years-display").innerHTML = '';
-    // Reset POD range slider
-    if (podLayer.podRangeSlider?.noUiSlider) {
-      podLayer.podRangeSlider.noUiSlider.set([0, 50]);
-    }
-    // Reset palette radio buttons
-    document.querySelectorAll('input[name="palette"]').forEach(radio => {
-      radio.checked = radio.value === 'Spectral';
-    });
+      if (this.podOverlay) {
+        this.podOverlay.remove();
+        this.podOverlay = null;
+      }
+      
+      this.clearLegend();
+      
+      // Reset POD settings to defaults
+      this.settings = {
+        years: [],
+        season: "All",
+        stops: 32,
+        vmin: 0,
+        vmax: 50,
+        palette: 'Spectral',
+        opacity: 1.0
+      };
+      
+      // Reset POD form controls
+      document.getElementById("pod-year-select").selectedIndex = -1;
+      document.getElementById("pod-season-select").value = "All";
+      document.getElementById("pod-color-count").value = "32";
+      document.getElementById("pod-opacity").value = "100";
+      document.getElementById("pod-opacity-value").textContent = "100%";
+      document.getElementById("selected-years-display").innerHTML = '';
+      
+      // Reset POD range slider
+      if (podLayer.podRangeSlider?.noUiSlider) {
+        podLayer.podRangeSlider.noUiSlider.set([0, 50]);
+      }
+      
+      // Reset palette radio buttons
+      document.querySelectorAll('input[name="palette"]').forEach(radio => {
+        radio.checked = radio.value === 'Spectral';
+      });
   }
 };
 
