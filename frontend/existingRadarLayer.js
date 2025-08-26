@@ -1,6 +1,6 @@
 class ExistingRadarLayer extends BaseRadarLayer {
     constructor(map, radarSitesUrl, boundsUrl, customRadarHelper) {
-        super(map, { markerFill: 'red', markerStroke: 'red', markerSize: 4.5 });
+        super(map, { markerFill: '#FF0000', markerStroke: '#FF0000', markerSize: 4.5 });
         
         this.radarSitesUrl = radarSitesUrl;
         
@@ -232,6 +232,21 @@ class ExistingRadarLayer extends BaseRadarLayer {
 
     hideMarkers() {
         this.markers.hide();
+    }
+
+    getMarkerStyle() {
+        return {
+            color: this.markers.markerFill,
+            size: this.markers.markerSize,
+        }
+    }
+
+    async setMarkerStyle(hexValue, size) {
+        await this.markers.updateIcons({
+            markerFill: hexValue,
+            markerStroke: hexValue,
+            markerSize: size
+        });
     }
 }
 

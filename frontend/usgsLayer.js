@@ -18,8 +18,8 @@ class UsgsLayer {
     async init() {
         await this.usgsSitesMarkers.init({
             marker_options: {
-                markerFill: "green",
-                markerStroke: "green",
+                markerFill: "#006400",
+                markerStroke: "#006400",
                 markerSize: 3.5
             }
         });
@@ -240,6 +240,21 @@ class UsgsLayer {
     reset() {
         this.hideUsgsSites();
         document.getElementById("usgsSites-checkbox").checked = false;
+    }
+
+    getMarkerStyle() {
+        return {
+            color: this.usgsSitesMarkers.markerFill,
+            size: this.usgsSitesMarkers.markerSize,
+        }
+    }
+
+    async setMarkerStyle(hexValue, size) {
+        await this.usgsSitesMarkers.updateIcons({
+            markerFill: hexValue,
+            markerStroke: hexValue,
+            markerSize: size
+        });
     }
 }
 

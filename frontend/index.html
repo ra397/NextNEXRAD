@@ -12,6 +12,7 @@
         <link rel="stylesheet" href="slider.css">
         <link rel="stylesheet" href="drag.css">
         <link rel="stylesheet" href="podLegend.css">
+        <link rel="stylesheet" href="marker-control.css">
 
         <!-- Proj4js for reprojection -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.8.1/proj4.js"></script>
@@ -269,11 +270,12 @@
                 <div class="edit-marker-container">
                     <div class="settings-input" style="flex: 1;">
                         <label class="switch round">
-                            <input type="checkbox" id="existingRadarSites-checkbox" checked><span class="toggle-slider"></span>
+                            <input type="checkbox" id="existingRadarSites-checkbox" checked>
+                            <span class="toggle-slider"></span>
                         </label>
                     </div>
                     <div>
-                        <span class="edit-marker-icon"></span>
+                        <span class="edit-marker-icon" data-marker-type="nexrad"></span>
                     </div>
                 </div>
 
@@ -281,23 +283,25 @@
                 <div class="edit-marker-container">
                     <div class="settings-input" style="flex: 1;">
                         <label class="switch round">
-                            <input type="checkbox" id="generatedRadarSites-checkbox" checked><span class="toggle-slider"></span>
+                            <input type="checkbox" id="generatedRadarSites-checkbox" checked>
+                            <span class="toggle-slider"></span>
                         </label>
                     </div>
                     <div>
-                        <span class="edit-marker-icon"></span>
+                        <span class="edit-marker-icon" data-marker-type="generated"></span>
                     </div>
                 </div>
-                
+
                 <div class="settings-label">USGS Stream Gages</div>
                 <div class="edit-marker-container">
                     <div class="settings-input" style="flex: 1;">
                         <label class="switch round">
-                            <input type="checkbox" id="usgsSites-checkbox"><span class="toggle-slider"></span>
+                            <input type="checkbox" id="usgsSites-checkbox">
+                            <span class="toggle-slider"></span>
                         </label>
                     </div>
                     <div>
-                        <span class="edit-marker-icon"></span>
+                        <span class="edit-marker-icon" data-marker-type="usgs"></span>
                     </div>
                 </div>
 
@@ -321,6 +325,25 @@
                     </div>
                     <span id="clear-pop-layer">🔄</span>
                 </div>
+            </div>
+        </div>
+
+        <div class="marker-control-popup">
+            <div class="x-btn" onclick="this.parentElement.style.display='none'">×</div>
+
+            <div class="marker-preview" id="marker-preview">
+                <span class="color-square" id="preview-square"></span>
+                Marker Controls
+            </div>
+
+            <div class="control-row">
+                <label for="marker-fill">Color</label>
+                <input type="color" value="#ff0000" id="marker-fill" onchange="updateMarker()">
+            </div>
+
+            <div class="control-row">
+                <label for="marker-size">Base Size</label>
+                <input type="number" value="4" max="12" min="2.5" step="0.5" id="marker-size" onchange="updateMarker()">
             </div>
         </div>
 
@@ -411,7 +434,7 @@
         <div id="settings-window" class="sidebar-window">
             <div class="window-title-container">
                 <span class="window-title">Settings</span>
-                <span class="window-exit">&times;</span>
+                <span class="window-exit" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
             </div>
             <div class="window-items-container">
                 <div class="settings-label">Radar Coverage Color</div>
@@ -458,6 +481,7 @@
         <script src="draggable.js"></script>
         <script src="podLegend.js"></script>
         <script src="settings.js"></script>
+        <script src="markerControl.js"></script>
         <script src="map.js"></script>
         <script>
             window.onload = function () {

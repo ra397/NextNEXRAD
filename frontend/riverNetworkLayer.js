@@ -24,7 +24,6 @@ class RiverNetworkLayer {
     }
 
     loadRiverNetwork() {
-        console.log("Adding River Network Layer");
         this.tileLayer = new pbfLayer(
             {
                 map: this.map,

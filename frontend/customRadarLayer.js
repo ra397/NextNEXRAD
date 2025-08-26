@@ -1,6 +1,6 @@
 class CustomRadarLayer extends BaseRadarLayer {
     constructor(map, serverUrl) {
-        super(map, { markerFill: 'blue', markerStroke: 'blue', markerSize: 4.5 });
+        super(map, { markerFill: '#0000FF', markerStroke: '#0000FF', markerSize: 4.5 });
         this.serverUrl = serverUrl;
         this.idCounter = 0;
         this.editSnapshot = null; // store original values for change detection
@@ -493,6 +493,21 @@ class CustomRadarLayer extends BaseRadarLayer {
 
     hideMarkers() {
         this.markers.hide();
+    }
+
+    getMarkerStyle() {
+        return {
+            color: this.markers.markerFill,
+            size: this.markers.markerSize,
+        }
+    }
+
+    async setMarkerStyle(hexValue, size) {
+        await this.markers.updateIcons({
+            markerFill: hexValue,
+            markerStroke: hexValue,
+            markerSize: size
+        });
     }
 }
 

@@ -30,12 +30,15 @@ async function initMap() {
 
   customRadarLayer = new CustomRadarLayer(map, server);
   customRadarLayer.init();
+  window.customRadarLayer = customRadarLayer;
 
   existingRadarLayer = new ExistingRadarLayer(map, 'public/data/nexrad.json', 'public/data/nexrad_coverages/radar_bounds.json', customRadarLayer);
   existingRadarLayer.init();
+  window.existingRadarLayer = existingRadarLayer;
 
   usgsLayer = new UsgsLayer(map);
   await usgsLayer.init();
+  window.usgsLayer = usgsLayer;
 
   podLayer = new PodLayer(map);
   podLayer.initUI();

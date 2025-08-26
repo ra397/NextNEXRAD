@@ -92,7 +92,6 @@ class markerCollection {
     }
 
     async updateIcons ({markerStroke = null, markerFill = null, markerSize = null}){
-        console.log (arguments[0])
         if (arguments[0])
             this.setMarkerOptions (arguments[0])
         await this.getIconURL().then(
