@@ -243,3 +243,25 @@
     border-color: #000000;
     border-width: 3px;
 }
+
+.edit-marker-container {
+    display: flex;
+}
+
+.edit-marker-icon {
+    display: inline-block;
+    background-image: url(./public/icons/edit.svg);
+    margin-right: 20px;
+    margin-top: 8px;
+    width: 24px;
+    height: 24px;
+    background-size: 20px;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.35;
+}
+
+.edit-marker-icon:hover {
+    cursor: pointer;
+    opacity: 1.0;
+}

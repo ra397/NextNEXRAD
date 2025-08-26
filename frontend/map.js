@@ -102,6 +102,22 @@ function m2ft(meters) {
   return (meters * 3.28084).toFixed(2);
 }
 
+document.getElementById("existingRadarSites-checkbox").addEventListener("change", function () {
+  if (this.checked) {
+    existingRadarLayer.showMarkers();
+  } else {
+    existingRadarLayer.hideMarkers();
+  }
+});
+
+document.getElementById("generatedRadarSites-checkbox").addEventListener("change", function () {
+  if (this.checked) {
+    customRadarLayer.showMarkers();
+  } else {
+    customRadarLayer.hideMarkers();
+  }
+});
+
 document.getElementById("usgsSites-checkbox").addEventListener("change", function () {
   if (this.checked) {
     usgsLayer.showUsgsSites();

@@ -265,18 +265,52 @@
                 <span class="window-exit" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
             </div>
             <div class="window-items-container">
-                <div class="settings-label">USGS Stream Gages</div>
-                <div class="settings-input">
-                    <label class="switch round">
-                        <input type="checkbox" id="usgsSites-checkbox"><span class="toggle-slider"></span>
-                    </label>
+                <div class="settings-label">NEXRAD Radars</div>
+                <div class="edit-marker-container">
+                    <div class="settings-input" style="flex: 1;">
+                        <label class="switch round">
+                            <input type="checkbox" id="existingRadarSites-checkbox" checked><span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div>
+                        <span class="edit-marker-icon"></span>
+                    </div>
+                </div>
+
+                <div class="settings-label">Generated Radars</div>
+                <div class="edit-marker-container">
+                    <div class="settings-input" style="flex: 1;">
+                        <label class="switch round">
+                            <input type="checkbox" id="generatedRadarSites-checkbox" checked><span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div>
+                        <span class="edit-marker-icon"></span>
+                    </div>
                 </div>
                 
+                <div class="settings-label">USGS Stream Gages</div>
+                <div class="edit-marker-container">
+                    <div class="settings-input" style="flex: 1;">
+                        <label class="switch round">
+                            <input type="checkbox" id="usgsSites-checkbox"><span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div>
+                        <span class="edit-marker-icon"></span>
+                    </div>
+                </div>
+
                 <div class="settings-label">River Network</div>
-                <div class="settings-input">
-                    <label class="switch round">
-                        <input type="checkbox" id="riverNetwork-checkbox"><span class="toggle-slider"></span>
-                    </label>
+                <div class="edit-marker-container">
+                    <div class="settings-input" style="flex: 1;">
+                        <label class="switch round">
+                            <input type="checkbox" id="riverNetwork-checkbox"><span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div>
+                        <span class="edit-marker-icon"></span>
+                    </div>
                 </div>
 
                 <div class="pop-settings-container">

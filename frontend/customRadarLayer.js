@@ -486,6 +486,14 @@ class CustomRadarLayer extends BaseRadarLayer {
         // Reset counter
         this.idCounter = 0;
     }
+
+    showMarkers() {
+        this.markers.show();
+    }
+
+    hideMarkers() {
+        this.markers.hide();
+    }
 }
 
 window.CustomRadarLayer = CustomRadarLayer;

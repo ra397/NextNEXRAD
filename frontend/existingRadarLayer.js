@@ -225,6 +225,14 @@ class ExistingRadarLayer extends BaseRadarLayer {
             angles.some((v, i) => v != this.editSnapshot.elevationAngles[i])
         );
     }
+
+    showMarkers() {
+        this.markers.show();
+    }
+
+    hideMarkers() {
+        this.markers.hide();
+    }
 }
 
 window.ExistingRadarLayer = ExistingRadarLayer;
