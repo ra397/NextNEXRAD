@@ -27,16 +27,6 @@ select option {
   padding: 0;
 }
 
-.sidebar-window {
-  position: absolute;
-  top: 1%;
-  right: 100px;
-  width: 350px;
-  background: white;
-  border: 1px solid #ccc;
-  display: none;
-}
-
 #loading-spinner {
   position: fixed;
   top: 50%;

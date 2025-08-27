@@ -211,28 +211,28 @@ class PodLayer {
     this.updateLegendLabels();
   }
 
-  updateLegendLabels() {
-      const minLabel = document.getElementById('pod-legend-min');
-      const maxLabel = document.getElementById('pod-legend-max');
-      const legendWindow = document.getElementById('pod-legend-window');
-      const legendContainer = document.getElementById('pod-legend-container');
-      
-      if (minLabel && maxLabel) {
-          minLabel.textContent = this.settings.vmin.toString();
-          maxLabel.textContent = this.settings.vmax.toString();
-      }
-      
-      // Show/hide entire legend window based on whether legend exists
-      if (legendWindow && legendContainer) {
-          const hasLegend = legendContainer.querySelector('img') !== null;
-          legendWindow.style.display = hasLegend ? 'block' : 'none';
-      }
-}
-
   applyStyling() {
     this.di.setStops(this.settings.stops);
     this.di.setRange(this.settings.vmin / 100, this.settings.vmax / 100);
     this.di.setColors(this.settings.palette, window.constants.pod.POD_COLORS[this.settings.palette]);
+  }
+
+  updateLegendLabels() {
+    const legendWindow = document.getElementById('pod-legend-window');
+    const legendContainer = document.getElementById('pod-legend-container');
+
+    // Show/hide entire legend window based on whether legend exists
+    if (legendWindow && legendContainer) {
+        const hasLegend = legendContainer.querySelector('img') !== null;
+        legendWindow.style.display = hasLegend ? 'block' : 'none';
+        
+        // Only update labels if we have a legend
+        if (hasLegend) {
+            // Calculate and render dynamic tick labels
+            const tickValues = legend.calculateTickValues(this.settings.stops, this.settings.vmin, this.settings.vmax);
+            legend.renderTickLabels(tickValues);
+        }
+    }    
   }
 
   clearLegend() {

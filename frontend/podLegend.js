@@ -1,6 +1,6 @@
 class PodLegend {
     width = 400;
-    height = 50;
+    height = 25;
     
     colors = [];
     stops = 0;
@@ -11,7 +11,7 @@ class PodLegend {
     blobUrl = null;
     image = null;
     
-    constructor(width = 400, height = 50) {
+    constructor(width = 400, height = 25) {
         this.setSize(width, height);
     }
     
@@ -120,5 +120,48 @@ class PodLegend {
         if (legendWindow) {
             legendWindow.style.display = 'none';
         }
+    }
+
+    calculateTickValues(stops, vmin, vmax) {
+        // Determine number of ticks based on stops (max 5 ticks)
+        const numTicks = Math.min(stops, 5);
+        
+        // Always need at least 2 ticks (min and max)
+        const actualTicks = Math.max(numTicks, 2);
+        
+        const tickValues = [];
+        
+        if (actualTicks === 1) {
+            // Edge case: just return the middle value
+            const value = (vmin + vmax) / 2;
+            tickValues.push(parseFloat(value.toFixed(2)));
+        } else {
+            // Calculate step size between ticks
+            const step = (vmax - vmin) / (actualTicks - 1);
+            
+            // Generate evenly spaced values
+            for (let i = 0; i < actualTicks; i++) {
+                const value = vmin + (step * i);
+                tickValues.push(parseFloat(value.toFixed(2)));
+            }
+        }
+        return tickValues;
+    }
+
+    renderTickLabels(tickValues) {
+        const labelContainer = document.getElementById('pod-legend-label-container');
+        if (!labelContainer) {
+            console.warn('Legend label container not found');
+            return;
+        }
+        // Clear existing tick labels
+        labelContainer.innerHTML = '';
+        // Create and position each tick label
+        tickValues.forEach((value, index) => {
+            const tickLabel = document.createElement('span');
+            tickLabel.className = 'pod-legend-tick';
+            tickLabel.textContent = value.toString();            
+            labelContainer.appendChild(tickLabel);
+        });
     }
 }
