@@ -1,4 +1,4 @@
-const server = window._env_dev.SERVER_URL;
+const server = window._env_prod.SERVER_URL;
 
 let map;
 
@@ -16,17 +16,41 @@ proj4.defs("EPSG:5070", "+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 
                          "+x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs");
 
 async function initMap() {
+  const standardMapType = new google.maps.StyledMapType(standardStyle, { name: 'Standard', mapTypeId: google.maps.MapTypeId.TERRAIN });
+  const lightMapType = new google.maps.StyledMapType(lightStyle, { name: 'Light' });
+  const darkMapType = new google.maps.StyledMapType(darkStyle, { name: 'Dark' });
+
   // Initialize the map
-  map = new google.maps.Map(document.getElementById("map"), {
-    zoom: window.constants.map.defaultZoom,
-    center: window.constants.map.centerUSA,
-    gestureHandling: "greedy",
-    minZoom: 5,
-    maxZoom: 12,
-    fullscreenControl: false,
-    mapTypeId: "terrain",
-    styles: window.constants.map.defaultMapStyle,
+  const map = new google.maps.Map(document.getElementById("map"), {
+      center: { lat: 39.5, lng: -98.35 }, // Center USA
+      zoom: 5,
+      minZoom: 5,
+      maxZoom: 12,
+      mapTypeId: 'light', // Default to light mode
+      gestureHandling: "greedy", // Allow scrolling to zoom (without using CTRL)
+      mapTypeControl: true, 
+      mapTypeControlOptions: {
+          style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+          position: google.maps.ControlPosition.TOP_LEFT,
+          mapTypeIds: ['light', 'dark', 'standard', 'satellite', 'hybrid']
+      },
+      fullScreenControl: true,
+      fullscreenControlOptions: {
+          position: google.maps.ControlPosition.BOTTOM_RIGHT
+      },
   });
+
+  // Register the custom map types
+  map.mapTypes.set('light', lightMapType);
+  map.mapTypes.set('dark', darkMapType);
+  map.mapTypes.set('standard', standardMapType);
+
+  addTerrainStyles();
+  const terrainOverlay = new TerrainOverlay(new google.maps.Size(256, 256));
+  map.overlayMapTypes.push(terrainOverlay);
+  window.terrainOverlay = terrainOverlay;
+  window.map = map;
+  terrainOverlay.setMap(null); // Start with terrain overlay OFF
 
   customRadarLayer = new CustomRadarLayer(map, server);
   customRadarLayer.init();
@@ -46,6 +70,7 @@ async function initMap() {
   populationLayer = new PopulationLayer(map);
   populationLayer.initUI();
   await populationLayer.load();
+  window.populationLayer = populationLayer;
 
   coveragesLayer = new CoveragesLayer(map);
   coveragesLayer.initUI();
@@ -53,6 +78,7 @@ async function initMap() {
 
   riverLayer = new RiverNetworkLayer(map);
   riverLayer.initUI();
+  window.riverLayer = riverLayer;
 
   map.addListener("zoom_changed", () => {
     const zoom = map.getZoom();
@@ -129,8 +155,18 @@ document.getElementById("usgsSites-checkbox").addEventListener("change", functio
   }
 });
 
+document.getElementById("terrainOverlay-checkbox").addEventListener("change", function () {
+  if (this.checked) {
+    terrainOverlay.setMap(window.map);
+  } else {
+    terrainOverlay.setMap(null);
+  }
+});
+
 function reset() {
   customRadarLayer.reset();
+  customRadarLayer.resetAllRangeRings();
+  existingRadarLayer.resetAllRangeRings();
   usgsLayer.reset();
   podLayer.reset();
   populationLayer.clear();

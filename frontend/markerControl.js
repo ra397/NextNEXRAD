@@ -3,8 +3,9 @@ let previousMarkerType = null;
 
 // Make the marker control popups draggable windows
 const markerControlPopup = document.querySelector(".marker-control-popup");
-new DragContainer(markerControlPopup, ['drag-cnr tl-cnr', 'drag-cnr tr-cnr', 'drag-cnr bl-cnr', 'drag-cnr br-cnr']);
-
+if (!markerControlPopup._dragger) {
+    markerControlPopup._dragger = new DragContainer(markerControlPopup, ['drag-cnr tl-cnr', 'drag-cnr tr-cnr', 'drag-cnr bl-cnr', 'drag-cnr br-cnr']);
+}
 // Add event listeners to all edit-marker-icon spans
 document.querySelectorAll('.edit-marker-icon[data-marker-type]').forEach(icon => {
     icon.addEventListener('click', function() {
@@ -29,8 +30,9 @@ const colorInput = document.getElementById("marker-fill");
 const sizeInput = document.getElementById('marker-size');
 
 function populateMarkerControlPopup(markerType) {
-    // Based on the markerType, get the marker information (marker color and marker size)
     let markerStyle = null;
+    document.getElementById("marker-size-label").style.display = "block";
+    sizeInput.style.display = "block";
     if (markerType == "nexrad") {
         markerStyle = existingRadarLayer.getMarkerStyle();
         title.textContent = "NEXRAD Markers";
@@ -40,7 +42,20 @@ function populateMarkerControlPopup(markerType) {
     } else if (markerType == "usgs") {
         markerStyle = usgsLayer.getMarkerStyle();
         title.textContent = "USGS Markers";
-    } else {
+    } else if (markerType == "river") {
+        title.textContent = "River Network";
+        document.getElementById("marker-size-label").style.display = "none";
+        sizeInput.style.display = "none";
+        colorInput.value = riverLayer.getColor();
+        return;
+    } else if (markerType == "population") {
+        title.textContent = "Population Layer";
+        document.getElementById("marker-size-label").style.display = "none";
+        sizeInput.style.display = "none";
+        colorInput.value = populationLayer.getColor();
+        return;
+    }
+    else {
         console.error("Invalid markerType.");
     }
     colorInput.value = markerStyle.color;
@@ -54,7 +69,12 @@ function updateMarker() {
         customRadarLayer.setMarkerStyle(colorInput.value, sizeInput.value);
     } else if (currentMarkerType == "usgs") {
         usgsLayer.setMarkerStyle(colorInput.value, sizeInput.value);
-    } else {
+    } else if (currentMarkerType == "river") {
+        riverLayer.setColor(colorInput.value);
+    } else if (currentMarkerType == "population") {
+        populationLayer.setColor(colorInput.value);
+    } 
+    else {
         console.error("Invalid markerType.");
     }
 }

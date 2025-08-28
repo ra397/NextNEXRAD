@@ -123,28 +123,26 @@ class PodLegend {
     }
 
     calculateTickValues(stops, vmin, vmax) {
-        // Determine number of ticks based on stops (max 5 ticks)
-        const numTicks = Math.min(stops, 5);
-        
-        // Always need at least 2 ticks (min and max)
-        const actualTicks = Math.max(numTicks, 2);
+        // Number of labels = stops + 1 (max 6 labels)
+        const numTicks = Math.min(stops + 1, 6);
         
         const tickValues = [];
         
-        if (actualTicks === 1) {
+        if (numTicks === 1) {
             // Edge case: just return the middle value
             const value = (vmin + vmax) / 2;
             tickValues.push(parseFloat(value.toFixed(2)));
         } else {
             // Calculate step size between ticks
-            const step = (vmax - vmin) / (actualTicks - 1);
+            const step = (vmax - vmin) / (numTicks - 1);
             
             // Generate evenly spaced values
-            for (let i = 0; i < actualTicks; i++) {
+            for (let i = 0; i < numTicks; i++) {
                 const value = vmin + (step * i);
                 tickValues.push(parseFloat(value.toFixed(2)));
             }
         }
+        
         return tickValues;
     }
 

@@ -39,6 +39,9 @@ class ExistingRadarLayer extends BaseRadarLayer {
         await this.initMarkers();
         await this.loadRadarSites();
         this.initUI();
+
+        this.markers.reactMouseOver = this.handleMouseOver.bind(this);
+        this.markers.reactMouseOut = this.handleMouseOut.bind(this);
     }
 
     initUI() {
@@ -69,6 +72,7 @@ class ExistingRadarLayer extends BaseRadarLayer {
             this.cleanupSiteState(currentSiteId); // Clean up the state tracking
 
             const marker = this.customRadarHelper.addCustomMarker(this.readForm());
+
             setTimeout(() => {
                 this.markers.highlightMarker(marker);
             }, 10);
@@ -148,7 +152,11 @@ class ExistingRadarLayer extends BaseRadarLayer {
                     elevationAngles: [0.5, 0.9, 1.3, 1.8, 2.4, 3.1, 4.0, 5.1, 6.4, 8.0, 10.0, 12.5, 15.6, 19.5]
                 },
             },
-            { clickable: true });
+            { 
+                clickable: true,
+                mouseOver: true,
+                mouseOut: true,
+            });
         }
     }
 
@@ -170,6 +178,47 @@ class ExistingRadarLayer extends BaseRadarLayer {
         );
     }
 
+    handleMouseOver(event, marker) {
+        if (this.mouseOverTimeout) {
+            clearTimeout(this.mouseOverTimeout);
+        }
+        
+        this.mouseOverTimeout = setTimeout(() => {
+            const { id, lat, lng, name, elev_ft} = marker.properties;
+            const content = this.createLabel(id, name, elev_ft);
+            this.activeTip = new markerTip(
+                new google.maps.LatLng(lat, lng),
+                'arrow_btm_box',
+                content
+            );
+            this.activeTip.setMap(this.map);
+        }, 500); 
+    }
+
+    createLabel(id, name, elev_ft) {
+        const elev = `${elev_ft} ft`;
+        const div = document.createElement('div');
+        div.innerHTML = `
+            <div>
+                <strong>${id}</strong><br>
+                ${name}<br>
+                Elev: ${elev}
+            </div>
+        `;
+        return div;
+    }
+
+    handleMouseOut() {
+        if (this.mouseOverTimeout) {
+            clearTimeout(this.mouseOverTimeout);
+            this.mouseOverTimeout = null;
+        }
+        if (this.activeTip) {
+            this.activeTip.setMap(null);
+            this.activeTip = null;
+        }
+    }
+
     populateDynamicRadarPanel(marker) {
         const props = marker.properties;
 
@@ -177,8 +226,8 @@ class ExistingRadarLayer extends BaseRadarLayer {
 
         document.getElementById("existing-radar-site-id").textContent = props.id || "";
         document.getElementById("existing-radar-site-name").textContent = props.name || "";
-        document.getElementById("existing-radar-site-lat").textContent = props.lat || "";
-        document.getElementById("existing-radar-site-lng").textContent = props.lng || "";
+        document.getElementById("existing-radar-site-lat").textContent = props.lat + "°" || "";
+        document.getElementById("existing-radar-site-lng").textContent = props.lng + "°" || "";
         document.getElementById("existing-radar-site-tower-height").value = ft2m(props.tower_ft) || "";
         document.getElementById("existing-radar-site-max-alt").value = aglThreshold || "";
 

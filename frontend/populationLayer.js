@@ -10,6 +10,9 @@ class PopulationLayer {
     this.bounds = null;
     this.threshold = 0;
     this.overlay = null;
+    
+    // Store the current color (default black)
+    this.currentColor = "#000000";
   }
 
   initUI() {
@@ -55,6 +58,12 @@ class PopulationLayer {
   draw() {
     if (!this.data || !this.ctx) return;
 
+    // Parse hex color to RGB
+    const hex = this.currentColor.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+
     const imageData = this.ctx.createImageData(this.width, this.height);
     for (let y = 0; y < this.height; y++) {
       for (let x = 0; x < this.width; x++) {
@@ -63,9 +72,9 @@ class PopulationLayer {
         const idx = i * 4;
 
         if (value > this.threshold) {
-          imageData.data[idx] = 0;
-          imageData.data[idx + 1] = 0;
-          imageData.data[idx + 2] = 0;
+          imageData.data[idx] = r;
+          imageData.data[idx + 1] = g;
+          imageData.data[idx + 2] = b;
           imageData.data[idx + 3] = 125;
         } else {
           imageData.data[idx + 3] = 0;
@@ -79,6 +88,21 @@ class PopulationLayer {
 
   clear() {
     this.canvas.style.display = "none";
+  }
+
+  // Get the current color
+  getColor() {
+    return this.currentColor;
+  }
+
+  // Set a new color and redraw if visible
+  setColor(hexColor) {
+    this.currentColor = hexColor;
+    
+    // Redraw if canvas is visible
+    if (this.canvas.style.display !== "none" && this.data) {
+      this.draw();
+    }
   }
 }
 

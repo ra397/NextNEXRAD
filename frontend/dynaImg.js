@@ -119,7 +119,9 @@ class dynaImg {
         legend.destroy();
         const legendContainer = document.getElementById("pod-legend-container");
         const legendWindow = document.getElementById("pod-legend-window");
-        new DragContainer(legendWindow, ['drag-cnr tl-cnr', 'drag-cnr tr-cnr', 'drag-cnr bl-cnr', 'drag-cnr br-cnr']);
+        if (!legendWindow?._dragger) {
+            legendWindow._dragger = new DragContainer(legendWindow, ['drag-cnr tl-cnr', 'drag-cnr tr-cnr', 'drag-cnr bl-cnr', 'drag-cnr br-cnr']);
+        }
         legend.setColors(this.clrs);
         legend.draw().then(blobUrl => {
             const legendElement = legend.createImageElement();

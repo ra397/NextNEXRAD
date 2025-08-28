@@ -106,20 +106,28 @@ class PodLayer {
   }
 
   updateSelectedYearsDisplay() {
-    const yearTags = this.settings.years.map(year => 
-        `<span class="year-tag" data-year="${year}">${year} <span class="year-tag-close">×</span></span>`
-    ).join('');
-    document.getElementById("selected-years-display").innerHTML = `<div class="year-tags">${yearTags}</div>`;
+    const displayElement = document.getElementById("selected-years-display");
     
-    // Add click event listeners to the close buttons
-    document.querySelectorAll('.year-tag-close').forEach(closeBtn => {
-      closeBtn.addEventListener('click', (event) => {
-        event.stopPropagation(); // Prevent event bubbling
-        const yearTag = event.target.parentElement;
-        const yearToRemove = yearTag.dataset.year;
-        this.removeYear(yearToRemove);
+    if (this.settings.years.length === 0) {
+      // No years selected - show default message
+      displayElement.innerHTML = 'No years selected';
+    } else {
+      // Years selected - show year tags
+      const yearTags = this.settings.years.map(year => 
+          `<span class="year-tag" data-year="${year}">${year} <span class="year-tag-close">×</span></span>`
+      ).join('');
+      displayElement.innerHTML = `<div class="year-tags">${yearTags}</div>`;
+      
+      // Add click event listeners to the close buttons
+      document.querySelectorAll('.year-tag-close').forEach(closeBtn => {
+        closeBtn.addEventListener('click', (event) => {
+          event.stopPropagation(); // Prevent event bubbling
+          const yearTag = event.target.parentElement;
+          const yearToRemove = yearTag.dataset.year;
+          this.removeYear(yearToRemove);
+        });
       });
-    });
+    }
   }
 
   removeYear(yearToRemove) {
@@ -276,7 +284,7 @@ class PodLayer {
       document.getElementById("pod-color-count").value = "32";
       document.getElementById("pod-opacity").value = "100";
       document.getElementById("pod-opacity-value").textContent = "100%";
-      document.getElementById("selected-years-display").innerHTML = '';
+      document.getElementById("selected-years-display").innerHTML = 'No years selected';
       
       // Reset POD range slider
       if (podLayer.podRangeSlider?.noUiSlider) {

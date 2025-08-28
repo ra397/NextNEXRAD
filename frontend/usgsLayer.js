@@ -164,7 +164,7 @@ class UsgsLayer {
 
     async loadBasin(usgsId) {
         try {
-            const buf = await this._getArrayBuffer(`${window._env_dev.USGS_BOUNDARY_URL}${usgsId}.pbf`);
+            const buf = await this._getArrayBuffer(`${window._env_prod.USGS_BOUNDARY_URL}${usgsId}.pbf`);
             const geojson = geobuf.decode(new Pbf(new Uint8Array(buf)));
 
             const layer = new google.maps.Data({ map: this.map });

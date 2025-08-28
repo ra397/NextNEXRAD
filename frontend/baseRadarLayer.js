@@ -182,6 +182,22 @@ class BaseRadarLayer {
     handleMarkerClick(event, marker) {
         throw new Error("handleMarkerClick must be implemented by child classes");
     }
+
+    resetAllRangeRings() {
+        Object.keys(this.rings).forEach(siteId => {
+            if (this.rings[siteId]) {
+                this.rings[siteId].forEach(ring => {
+                    ring.setMap(null);
+                });
+                delete this.rings[siteId];
+            }
+        });
+        
+        // Reset all slider states to "None" (0)
+        Object.keys(this.rangeRingStates).forEach(siteId => {
+            this.rangeRingStates[siteId].sliderValue = 0;
+        });        
+    }
 }
 
 window.BaseRadarLayer = BaseRadarLayer;

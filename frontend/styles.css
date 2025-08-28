@@ -54,7 +54,7 @@ select option {
   background-color: whitesmoke;
   border: 1px solid #000;
   font-size: 14px;
-  padding: 0 0.2em 0 0.2em;
+  padding: 0 0.3em 0 0.3em;
   z-index: 998;
   line-height: 1.5em;
   transform: translate(calc(-100% - 11px), -50%);
@@ -80,7 +80,6 @@ select option {
 .arrow_btm_box {
     background-color: whitesmoke;
     width: 6.7em;
-    padding: 0;
     border: 1px solid red;
     text-align: center;
     transform: translate(-45%, -105%);
@@ -116,7 +115,7 @@ select option {
 }
 
 .year-tag {
-  background-color: #007bff;
+  background-color: green;
   color: white;
   padding: 4px 8px;
   border-radius: 3px;

@@ -2,6 +2,8 @@ class RiverNetworkLayer {
     constructor(map) {
         this.map = map;
         this.tileLayer = null;
+        this.currentColor = "#46bcec"; // Store the current color
+        this.isLayerVisible = false; // Track visibility state
         this.loadRiverNetwork();
     }
 
@@ -45,27 +47,55 @@ class RiverNetworkLayer {
         );
 
         let use_style = this.tileLayer.defaultStyle();
-        use_style.strokeColor = "#46bcec";
+        use_style.strokeColor = this.currentColor;
 
         this.tileLayer.tileStyle = (f) => {
-            return this.tileLayer.defaultStyle();
+            let style = this.tileLayer.defaultStyle();
+            style.strokeColor = this.currentColor;
+            return style;
         }
     }
 
     show() {
         if (this.tileLayer) {
             this.tileLayer.show();
+            this.isLayerVisible = true;
         }
     }
 
     hide() {
         if (this.tileLayer) {
             this.tileLayer.hide();
+            this.isLayerVisible = false;
         }
     }
 
     reset() {
         this.hide();
         document.getElementById("riverNetwork-checkbox").checked = false;
+    }
+
+    // Get the current color of the tiles
+    getColor() {
+        return this.currentColor;
+    }
+
+    // Set a new color and reload the tiles
+    setColor(newColor) {
+        this.currentColor = newColor;
+        
+        // Store current visibility state
+        const wasVisible = this.isLayerVisible;
+        
+        // Hide current tiles
+        this.hide();
+        
+        // Reload the river network with new color
+        this.loadRiverNetwork();
+        
+        // Restore visibility state
+        if (wasVisible) {
+            this.show();
+        }
     }
 }

@@ -66,7 +66,10 @@ class CustomRadarLayer extends BaseRadarLayer {
         // Submit new radar
         document.getElementById("radar-submit-btn").addEventListener("click", () => {
             const params = this.readForm();
-            if (!params) return;
+            if (!params) {
+                alert("Please fill out all fields correctly.");
+                return;
+            }
             const marker = this.addCustomMarker(params);
             this.fetchAndAddOverlay(marker);
 
@@ -248,8 +251,8 @@ class CustomRadarLayer extends BaseRadarLayer {
         // Validate coordinates (basic check - you might want more specific validation)
         if (this.isValidLocation(lat, lng)) {
             // Fill out the form fields
-            document.getElementById("radarLat").value = lat.toFixed(4);
-            document.getElementById("radarLng").value = lng.toFixed(4);            
+            document.getElementById("radarLat").textContent = lat.toFixed(4) + "°";
+            document.getElementById("radarLng").textContent = lng.toFixed(4) + "°";            
             // Exit location selection mode
             this.endLocationSelection();
         } else {
@@ -300,8 +303,8 @@ class CustomRadarLayer extends BaseRadarLayer {
     }
 
     readForm() {
-        const lat = parseFloat(document.getElementById("radarLat").value);
-        const lng = parseFloat(document.getElementById("radarLng").value);
+        const lat = parseFloat(document.getElementById("radarLat").textContent);
+        const lng = parseFloat(document.getElementById("radarLng").textContent);
         const agl = parseFloat(document.getElementById("aglThreshold-input").value);
         const tower = parseFloat(document.getElementById("towerHeight-input").value);
 
@@ -410,8 +413,8 @@ class CustomRadarLayer extends BaseRadarLayer {
         const props = marker.properties;
         
         document.getElementById("dynamic-radar-site-id").textContent = props.id || "";
-        document.getElementById("dynamic-radar-site-lat").textContent = props.lat.toFixed(4) || "";
-        document.getElementById("dynamic-radar-site-lng").textContent = props.lng.toFixed(4) || "";
+        document.getElementById("dynamic-radar-site-lat").textContent = props.lat.toFixed(4) + "°" || "";
+        document.getElementById("dynamic-radar-site-lng").textContent = props.lng.toFixed(4) + "°" || "";
         document.getElementById("dynamic-radar-site-tower-height").value = props.towerHeight || "";
         document.getElementById("dynamic-radar-site-max-alt").value = props.aglThreshold || "";
 
@@ -462,8 +465,8 @@ class CustomRadarLayer extends BaseRadarLayer {
         }
 
         // Reset form inputs for custom radar
-        document.getElementById("radarLat").value = '';
-        document.getElementById("radarLng").value = '';
+        document.getElementById("radarLat").textContent = 'Latitude';
+        document.getElementById("radarLng").textContent = 'Longitude';
         document.getElementById("aglThreshold-input").value = '';
         document.getElementById("towerHeight-input").value = '';
         // Reset elevation angles slider to full range

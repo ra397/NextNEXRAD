@@ -91,14 +91,13 @@
                     <button id="select-location-btn">Select Location on Map</button>
                 </div>
 
-                <div class="settings-label" style="grid-row: span 2;">
+                <div class="settings-label">
                     Location:
                 </div>
-                <div class="settings-input location-input">
-                    <input type="text" id="radarLat" placeholder="lat">
-                </div>
-                <div class="settings-input location-input">
-                    <input type="text" id="radarLng" placeholder="lon">
+                <div class="settings-input">
+                    <span id="radarLat">Latitude</span>
+                    <span>,&nbsp;&nbsp;</span>
+                    <span id="radarLng">Longitude</span>
                 </div>
 
                 <div class="settings-label">
@@ -138,14 +137,13 @@
                     <span id="dynamic-radar-site-id"></span>
                 </div>
 
-                <span class="settings-label">Latitude:</span>
-                <div class="settings-input">
-                    <span id="dynamic-radar-site-lat"></span>
+                <div class="settings-label">
+                    Location:
                 </div>
-
-                <span class="settings-label">Longitude:</span>
                 <div class="settings-input">
-                    <span id="dynamic-radar-site-lng"></span>
+                    <span id="dynamic-radar-site-lat">Latitude</span>
+                    <span>,&nbsp;&nbsp;</span>
+                    <span id="dynamic-radar-site-lng">Longitude</span>
                 </div>
 
                 <div class="settings-label">
@@ -206,17 +204,12 @@
                 </div>
 
                 <div class="settings-label">
-                    Latitude:
+                    Location:
                 </div>
                 <div class="settings-input">
-                    <span id="existing-radar-site-lat"></span>
-                </div>
-
-                <div class="settings-label">
-                    Longitude:
-                </div>
-                <div class="settings-input">
-                    <span id="existing-radar-site-lng"></span>
+                    <span id="existing-radar-site-lat">Latitude</span>
+                    <span>,&nbsp;&nbsp;</span>
+                    <span id="existing-radar-site-lng">Longitude</span>
                 </div>
 
                 <div class="settings-label">
@@ -313,7 +306,16 @@
                         </label>
                     </div>
                     <div>
-                        <span class="edit-marker-icon"></span>
+                        <span class="edit-marker-icon" data-marker-type="river"></span>
+                    </div>
+                </div>
+
+                <div class="settings-label">Shaded Relief</div>
+                <div class="edit-marker-container">
+                    <div class="settings-input" style="flex: 0.8;">
+                        <label class="switch round">
+                            <input type="checkbox" id="terrainOverlay-checkbox"><span class="toggle-slider"></span>
+                        </label>
                     </div>
                 </div>
 
@@ -323,7 +325,10 @@
                         <input type="range" class="styled-range-slider" id="popThreshold-slider" min="0" max="25000" value="7500" step="25"><br>
                         <span id="popThreshold-value">7,500 people / 25 km²</span>
                     </div>
-                    <span id="clear-pop-layer">🔄</span>
+                    <div id="population-layer-controls-container">
+                        <span class="edit-marker-icon" data-marker-type="population"></span>
+                        <span id="clear-pop-layer"></span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -342,14 +347,14 @@
             </div>
 
             <div class="control-row">
-                <label for="marker-size">Base Size</label>
+                <label for="marker-size" id="marker-size-label">Base Size</label>
                 <input type="number" value="4" max="12" min="2.5" step="0.5" id="marker-size" onchange="updateMarker()">
             </div>
         </div>
 
         <div id="pod-settings" class="sidebar-window">
             <div class="window-title-container">
-                <span class="window-title">POD</span>
+                <span class="window-title">Probability of Rain</span>
                 <span class="window-exit" id="pod-settings-window-exit-btn">&times;</span>
             </div>
 
@@ -411,8 +416,8 @@
 
                 <span class="settings-label">Opacity</span>
                 <div class="settings-input">
-                    <input type="range" class="styled-range-slider" id="pod-opacity" min="0" max="100" value="100">
                     <div><span id="pod-opacity-value">100%</span></div>
+                    <input type="range" class="styled-range-slider" id="pod-opacity" min="0" max="100" value="100">
                 </div>
             </div>
             <div id="pod-btns-container">
@@ -481,6 +486,7 @@
         <script src="podLegend.js"></script>
         <script src="settings.js"></script>
         <script src="markerControl.js"></script>
+        <script src="terrainOverlay.js"></script>
         <script src="map.js"></script>
         <script>
             window.onload = function () {
