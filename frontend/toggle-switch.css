@@ -4,7 +4,7 @@
     display: inline-block;
     width: 2.2rem;
     height: 1rem;
-    border: 0.2rem solid green;
+    border: 0.2rem solid #247B7B;
 }
 
 /* Hide default HTML checkbox */
@@ -34,7 +34,7 @@
     width: 1rem;
     left: 0;
     bottom: 0;
-    background-color: white;
+    background-color: #FFFFFA;
     -webkit-transition: .133s;
     transition: .133s;
     border-radius: inherit;
@@ -42,7 +42,7 @@
 
 
 input:checked + .toggle-slider {
-    background-color: #008609;
+    background-color: #44A1A0;
 }
 
 /*input:focus + .slider:before {*/

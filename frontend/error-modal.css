@@ -15,7 +15,7 @@
 #error-modal {
     width: 400px;
     height: 200px;
-    background: #ffffff;
+    background: #FFFFFA;
     z-index: 4;
 
     display: flex;
@@ -43,5 +43,5 @@
     padding: 6px;
     border-radius: 7px;
     background: #44A1A0;
-    color: white;
+    color: #FFFFFA;
 }

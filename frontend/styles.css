@@ -16,8 +16,8 @@ select {
 }
 
 select option {
-  background: rgba(73, 155, 55, 0.57);
-  color: white;
+  background: #78CDD7;
+  color: #FFFFFA;
 }
 
 #map {
@@ -32,7 +32,7 @@ select option {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 2000;
+  z-index: 3;
 }
 
 .spinner {
@@ -55,7 +55,7 @@ select option {
   border: 1px solid #000;
   font-size: 14px;
   padding: 0 0.3em 0 0.3em;
-  z-index: 998;
+  z-index: 1;
   line-height: 1.5em;
   transform: translate(calc(-100% - 11px), -50%);
 }
@@ -68,7 +68,7 @@ select option {
     border: solid transparent;
     border-width: 0.75em;
     border-color: transparent;
-    border-left-color: #006400;
+    border-left-color: #247B7B;
     content: "";
     position: absolute;
     left: 100%;
@@ -80,9 +80,9 @@ select option {
 .arrow_btm_box {
     background-color: whitesmoke;
     width: 6.7em;
-    border: 1px solid red;
+    border: 1px solid #247B7B;
     text-align: center;
-    transform: translate(-45%, -105%);
+    transform: translate(-42%, -115%);
 }
 
 .arrow_btm_box:before {
@@ -115,7 +115,7 @@ select option {
 }
 
 .year-tag {
-  background-color: green;
+  background-color: #44A1A0;
   color: white;
   padding: 4px 8px;
   border-radius: 3px;

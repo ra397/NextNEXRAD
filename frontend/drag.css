@@ -16,7 +16,7 @@ div.drag-cnr {
 }
 
 @keyframes border-pulsate {
-    0% { border-color: #008609; }
+    0% { border-color: #0D5C63; }
     100% { border-color: var(--drag-brd-clr); }
 }
 
@@ -24,7 +24,7 @@ div.drag-cnr:hover {
     width: 20px;
     height: 20px;
     background: #ffffff;
-    border-color: #008609;
+    border-color: #0D5C63;
     cursor: move;
     transition: all 0.133s;
     animation: none;
@@ -62,7 +62,7 @@ div.drag-cnr:hover {
     top: 1%;
     right: 100px;
     width: 350px;
-    background: white;
+    background: #FFFFFA;
     border: 1px solid #ccc;
     display: none;
     /* Add these for better dragging */
