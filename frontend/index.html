@@ -60,7 +60,7 @@
 
         <div id="radar-settings" class="sidebar-window">
             <div class="window-title-container">
-                <span class="window-title">Radar Settings</span>
+                <span class="window-title">NEXRAD Coverage</span>
                 <span class="window-exit" id="radar-settings-window-exit-btn">&times;</span>
             </div>
             <div class="window-items-container">
@@ -117,7 +117,7 @@
                 </div>
 
                 <div class="settings-label">
-                    Elevation Angle(s):
+                    Antenna Elevation Angle(s):
                 </div>
                 <div class="settings-input double-slider">
                     <div id="elevation-angles-slider"></div>
@@ -157,14 +157,14 @@
                 </div>
 
                 <div class="settings-label">
-                    Max Altitude (m):
+                    AGL Threshold (m):
                 </div>
                 <div class="settings-input">
                     <input type="text" id="dynamic-radar-site-max-alt">
                 </div>
 
                 <div class="settings-label">
-                    Elevation Angle(s):
+                    Antenna Elevation Angle(s):
                 </div>
                 <div class="settings-input">
                     <div class="settings-input double-slider">
@@ -223,14 +223,14 @@
                 </div>
 
                 <div class="settings-label">
-                    Max Altitude (m):
+                    AGL Threshold (m):
                 </div>
                 <div class="settings-input">
                     <input type="text" id="existing-radar-site-max-alt"></input>
                 </div>
 
                 <div class="settings-label">
-                    Elevation Angle(s):
+                    Antenna Elevation Angle(s):
                 </div>
                 <div class="settings-input">
                     <div class="settings-input double-slider">
@@ -326,8 +326,8 @@
                 <div class="pop-settings-container">
                     <div class="settings-label">Population Threshold</div>
                     <div class="settings-input">
-                        <input type="range" class="styled-range-slider" id="popThreshold-slider" min="0" max="25000" value="7500" step="25"><br>
-                        <span id="popThreshold-value">7,500 people / 25 km²</span>
+                        <input type="range" class="styled-range-slider" id="popThreshold-slider" min="1" max="85" value="1" step="1"><br>
+                        <span id="popThreshold-value">1 people / 25 km²</span>
                     </div>
                     <div id="population-layer-controls-container">
                         <span class="edit-marker-icon" data-marker-type="population"></span>
