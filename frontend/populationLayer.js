@@ -15,101 +15,26 @@ class PopulationLayer {
     this.currentColor = "#000000";
   }
 
-  sliderKeyValueObject = {
-  1: 1,
-  2: 5,
-  3: 10,
-  4: 15,
-  5: 20,
-  6: 25,
-  7: 30,
-  8: 35,
-  9: 40,
-  10: 45,
-  11: 50,
-  12: 55,
-  13: 60,
-  14: 65,
-  15: 70,
-  16: 75,
-  17: 80,
-  18: 85,
-  19: 90,
-  20: 95,
-  21: 100,
-  22: 125,
-  23: 150,
-  24: 175,
-  25: 200,
-  26: 225,
-  27: 250,
-  28: 275,
-  29: 300,
-  30: 325,
-  31: 350,
-  32: 375,
-  33: 400,
-  34: 425,
-  35: 450,
-  36: 475,
-  37: 500,
-  38: 550,
-  39: 600,
-  40: 650,
-  41: 700,
-  42: 750,
-  43: 800,
-  44: 850,
-  45: 900,
-  46: 950,
-  47: 1000,
-  48: 1250,
-  49: 1500,
-  50: 1750,
-  51: 2000,
-  52: 2250,
-  53: 2500,
-  54: 2750,
-  55: 3000,
-  56: 3250,
-  57: 3500,
-  58: 3750,
-  59: 4000,
-  60: 4250,
-  61: 4500,
-  62: 4750,
-  63: 5000,
-  64: 5500,
-  65: 6000,
-  66: 6500,
-  67: 7000,
-  68: 7500,
-  69: 8000,
-  70: 8500,
-  71: 9000,
-  72: 9500,
-  73: 10000,
-  74: 11250,
-  75: 12500,
-  76: 13750,
-  77: 15000,
-  78: 16250,
-  79: 17500,
-  80: 18750,
-  81: 20000,
-  82: 21250,
-  83: 22500,
-  84: 23750,
-  85: 25000
-};
+  getThresholdFromSlider(sliderValue) {
+    if (sliderValue <= 21) {
+      return sliderValue === 1 ? 1 : (sliderValue - 1) * 5;
+    } else if (sliderValue <= 47) {
+      return 100 + (sliderValue - 21) * 25;
+    } else if (sliderValue <= 63) {
+      return 1000 + (sliderValue - 47) * 250;
+    } else if (sliderValue <= 73) {
+      return 5000 + (sliderValue - 63) * 500;
+    } else {
+      return 10000 + (sliderValue - 73) * 1250;
+    }
+  }
 
   initUI() {
     const slider = document.getElementById("popThreshold-slider");
     const label = document.getElementById("popThreshold-value");
 
     slider.addEventListener("input", e => {
-      console.log(e.target.value);
-      this.threshold = +this.sliderKeyValueObject[e.target.value];
+      this.threshold = this.getThresholdFromSlider(+e.target.value);
       label.textContent = `${this.threshold.toLocaleString()} people / 25 km²`;
       this.canvas.style.display = "block";
       this.draw();
