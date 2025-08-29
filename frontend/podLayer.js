@@ -52,7 +52,7 @@ class PodLayer {
       if (this.settings.years.length > 0) {
         this.fetchAndDraw(this.getSeasonDates(this.settings.years, this.settings.season));
       } else {
-        alert("You must select years.");
+        showError("Please select at least one year before submitting.");
       }
     });
 

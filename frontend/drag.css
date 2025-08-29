@@ -59,11 +59,11 @@ div.drag-cnr:hover {
 /* Update your sidebar-window class */
 .sidebar-window {
     position: absolute;
-    top: 1%;
+    top: 2.5%;
     right: 100px;
     width: 350px;
     background: #FFFFFA;
-    border: 1px solid #ccc;
+    border-radius: 5px;
     display: none;
     /* Add these for better dragging */
     user-select: none;

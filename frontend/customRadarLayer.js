@@ -67,7 +67,7 @@ class CustomRadarLayer extends BaseRadarLayer {
         document.getElementById("radar-submit-btn").addEventListener("click", () => {
             const params = this.readForm();
             if (!params) {
-                window.showError("Form is filled out incorrectly.");
+                window.showError("Invalid form input: ensure coordinates, tower height, and elevation range are entered correctly.");
                 return;
             }
             const marker = this.addCustomMarker(params);
