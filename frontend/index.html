@@ -13,6 +13,7 @@
         <link rel="stylesheet" href="drag.css">
         <link rel="stylesheet" href="podLegend.css">
         <link rel="stylesheet" href="marker-control.css">
+        <link rel="stylesheet" href="error-modal.css">
 
         <!-- Proj4js for reprojection -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.8.1/proj4.js"></script>
@@ -451,6 +452,14 @@
             </div>
         </div>
 
+        <!-- Error Modal -->
+        <div id="error-overlay">
+            <div id="error-modal">
+                <div id="error-message"></div>
+                <span id="error-close">Close</span>
+            </div>
+        </div>
+
         <!-- <div id="information" class="sidebar-window">
             <div class="window-title-container">
                 <h3>Information</h3>
@@ -487,6 +496,7 @@
         <script src="settings.js"></script>
         <script src="markerControl.js"></script>
         <script src="terrainOverlay.js"></script>
+        <script src="errorModal.js"></script>
         <script src="map.js"></script>
         <script>
             window.onload = function () {

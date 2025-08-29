@@ -67,7 +67,7 @@ class CustomRadarLayer extends BaseRadarLayer {
         document.getElementById("radar-submit-btn").addEventListener("click", () => {
             const params = this.readForm();
             if (!params) {
-                alert("Please fill out all fields correctly.");
+                window.showError("Form is filled out incorrectly.");
                 return;
             }
             const marker = this.addCustomMarker(params);
