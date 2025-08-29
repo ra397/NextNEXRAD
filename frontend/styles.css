@@ -9,6 +9,22 @@ body {
   overflow: hidden;
 }
 
+.sidebar-window {
+    position: absolute;
+    top: 2.5%;
+    right: 100px;
+    width: 350px;
+    background: #FFFFFA;
+    border-radius: 5px;
+    padding-bottom: 8px;
+    display: none;
+    /* Add these for better dragging */
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
 select {
   font-size: medium;
   text-align-last: center;

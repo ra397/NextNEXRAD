@@ -97,7 +97,7 @@ class CustomRadarLayer extends BaseRadarLayer {
 
         // Update
         const updateBtn = document.getElementById("update-dynamic-radar");
-        updateBtn.disabled = true;
+        updateBtn.classList.add('disabled');
 
         const towerEl = document.getElementById("dynamic-radar-site-tower-height");
         const altEl   = document.getElementById("dynamic-radar-site-max-alt");
@@ -105,12 +105,12 @@ class CustomRadarLayer extends BaseRadarLayer {
         const watchFields = [towerEl, altEl].filter(Boolean);
 
         this.elevationAnglesSlider_showRadar.noUiSlider.on('update', () => {
-            updateBtn.disabled = !this.hasChanges();
+            updateBtn.classList.toggle('disabled', !this.hasChanges());
         });
 
         watchFields.forEach(el => {
             el.addEventListener("input", () => {
-                updateBtn.disabled = !this.hasChanges();
+                updateBtn.classList.toggle('disabled', !this.hasChanges());
             });
         });
 
@@ -134,7 +134,7 @@ class CustomRadarLayer extends BaseRadarLayer {
             document.getElementById("dynamic-radar-range-slider").value = 0;
 
             this.updateRadar(siteId, { lat, lng, aglThreshold: agl, towerHeight: tower, elevationAngles: angles });
-            updateBtn.disabled = true;
+            updateBtn.classList.add('disabled');
         });
 
         // For the create window
@@ -432,7 +432,7 @@ class CustomRadarLayer extends BaseRadarLayer {
             elevationAngles: [...selectedAngles].sort()
         };
 
-        document.getElementById("update-dynamic-radar").disabled = true;
+        document.getElementById("update-dynamic-radar").classList.add('disabled');
     }
 
     hasChanges() {

@@ -14,6 +14,7 @@
         <link rel="stylesheet" href="podLegend.css">
         <link rel="stylesheet" href="marker-control.css">
         <link rel="stylesheet" href="error-modal.css">
+        <link rel="stylesheet" href="buttons.css">
 
         <!-- Proj4js for reprojection -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.8.1/proj4.js"></script>
@@ -121,8 +122,9 @@
                 <div class="settings-input double-slider">
                     <div id="elevation-angles-slider"></div>
                 </div>
-
-                <button id="radar-submit-btn">Get Coverage</button>
+            </div>
+            <div class="submit-container">
+                <span class="submit-btn" id="radar-submit-btn">Get Coverage</span>
             </div>
         </div>
 
@@ -183,10 +185,10 @@
                     </div>
                 </div>
             </div>
-            <div id="custom-radar-show-btns-container">
-                <button id="toggle-dynamic-radar" class="settings-input">Toggle</button>
-                <button id="update-dynamic-radar" class="settings-input">Update</button>
-                <button id="delete-dynamic-radar" class="settings-input">Delete</button>
+            <div class="submit-container">
+                <span class="submit-btn" style="background: #78cdd7;" id="toggle-dynamic-radar">Toggle</span>
+                <span class="submit-btn" id="update-dynamic-radar">Update</span>
+                <span class="danger-btn" id="delete-dynamic-radar">Delete</span>
             </div>
         </div>
 
@@ -249,8 +251,9 @@
                     </div>
                 </div>
             </div>
-            <div id="update-existing-radar-container">
-                <button id="update-existing-radar">Update</button>
+
+            <div class="submit-container">
+                <span class="submit-btn" id="update-existing-radar">Update</button>
             </div>
         </div>
 
@@ -421,9 +424,9 @@
                     <input type="range" class="styled-range-slider" id="pod-opacity" min="0" max="100" value="100">
                 </div>
             </div>
-            <div id="pod-btns-container">
-                <button id="submit-pod-layer">Submit</button>
-                <button id="clear-pod-layer">Clear</button>
+            <div class="submit-container">
+                <span class="submit-btn" id="submit-pod-layer">Submit</span>
+                <span class="danger-btn" id="clear-pod-layer">Clear</span>
             </div>
         </div>
 

@@ -1,0 +1,38 @@
+.submit-btn {
+    cursor: pointer;
+    text-align: center;
+    padding: 6px;
+    border-radius: 7px;
+    background: #247b7b;
+    color: #FFFFFA
+}
+
+.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: default;
+}
+
+.submit-container {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+#pod-btns-container {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+#custom-radar-show-btns-container {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.danger-btn {
+    cursor: pointer;
+    text-align: center;
+    background: #d9534f;
+    color: #FFFFFA;
+    padding: 6px;
+    border-radius: 7px;
+}

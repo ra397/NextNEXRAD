@@ -47,7 +47,7 @@ class ExistingRadarLayer extends BaseRadarLayer {
     initUI() {
         // Update
         const updateBtn = document.getElementById("update-existing-radar");
-        updateBtn.disabled = true;
+        updateBtn.classList.add('disabled');
 
         const towerEl = document.getElementById("existing-radar-site-tower-height");
         const altEl   = document.getElementById("existing-radar-site-max-alt");
@@ -56,13 +56,13 @@ class ExistingRadarLayer extends BaseRadarLayer {
         watchFields.forEach(el => {
             el.addEventListener("input", () => {
                 console.log(this.hasChanges());
-                updateBtn.disabled = !this.hasChanges();
+                updateBtn.classList.toggle('disabled', !this.hasChanges());
             });
         });
 
         // Add slider change listener separately
         this.elevationAnglesSlider.noUiSlider.on('update', () => {
-            updateBtn.disabled = !this.hasChanges();
+            updateBtn.classList.toggle('disabled', !this.hasChanges());
         });
 
         updateBtn.addEventListener("click", () => {
@@ -78,7 +78,7 @@ class ExistingRadarLayer extends BaseRadarLayer {
             }, 10);
             this.customRadarHelper.fetchAndAddOverlay(marker);
 
-            updateBtn.disabled = true;
+            updateBtn.classList.add('disabled');
 
             this.customRadarHelper.populateDynamicRadarPanel(marker);
             toggleWindow('arbitrary-radar-show');
@@ -244,7 +244,7 @@ class ExistingRadarLayer extends BaseRadarLayer {
             elevationAngles: [...selectedAngles].sort()
         }
 
-        document.getElementById("update-existing-radar").disabled = true;
+        document.getElementById("update-existing-radar").classList.add('disabled');
     }
 
     getCurrentThresholdInMeters() {

@@ -71,7 +71,7 @@ class PopulationLayer {
         const value = this.data[i];
         const idx = i * 4;
 
-        if (value > this.threshold) {
+        if (value >= this.threshold) {
           imageData.data[idx] = r;
           imageData.data[idx + 1] = g;
           imageData.data[idx + 2] = b;

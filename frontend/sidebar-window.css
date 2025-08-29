@@ -1,6 +1,6 @@
 .window-title-container {
     display: flex;
-    background-color: #44A1A0;
+    background-color: #0d5c63;
 
     padding: 5px;
 }
@@ -52,55 +52,6 @@
     padding: 35px 25px 25px 25px;
 }
 
-#radar-submit-btn {
-    grid-column: 1 / span 2;
-    justify-self: center;
-
-    margin: 0.25rem auto 0.85rem auto;
-    padding: 0.25rem 0.5rem;
-    border-radius: .75rem;
-    background-color: rgb(46, 143, 46);
-    color: white;
-    cursor: pointer;
-    outline: 1px solid green;
-}
-
-#radar-submit-btn:hover {
-    background-color: rgb(77, 168, 77);
-}
-
-#submit-pod-layer {
-    justify-self: right;
-
-    margin: 0.25rem auto 0.85rem 100px;
-    padding: 0.25rem 0.5rem;
-    border-radius: .75rem;
-    background-color: rgb(46, 143, 46);
-    color: white;
-    cursor: pointer;
-    outline: 1px solid green;
-}
-
-#submit-pod-layer:hover {
-    background-color: rgb(77, 168, 77);
-}
-
-#clear-pod-layer {
-    justify-self: left;
-
-    margin: 0.25rem auto 0.85rem auto;
-    padding: 0.25rem 0.5rem;
-    border-radius: .75rem;
-    background-color: rgb(177, 15, 15);
-    color: white;
-    cursor: pointer;
-    outline: 1px solid green;
-}
-
-#clear-pod-layer:hover {
-    background-color: rgb(255,0, 0);
-}
-
 .pop-settings-container {
   display: grid;
   grid-template-columns: 75px 250px 25px; /* label small, input expands, button auto */
@@ -127,26 +78,6 @@
     padding-left: 65px;
 }
 
-#update-existing-radar-container {
-    display: flex;
-    justify-content: center;
-}
-
-#update-existing-radar {
-    margin-bottom: 10px;
-    padding: 0.25rem 0.5rem;
-    border-radius: .75rem;
-    background-color: rgb(29, 110, 29);
-    color: white;
-    cursor: pointer;
-    outline: 1px solid green;
-}
-
-#update-existing-radar:disabled {
-    cursor: default;
-    background-color: rgb(107, 153, 107);
-}
-
 #show-existing-radar {
     margin-bottom: 10px;
     padding: 0.25rem 0.5rem;
@@ -155,72 +86,6 @@
     color: white;
     cursor: pointer;
     outline: 1px solid green;
-}
-
-#custom-radar-show-btns-container {
-    display: flex;
-    justify-content: space-around;
-    width: 100%;
-}
-
-#toggle-dynamic-radar {
-    margin: 0.25rem auto 0.85rem auto;
-    padding: 0.25rem 0.5rem;
-    border-radius: .75rem;
-    background-color: rgb(46, 143, 46);
-    color: white;
-    cursor: pointer;
-    outline: 1px solid green;
-}
-
-#update-dynamic-radar {
-    margin: 0.25rem auto 0.85rem auto;
-    padding: 0.25rem 0.5rem;
-    border-radius: .75rem;
-    background-color: #0d6efd;
-    color: white;
-    cursor: pointer;
-    outline: 1px solid #0d6efd;
-}
-
-#update-dynamic-radar:disabled {
-    cursor: default;
-    background-color: #73a6f2;
-}
-
-#delete-dynamic-radar {
-    margin: 0.25rem auto 0.85rem auto;
-    padding: 0.25rem 0.5rem;
-    border-radius: .75rem;
-    background-color: rgb(177, 15, 15);
-    color: white;
-    cursor: pointer;
-    outline: 1px solid rgb(177, 15, 15);
-}
-
-#pod-btns-container {
-    display: flex;
-    justify-content: space-between;
-}
-
-#submit-pod-layer {
-    margin: 0.25rem auto 0.85rem auto;
-    padding: 0.25rem 0.5rem;
-    border-radius: .75rem;
-    background-color: rgb(46, 143, 46);
-    color: white;
-    cursor: pointer;
-    outline: 1px solid green;
-}
-
-#clear-pod-layer {
-    margin: 0.25rem auto 0.85rem auto;
-    padding: 0.25rem 0.5rem;
-    border-radius: .75rem;
-    background-color: rgb(177, 15, 15);
-    color: white;
-    cursor: pointer;
-    outline: 1px solid rgb(177, 15, 15);
 }
 
 #pod-opacity {

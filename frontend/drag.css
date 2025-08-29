@@ -55,19 +55,3 @@ div.drag-cnr:hover {
     bottom: var(--drag-off);
     clip-path: polygon(0 0, 100% 100%, 0 100%);
 }
-
-/* Update your sidebar-window class */
-.sidebar-window {
-    position: absolute;
-    top: 2.5%;
-    right: 100px;
-    width: 350px;
-    background: #FFFFFA;
-    border-radius: 5px;
-    display: none;
-    /* Add these for better dragging */
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-}
