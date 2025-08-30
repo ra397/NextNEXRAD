@@ -136,40 +136,46 @@ class RadarFieldsManager {
      * @param {string} windowType - 'arbitrary-create', 'arbitrary-show', or 'existing'
      * @param {object} values - Object containing field values to set
      */
-    setFields(windowType, values) {
+    setFields(windowType, values, id) {
+        if (windowType == "arbitrary-radar-show") {
+            document.getElementById("dynamic-radar-site-id").textContent = id;
+        }
+
+        const params = values;
+
+        console.log(params);
+
         const mapping = this.fieldMappings[windowType];
         if (!mapping) {
             throw new Error(`Unknown window type: ${windowType}`);
         }
 
         // Set latitude and longitude
-        if (values.lat !== undefined) {
-            this.setElementValue(mapping.lat, values.lat);
+        if (params.lat !== undefined) {
+            this.setElementValue(mapping.lat, params.lat);
         }
-        if (values.lng !== undefined) {
-            this.setElementValue(mapping.lng, values.lng);
+        if (params.lng !== undefined) {
+            this.setElementValue(mapping.lng, params.lng);
         }
 
         // Set tower height
-        if (values.tower_height_m !== undefined) {
-            console.log(values.tower_height_m);
-            this.setElementValue(mapping.towerHeight, values.tower_height_m);
+        if (params.tower_height_m !== undefined) {
+            this.setElementValue(mapping.towerHeight, params.tower_height_m);
         }
 
         // Set AGL threshold
-        if (values.agl_threshold_m !== undefined) {
-            console.log(values.agl_threshold_m);
-            this.setElementValue(mapping.aglThreshold, values.agl_threshold_m);
+        if (params.agl_threshold_m !== undefined) {
+            this.setElementValue(mapping.aglThreshold, params.agl_threshold_m);
         }
 
         // Set the Elevation Angles
-        if (values.elevation_angles.min !== undefined && values.elevation_angles.max !== undefined) {
+        if (params.elevation_angles.min !== undefined && params.elevation_angles.max !== undefined) {
             if (windowType == "arbitrary-radar-show") {
-                elevationAnglesSlider_customRadarShow.noUiSlider.set([values.elevation_angles.min, values.elevation_angles.max]);
+                elevationAnglesSlider_customRadarShow.noUiSlider.set([params.elevation_angles.min, params.elevation_angles.max]);
+            } else if (windowType == "arbitrary-radar") {
+                elevationAnglesSlider.noUiSlider.set([params.elevation_angles.min, params.elevation_angles.max]);
             }
         }
-
-        console.log(values.id);
     }
 
     /**
@@ -302,12 +308,16 @@ class RadarFieldsManager {
      * @param {string} windowType - Window type to reset
      */
     resetFields(windowType) {
+        console.log("here");
         const defaultValues = {
             lat: 'Latitude',
             lng: 'Longitude', 
-            towerHeight: '',
-            aglThreshold: '914.4',
-            rangeSlider: 0
+            tower_height_m: '',
+            agl_threshold_m: '',
+            elevation_angles: {
+                min: 0.5,
+                max: 19.5
+            }
         };
         
         this.setFields(windowType, defaultValues);
@@ -327,11 +337,16 @@ document.getElementById("select-location-btn").addEventListener("click", () => {
     mapLocationSelector.start();
 });
 
-document.getElementById("radar-submit-btn").addEventListener("click", () => {
+document.getElementById("radar-submit-btn").addEventListener("click", async () => {
     const params = fieldManager.getFields("arbitrary-radar");
     if (params != null) {
-        radarLayer.newRadarRequest(params);
-        toggleWindow("arbitrary-radar-show");
-        fieldManager.setFields('arbitrary-radar-show', params);
+        const newRadar = await radarLayer.newRadarRequest(params);
+        if (newRadar != null) {
+            toggleWindow("arbitrary-radar-show");
+            fieldManager.setFields('arbitrary-radar-show', newRadar.params, newRadar.id);
+            fieldManager.resetFields("arbitrary-radar");
+        }
+    } else {
+        showError("Please fill out all fields before submitting.");
     }
 });

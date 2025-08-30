@@ -9,6 +9,8 @@ class RadarLayer {
         this.nexradBounds = {};
 
         this.radars = [];
+
+        this.currentRadarId = 0;
     }
 
     async loadNexradBounds() {
@@ -46,23 +48,27 @@ class RadarLayer {
         }
     };
 
-    newRadarRequest(params) {
-        let isDuplicate = false;
-        for (const radar of this.radars) {
-            if (this.isEqual(params, radar.params)) {
-                showError("Duplicate Radar.");
-                isDuplicate = true;
-                break;
-            }
+    async newRadarRequest(params) {
+        // Check for duplicates
+        if (this.radars.some(radar => this.isEqual(params, radar.params))) {
+            showError("Duplicate Radar.");
+            return null;
         }
-        if (!isDuplicate) {
-            const overlay = this.fetchCoverage(params);
-            this.radars.push({
-                id: params.id || `radar_${Date.now()}`,
-                params: params,
-                overlay: overlay
-            });
-        }
+        
+        // Fetch coverage and create radar
+        const overlay = await this.fetchCoverage(params);
+        if (!overlay) return null;
+
+        console.log("Does the below contain elevation angles?");
+        console.log(params);
+        
+        const newRadar = {
+            id: ++this.currentRadarId,
+            params,
+            overlay
+        };
+        this.radars.push(newRadar);
+        return newRadar;
     }
 
     async fetchCoverage(p) {
