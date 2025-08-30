@@ -68,9 +68,6 @@ class RadarLayer {
         // Fetch coverage and create radar
         const overlay = await this.fetchCoverage(params);
         if (!overlay) return null;
-
-        console.log("Does the below contain elevation angles?");
-        console.log(params);
         
         const newRadar = {
             id: ++this.currentRadarId,

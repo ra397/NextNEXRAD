@@ -119,15 +119,6 @@ class RadarFieldsManager {
             max: maxSelected,
         }
 
-        if (isNaN(values.lat) || 
-            isNaN(values.lng) || 
-            isNaN(values.tower_height_m) || 
-            isNaN(values.agl_threshold_m) ||
-            isNaN(minSelected) || 
-            isNaN(maxSelected)) {
-            return null;
-        }
-
         return values;
     }
 
@@ -282,17 +273,18 @@ class RadarFieldsManager {
         }
 
         // Validate tower height
-        if (values.towerHeight !== null && values.towerHeight !== undefined) {
-            const height = parseFloat(values.towerHeight);
-            if (isNaN(height) || height < 0) {
+        if (values.tower_height_m !== null && values.tower_height_m !== undefined) {
+            const height = parseFloat(values.tower_height_m);
+            if (isNaN(height) || height <= 0) {
+                console.log("NEW ERROR")
                 errors.push('Tower height must be a positive number');
             }
         }
 
         // Validate AGL threshold
-        if (values.aglThreshold !== null && values.aglThreshold !== undefined) {
-            const threshold = parseFloat(values.aglThreshold);
-            if (isNaN(threshold) || threshold < 0) {
+        if (values.agl_threshold_m !== null && values.agl_threshold_m !== undefined) {
+            const threshold = parseFloat(values.agl_threshold_m);
+            if (isNaN(threshold) || threshold <= 0) {
                 errors.push('AGL threshold must be a positive number');
             }
         }
@@ -340,7 +332,8 @@ document.getElementById("select-location-btn").addEventListener("click", () => {
 
 document.getElementById("radar-submit-btn").addEventListener("click", async () => {
     const params = fieldManager.getFields("arbitrary-radar");
-    if (params != null) {
+    const validation = fieldManager.validateFields(params);
+    if (validation.isValid) {
         const newRadar = await radarLayer.newRadarRequest(params);
         mapLocationSelector.deleteTempMarker();
         if (newRadar != null) {
@@ -349,6 +342,22 @@ document.getElementById("radar-submit-btn").addEventListener("click", async () =
             fieldManager.resetFields("arbitrary-radar");
         }
     } else {
-        showError("Please fill out all fields before submitting.");
+        showError(validation.errors);
+    }
+});
+
+document.getElementById("update-dynamic-radar").addEventListener("click", async () => {
+    const params = fieldManager.getFields("arbitrary-radar-show");
+    const validation = fieldManager.validateFields(params);
+    if (validation.isValid) {
+        const newRadar = await radarLayer.newRadarRequest(params);
+        mapLocationSelector.deleteTempMarker();
+        if (newRadar != null) {
+            // TODO: delete the old radar overlay and marker (from cache as well)
+            fieldManager.setFields('arbitrary-radar-show', newRadar.params, newRadar.id);
+            fieldManager.resetFields("arbitrary-radar");
+        }
+    } else {
+        showError(validation.errors);
     }
 });
