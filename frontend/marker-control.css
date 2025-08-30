@@ -1,6 +1,6 @@
 .marker-control-popup {
     position: absolute;
-    top: 1%; /* Same top position as sidebar */
+    top: 2.5%; /* Same top position as sidebar */
     right: 452px; /* sidebar's right (100px) + sidebar's width (350px) */
     width: 170px;
     height: fit-content;

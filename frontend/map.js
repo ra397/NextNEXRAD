@@ -2,8 +2,7 @@ const server = window._env_prod.SERVER_URL;
 
 let map;
 
-let existingRadarLayer;
-let customRadarLayer;
+let radarLayer;
 let usgsLayer;
 let podLayer;
 let populationLayer;
@@ -52,13 +51,11 @@ async function initMap() {
   window.map = map;
   terrainOverlay.setMap(null); // Start with terrain overlay OFF
 
-  customRadarLayer = new CustomRadarLayer(map, server);
-  customRadarLayer.init();
-  window.customRadarLayer = customRadarLayer;
-
-  existingRadarLayer = new ExistingRadarLayer(map, 'public/data/nexrad.json', 'public/data/nexrad_coverages/radar_bounds.json', customRadarLayer);
-  existingRadarLayer.init();
-  window.existingRadarLayer = existingRadarLayer;
+  radarLayer = new RadarLayer(map);
+  window.radarLayer = radarLayer;
+  
+  mapLocationSelector = new MapLocationSelector(map);
+  window.mapLocationSelector = mapLocationSelector;
 
   usgsLayer = new UsgsLayer(map);
   await usgsLayer.init();
