@@ -3,8 +3,10 @@ class RadarLayer {
         this.map = map;
 
         this.nexradMarkers = new markerCollection(this.map);
+        this.customMarkers = new markerCollection(this.map);
 
         this.initializeNexrad();
+        this.initializeCustomMarkers();
 
         this.nexradBounds = {};
 
@@ -48,6 +50,14 @@ class RadarLayer {
         }
     };
 
+    initializeCustomMarkers = async () => {
+        await this.customMarkers.init({
+            map: this.map, 
+            use_advanced: false,
+            marker_options: { markerFill: '#0000FF', markerStroke: '#0000FF', markerSize: 4.5 }
+        });
+    }
+
     async newRadarRequest(params) {
         // Check for duplicates
         if (this.radars.some(radar => this.isEqual(params, radar.params))) {
@@ -67,6 +77,10 @@ class RadarLayer {
             params,
             overlay
         };
+        // make a marker 
+        this.addMarker(newRadar.id, params.lat, params.lng);
+
+        // Add to cache
         this.radars.push(newRadar);
         return newRadar;
     }
@@ -86,7 +100,7 @@ class RadarLayer {
         let data;
         try {
             showSpinner();
-            const res = await fetch(`${window._env_dev.SERVER_URL}/calculate_blockage`, {
+            const res = await fetch(`${window._env_prod.SERVER_URL}/calculate_blockage`, {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
             });
@@ -119,6 +133,11 @@ class RadarLayer {
         overlay.setOpacity(0.7);  
         
         return overlay;
+    }
+
+    addMarker(site_id, lat, lng) {
+        const marker = this.customMarkers.makeMarker(lat, lng, { properties: { id: site_id} }, { clickable: true });
+        return marker;
     }
 
     isEqual(obj1, obj2) {

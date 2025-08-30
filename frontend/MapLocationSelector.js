@@ -5,6 +5,26 @@ class MapLocationSelector {
         this.originalCursor = null;
         this.clickListener = null;
         this.selectedLocation = null;
+
+        this.tempMarker = new markerCollection(this.map);
+        this.initializeTempMarker();
+    }
+
+    initializeTempMarker = async () => {
+        await this.tempMarker.init({
+            map: this.map, 
+            use_advanced: false,
+            marker_options: { markerFill: '#0000FF', markerStroke: '#0000FF', markerSize: 4.5 }
+        });
+    }
+
+    addTempMarker(lat, lng) {
+        const marker = this.tempMarker.makeMarker(lat, lng, { properties: {id: "temp"} }, { clickable: true });
+        return marker;
+    }
+
+    deleteTempMarker() {
+        return this.tempMarker.deleteMarker("temp");
     }
 
     start() {
@@ -19,6 +39,7 @@ class MapLocationSelector {
 
     handleClick(event) {
         if (!this.isSelectModeActive) return;
+        this.deleteTempMarker("temp");
         // Record the latitude and longitude
         this.selectedLocation = {
             lat: event.latLng.lat().toFixed(4),
