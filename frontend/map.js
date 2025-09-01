@@ -161,9 +161,6 @@ document.getElementById("terrainOverlay-checkbox").addEventListener("change", fu
 });
 
 function reset() {
-  customRadarLayer.reset();
-  customRadarLayer.resetAllRangeRings();
-  existingRadarLayer.resetAllRangeRings();
   usgsLayer.reset();
   podLayer.reset();
   populationLayer.clear();

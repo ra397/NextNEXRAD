@@ -71,8 +71,8 @@ class RadarLayer {
         
         const newRadar = {
             id: ++this.currentRadarId,
-            params,
-            overlay
+            params: params,
+            overlay: overlay,
         };
         // make a marker 
         this.addMarker(newRadar.id, params.lat, params.lng);
@@ -82,8 +82,76 @@ class RadarLayer {
         return newRadar;
     }
 
+    async updateRadar(id, params) {
+        // Check if params are duplicate
+        if (this.radars.some(radar => this.isEqual(params, radar.params))) {
+            showError("Duplicate Radar.");
+            return null;
+        }
+
+        // Find radar to update
+        let radarToUpdateIndex = -1;
+        let radarToUpdate;
+        for (let i = 0; i < this.radars.length; i ++) {
+            if (this.radars[i].id == id) {
+                radarToUpdate = this.radars[i];
+                radarToUpdateIndex = i;
+                break;
+            }
+        }
+        console.log("The radar we are tring to update is below:");
+        console.log(radarToUpdate);
+
+        // Update radar params and overlay, keep ID the same
+        const overlay = await this.fetchCoverage(params);
+        if (!overlay) return null;
+
+        if (radarToUpdate.overlay) {
+            radarToUpdate.overlay.setMap(null);
+            radarToUpdate.overlay = null;
+        }
+
+        radarToUpdate.overlay = overlay;
+        radarToUpdate.overlay.setMap(this.map);
+
+        const updated = {
+            id: radarToUpdate.id,
+            params: params,
+            overlay: overlay,
+        };
+        this.radars[radarToUpdateIndex] = updated;
+        return updated;
+    }
+
+    deleteRadar(id) {
+        // Remove marker
+        this.customMarkers.deleteMarker(id);
+
+        // Find radar
+        let radarIndex = -1;
+        let radar;
+        for (let i = 0; i < this.radars.length; i ++) {
+            if (this.radars[i].id == id) {
+                radar = this.radars[i];
+                radarIndex = i;
+                break;
+            }
+        }
+        console.log("The radar we are trying to delete is below:");
+        console.log(radar);
+        // Remove overlay
+        radar.overlay.setMap(null);
+        radar.ovlerlay = null;
+        // Remove from cache
+        if (radarIndex != -1) {
+            this.radars.splice(radarIndex, 1);
+        }
+    }
+
     async fetchCoverage(p) {
-        const steps = [0.5, 0.9, 1.3, 1.8, 2.4, 3.1, 4.0, 5.1, 6.4, 8.0, 10.0, 12.5, 15.6, 19.5]
+        const steps = [0.5, 0.9, 1.3, 1.8, 2.4, 3.1, 4.0, 5.1, 6.4, 8.0, 10.0, 12.5, 15.6, 19.5];
+
+        console.log(p);
 
         const [x5070, y5070] = proj4('EPSG:4326', 'EPSG:5070', [p.lng, p.lat]);
         const body = {
@@ -116,6 +184,22 @@ class RadarLayer {
         overlay.setOpacity(0.7);
         hideSpinner();
         return overlay;
+    }
+
+    toggleOverlay(id) {
+        // Find radar whose overlay we will toggle
+        let radarToToggleIndex = -1;
+        let radarToToggle;
+        for (let i = 0; i < this.radars.length; i ++) {
+            if (this.radars[i].id == id) {
+                radarToToggle = this.radars[i];
+                radarToToggleIndex = i;
+                break;
+            }
+        }
+        if (!radarToToggle.overlay) return;
+        const isOverlayVisible = radarToToggle.overlay.getMap();
+        radarToToggle.overlay.setMap(isOverlayVisible ? null : this.map);
     }
 
     getPrecalculatedOverlay(siteId) {
