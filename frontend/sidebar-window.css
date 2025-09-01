@@ -76,16 +76,6 @@
     padding-left: 65px;
 }
 
-#show-existing-radar {
-    margin-bottom: 10px;
-    padding: 0.25rem 0.5rem;
-    border-radius: .75rem;
-    background-color: rgb(29, 110, 29);
-    color: white;
-    cursor: pointer;
-    outline: 1px solid green;
-}
-
 #pod-opacity {
     width: 100%;
 }

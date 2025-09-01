@@ -38,7 +38,7 @@ document.getElementById("update-dynamic-radar").addEventListener("click", async 
         const updatedRadar = radarLayer.updateRadar(oldRadarId, params);
         mapLocationSelector.deleteTempMarker();
         if (updatedRadar != null) {
-            fieldManager.setFields('arbitrary-radar-show', updatedRadar.params);
+            fieldManager.setFields('arbitrary-radar-show', updatedRadar);
             fieldManager.resetFields("arbitrary-radar");
         }
     } else {
@@ -56,4 +56,26 @@ document.getElementById("delete-dynamic-radar").addEventListener("click", () => 
     radarLayer.deleteRadar(radarId);
     fieldManager.resetFields("arbitrary-radar-show");
     toggleWindow("arbitrary-radar-show");
+});
+
+// Existing Radar Show Menu Button Handlers
+// Update Btn: If we have unique params, create new radar
+//             otherwise, fetch overlay with params and attach it to existing radar.overlay (show it too)
+document.getElementById("update-existing-radar").addEventListener("click", async () => {
+    const params = fieldManager.getFields("existing-radar-show");
+    const validation = fieldManager.validateFields(params);
+    if (validation.ok) {
+        const result = await radarLayer.getOverlayForNexradRadar(params);
+        if (!result) {
+            const siteId = document.getElementById("existing-radar-site-id").textContent;
+            console.log(siteId);
+            radarLayer.toggleOverlay(siteId);
+            const newRadar = await radarLayer.newRadarRequest(params);
+            toggleWindow('arbitrary-radar-show');
+            fieldManager.setFields('arbitrary-radar-show', newRadar);
+            fieldManager.resetFields("existing-radar-show");
+        }
+    } else {
+        showError(validation.errors);
+    }
 });

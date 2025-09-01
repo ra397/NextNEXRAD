@@ -48,6 +48,8 @@ class RadarLayer {
                 overlay: null
             });
         }
+
+        this.nexradMarkers.reactClick = this.nexradMarkerClick.bind(this);
     };
 
     initializeCustomMarkers = async () => {
@@ -56,6 +58,8 @@ class RadarLayer {
             use_advanced: false,
             marker_options: { markerFill: '#0000FF', markerStroke: '#0000FF', markerSize: 4.5 }
         });
+
+        this.customMarkers.reactClick = this.customMarkerClick.bind(this);
     }
 
     async newRadarRequest(params) {
@@ -75,13 +79,16 @@ class RadarLayer {
             overlay: overlay,
         };
         // make a marker 
-        this.addMarker(newRadar.id, params.lat, params.lng);
+        const marker = this.addMarker(newRadar.id, params.lat, params.lng);
+        this.customMarkers.highlightMarker(marker);
 
         // Add to cache
         this.radars.push(newRadar);
         return newRadar;
     }
 
+    // Changes params and attaches new overlay based on those params
+    // Preserves id
     async updateRadar(id, params) {
         // Check if params are duplicate
         if (this.radars.some(radar => this.isEqual(params, radar.params))) {
@@ -121,6 +128,31 @@ class RadarLayer {
         };
         this.radars[radarToUpdateIndex] = updated;
         return updated;
+    }
+
+    async getOverlayForNexradRadar(params) {
+        const duplicateIndex = this.radars.findIndex(
+            radar => this.isEqual(params, radar.params)
+        );
+
+        if (duplicateIndex !== -1) { // params are duplicate
+            const radarToUpdate = this.radars[duplicateIndex];
+            if (radarToUpdate.overlay === null) {
+                const overlay = await this.fetchCoverage(params);
+                radarToUpdate.overlay = overlay;
+                return true; // attached overlay
+            } else {
+                // Ensure overlay is visible
+                const isVisible = radarToUpdate.overlay.getMap();
+                if (!isVisible) {
+                    radarToUpdate.overlay.setMap(this.map);
+                } else {
+                    showError("Duplicate Radar.");
+                }
+                return true;
+            }
+        }
+        return false; // brand new radar
     }
 
     deleteRadar(id) {
@@ -197,28 +229,64 @@ class RadarLayer {
                 break;
             }
         }
+        console.log(radarToToggle);
         if (!radarToToggle.overlay) return;
         const isOverlayVisible = radarToToggle.overlay.getMap();
         radarToToggle.overlay.setMap(isOverlayVisible ? null : this.map);
     }
 
-    getPrecalculatedOverlay(siteId) {
-        const url = `public/data/nexrad_coverages/coverages_3k/${siteId}.png`;
-
-        const overlayBounds = this.nexradBounds[siteId];
-        const sw = new google.maps.LatLng(overlayBounds.south, overlayBounds.west);
-        const ne = new google.maps.LatLng(overlayBounds.north, overlayBounds.east);
-        const bounds = new google.maps.LatLngBounds(sw, ne);
-
-        const overlay = customOverlay(url, bounds, this.map, 'OverlayView');
-        overlay.setOpacity(0.7);  
-        
-        return overlay;
-    }
-
     addMarker(site_id, lat, lng) {
         const marker = this.customMarkers.makeMarker(lat, lng, { properties: { id: site_id} }, { clickable: true });
         return marker;
+    }
+
+    nexradMarkerClick(event, marker) {
+        console.log("This marker was clicked", marker.properties.id);
+        const id = marker.properties.id;
+
+        let radar = null;
+        for (let i = 0; i < this.radars.length; i ++) {
+            if (this.radars[i].id == id) {
+                radar = this.radars[i];
+            }
+        }
+
+        if (radar != null) {
+            fieldManager.resetFields('existing-radar-show');
+            fieldManager.setFields('existing-radar-show', radar);
+
+            const panel = document.getElementById('existing-radar-show');
+                if (panel.style.display === 'none' || getComputedStyle(panel).display === 'none') {
+                toggleWindow('existing-radar-show');
+            }
+            setTimeout(() => {
+                this.nexradMarkers.highlightMarker(marker);
+            }, 10);
+        }
+    }
+
+    customMarkerClick(event, marker) {
+        const id = marker.properties.id;
+
+        let radar = null;
+        for (let i = 0; i < this.radars.length; i ++) {
+            if (this.radars[i].id == id) {
+                radar = this.radars[i];
+            }
+        }
+
+        if (radar != null) {
+            fieldManager.resetFields('arbitrary-radar-show');
+            fieldManager.setFields('arbitrary-radar-show', radar);
+
+            const panel = document.getElementById('arbitrary-radar-show');
+                if (panel.style.display === 'none' || getComputedStyle(panel).display === 'none') {
+                toggleWindow('arbitrary-radar-show');
+            }
+            setTimeout(() => {
+                this.customMarkers.highlightMarker(marker);
+            }, 10);
+        }
     }
 
     isEqual(obj1, obj2) {

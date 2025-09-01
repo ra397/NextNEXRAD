@@ -85,7 +85,7 @@
         <div id="arbitrary-radar" class="sidebar-window">
             <div class="window-title-container">
                 <span class="window-title">Build a Radar</span>
-                <span class="window-exit" id="arbitrary-radar-create-close-btn">&times;</span>
+                <span class="window-exit" onclick="this.parentElement.parentElement.style.display = 'none'" id="arbitrary-radar-create-close-btn">&times;</span>
             </div>
             <div class="window-items-container">
                 <div class="settings-label">Select Location with Map Click</div>
@@ -131,7 +131,7 @@
         <div id="arbitrary-radar-show" class="sidebar-window">
             <div class="window-title-container">
                 <span class="window-title">Custom Radar Info</span>
-                <span class="window-exit" id="arbitrary-radar-show-close-btn">&times;</span>
+                <span class="window-exit" onclick="this.parentElement.parentElement.style.display = 'none'" id="arbitrary-radar-show-close-btn">&times;</span>
             </div>
 
             <div class="window-items-container">
@@ -195,7 +195,7 @@
         
         <div id="existing-radar-show" class="sidebar-window">
             <div class="window-title-container">
-                <span class="window-title" id="existing-radar-site-name"></span>
+                <span class="window-title">NEXRAD Radar Info</span>
                 <span class="window-exit" id="existing-radar-show-close-btn">&times;</span>
             </div>
             <div class="window-items-container">
@@ -502,6 +502,7 @@
         <script src="markerControl.js"></script>
         <script src="terrainOverlay.js"></script>
         <script src="errorModal.js"></script>
+        <script src="windowObserver.js"></script>
         <script src="map.js"></script>
         <script>
             window.onload = function () {
