@@ -52,7 +52,7 @@
             <div class="sidebar-icon radar" onclick="toggleWindow('radar-settings')" data-target="radar-settings"></div>
             <div class="sidebar-icon add-radar" onclick="toggleWindow('arbitrary-radar')" data-target="arbitrary-radar"></div>
             <div class="sidebar-icon cloud" onclick="toggleWindow('pod-settings')" data-target="pod-settings"></div>
-            <div class="sidebar-icon control" onclick="toggleWindow('map-control')" data-target="usgs-settings"></div>
+            <div class="sidebar-icon control" onclick="toggleWindow('map-control')" data-target="map-control"></div>
             <div class="sidebar-icon reset" onclick="reset()"></div>
             <!-- <div class="sidebar-icon info" onclick="toggleWindow('information')" data-target="information"></div> -->
         </div>
@@ -60,7 +60,7 @@
         <div id="radar-settings" class="sidebar-window">
             <div class="window-title-container">
                 <span class="window-title">NEXRAD Coverage</span>
-                <span class="window-exit" id="radar-settings-window-exit-btn">&times;</span>
+                <span class="window-exit" id="radar-settings-window-exit-btn" onclick="closeWindow(this);">&times;</span>
             </div>
             <div class="window-items-container">
                 <div class="settings-label">AGL Threshold (m):</div>
@@ -84,7 +84,7 @@
         <div id="arbitrary-radar" class="sidebar-window">
             <div class="window-title-container">
                 <span class="window-title">Build a Radar</span>
-                <span class="window-exit" onclick="this.parentElement.parentElement.style.display = 'none'" id="arbitrary-radar-create-close-btn">&times;</span>
+                <span class="window-exit" onclick="closeWindow(this);" id="arbitrary-radar-create-close-btn">&times;</span>
             </div>
             <div class="window-items-container">
                 <div class="settings-label">
@@ -254,7 +254,7 @@
         <div id="map-control" class="sidebar-window">
             <div class="window-title-container">
                 <span class="window-title">Map Controls</span>
-                <span class="window-exit" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+                <span class="window-exit" onclick="closeWindow(this);">&times;</span>
             </div>
             <div class="window-items-container">
                 <div class="settings-label">NEXRAD Radars</div>
@@ -375,7 +375,7 @@
         <div id="pod-settings" class="sidebar-window">
             <div class="window-title-container">
                 <span class="window-title">Probability of Rain</span>
-                <span class="window-exit" id="pod-settings-window-exit-btn">&times;</span>
+                <span class="window-exit" id="pod-settings-window-exit-btn" onclick="closeWindow(this);">&times;</span>
             </div>
 
             <div class="window-items-container">

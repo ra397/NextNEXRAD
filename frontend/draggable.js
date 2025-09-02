@@ -124,6 +124,19 @@ function toggleWindow(id) {
     const isCurrentlyVisible = el.style.display === 'block';
     el.style.display = isCurrentlyVisible ? 'none' : 'block';
 
+    // Update active state for sidebar icons
+    document.querySelectorAll('.sidebar-icon').forEach(icon => {
+        const target = icon.getAttribute('data-target');
+        if (target) {
+            const targetWindow = document.getElementById(target);
+            if (targetWindow && targetWindow.style.display === 'block') {
+                icon.classList.add('active');
+            } else {
+                icon.classList.remove('active');
+            }
+        }
+    });
+
     // Initialize dragging if window is being shown and not already initialized
     if (!isCurrentlyVisible && !el.dragContainer) {
         // Add title bar dragging
@@ -131,6 +144,25 @@ function toggleWindow(id) {
         // Add corner draggers
         el.dragContainer = new DragContainer(el, draggerClassList);
     }
+}
+
+function closeWindow(element) {
+    element.parentElement.parentElement.style.display = 'none';
+    updateSidebarActiveStates();
+}
+
+function updateSidebarActiveStates() {
+    document.querySelectorAll('.sidebar-icon').forEach(icon => {
+        const target = icon.getAttribute('data-target');
+        if (target) {
+            const targetWindow = document.getElementById(target);
+            if (targetWindow && targetWindow.style.display === 'block') {
+                icon.classList.add('active');
+            } else {
+                icon.classList.remove('active');
+            }
+        }
+    });
 }
 
 // Function to make title bar draggable
