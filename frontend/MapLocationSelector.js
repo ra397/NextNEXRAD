@@ -48,7 +48,6 @@ class MapLocationSelector {
         if (this.onLocationSelected) {
             this.onLocationSelected(this.selectedLocation);
         }
-        this.cancel();
     }
 
     cancel() {

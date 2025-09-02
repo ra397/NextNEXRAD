@@ -115,7 +115,9 @@ class DragContainer {
 function toggleWindow(id) {
     // Close other windows
     document.querySelectorAll('.sidebar-window').forEach(w => {
-        if (w.id !== id) w.style.display = 'none';
+        if (w.id !== id) {
+            w.style.display = 'none';
+        }
     });
 
     const el = document.getElementById(id);

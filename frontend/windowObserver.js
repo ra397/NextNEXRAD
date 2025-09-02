@@ -64,3 +64,38 @@ observer.observe(showWindow, {
 showCloseBtn.addEventListener('click', () => {
     showWindow.style.display = 'none';
 });
+
+// arbitrary-radar window observer
+const radarWindow = document.getElementById("arbitrary-radar");
+
+// Track the previous visibility state
+let wasWindowVisible = window.getComputedStyle(radarWindow).display !== "none";
+
+// Watch for changes to the radarWindow's style attribute
+const radarObserver = new MutationObserver(() => {
+    const isCurrentlyVisible = radarWindow.style.display !== "none" &&
+                               window.getComputedStyle(radarWindow).display !== "none";
+
+    if (!wasWindowVisible && isCurrentlyVisible) {
+        console.log("Radar window opened");
+        mapLocationSelector.setOnLocationSelected((location) => {
+            document.getElementById("radarLat").textContent = location.lat;
+            document.getElementById("radarLng").textContent = location.lng;
+            mapLocationSelector.addTempMarker(location.lat, location.lng);
+        });
+        mapLocationSelector.start();
+    }
+
+    if (wasWindowVisible && !isCurrentlyVisible) {
+        fieldManager.resetFields('arbitrary-radar');
+        mapLocationSelector.deleteTempMarker();
+        mapLocationSelector.cancel();
+    }
+
+    wasWindowVisible = isCurrentlyVisible;
+});
+
+radarObserver.observe(radarWindow, {
+    attributes: true,
+    attributeFilter: ["style"],
+});

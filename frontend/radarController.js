@@ -1,15 +1,5 @@
 const fieldManager = new RadarFieldsManager();
 
-// Select Location Button Click Handler
-document.getElementById("select-location-btn").addEventListener("click", () => {
-    mapLocationSelector.setOnLocationSelected((location) => {
-        document.getElementById("radarLat").textContent = location.lat;
-        document.getElementById("radarLng").textContent = location.lng;
-        mapLocationSelector.addTempMarker(location.lat, location.lng);
-    });
-    mapLocationSelector.start();
-});
-
 // Arbitrary Radar Menu Button Handlers
 // "Get Coverage Button" Click Handler
 document.getElementById("radar-submit-btn").addEventListener("click", async () => {
