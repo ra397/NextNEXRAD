@@ -56,7 +56,6 @@ async function initMap() {
 
   // Decode URL
   const radarParamsList = radarLayer.decodeRadarParamsListFromUrl(window.location.href);
-  
   showSpinner();
   const promises = radarParamsList.map(params => radarLayer.newRadarRequest(params));
   await Promise.all(promises);
@@ -175,6 +174,20 @@ document.getElementById("terrainOverlay-checkbox").addEventListener("change", fu
     terrainOverlay.setMap(null);
   }
 });
+
+document.getElementById('share-link').addEventListener('click', () => {
+  const link = radarLayer.generateUrl();
+  copyToClipboard(link);
+});
+
+async function copyToClipboard(link) {
+  try {
+    await navigator.clipboard.writeText(link);
+    showError("Link copied to clipboard successfully.");
+  } catch (err) {
+    showError("Failed to copy link to clipboard.");
+  }
+}
 
 function reset() {
   radarLayer.reset();
