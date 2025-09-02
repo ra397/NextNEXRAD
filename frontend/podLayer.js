@@ -84,10 +84,19 @@ class PodLayer {
     });
 
     // Color Palette 
-    document.querySelectorAll('input[name="palette"]').forEach(r => r.addEventListener('change', e => {
-      this.settings.palette = e.target.value.replace('-', '');
-      this.redrawStylingOnly();
-    }));
+    document.querySelectorAll('.radio-selector').forEach(selector => {
+        selector.addEventListener('click', e => {
+            // Remove selected class from all selectors
+            document.querySelectorAll('.radio-selector').forEach(s => s.classList.remove('selected'));
+            
+            // Add selected class to clicked selector
+            e.target.classList.add('selected');
+            
+            // Update settings (convert back to match original logic)
+            this.settings.palette = e.target.dataset.value.replace('-', '');
+            this.redrawStylingOnly();
+        });
+    });
 
     // Opacity
     const opacitySlider = document.getElementById('pod-opacity');

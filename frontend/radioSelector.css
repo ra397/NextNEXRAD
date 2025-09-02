@@ -1,0 +1,42 @@
+.pod-color-palette {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    display: grid;
+    width: 76%;
+    align-items: center;
+    grid-template-columns: 1fr 1fr;
+    padding: 0.75rem 0 1rem 0;
+    gap: 0.75rem 0;
+}
+
+.radio-selector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.2em 0.1em;
+    background-color: #fff;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    text-align: center;
+    margin: 3px;
+}
+
+.radio-selector:hover {
+    color: white;
+    border-color: #44A1A0;
+    background-color: #44A1A0;
+}
+
+.radio-selector.selected {
+    border-color: #44A1A0;
+    background-color: #44A1A0;
+    color: white;
+}
+
+.radio-selector.selected:hover {
+    background-color: #247B7B;
+}
