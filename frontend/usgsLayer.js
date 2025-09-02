@@ -11,7 +11,7 @@ class UsgsLayer {
         this._lastMarkerSize = null;
         
         // Hover timing control
-        this.hoverDelay = 366; // milliseconds to wait before showing hover label
+        this.hoverDelay = 500; // milliseconds to wait before showing hover label
         this.hoverTimeouts = new Map(); // Store timeout IDs per marker
     }
 
@@ -195,8 +195,15 @@ class UsgsLayer {
         div.classList.add(use_class);
         div.setAttribute('style', 'position:absolute; will-change: left, top;');
 
-        const displayArea = Math.round(area_km2);
-        const unit = "km²";
+        let displayArea;
+        let unit;
+        if (window.units == 'metric') {
+            displayArea = Math.round(area_km2);
+            unit = "km²";
+        } else {
+            displayArea = Math.round(km2ToMi2(area_km2));
+            unit = "mi²";
+        }
 
         let html = `ID: ${site_id}<br>Area: ${displayArea} ${unit}`;
         if (population !== null) {

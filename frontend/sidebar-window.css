@@ -30,7 +30,7 @@
 
 .window-items-container {
     display: grid;
-    grid-template-columns: 125px 1fr;
+    grid-template-columns: 143px 1fr;
 
     justify-content: center;
     align-items: center;
@@ -104,6 +104,27 @@
     border-width: 3px;
 }
 
+.unit-option {
+    display: inline-block;
+    width: 60px;
+    height: 20px;
+    border-radius: 14px;
+    margin: 0 12px;
+    cursor: pointer;
+    border: 3px solid #a1a1a1;
+    transition: border-color 0.2s ease;
+    padding: 2px;
+}
+
+.unit-option:hover {
+    border-color: #5a5a5a;
+}
+
+.unit-option.selected {
+    border-color: #000000;
+    border-width: 3px;
+}
+
 .edit-marker-container {
     display: flex;
 }
@@ -156,4 +177,11 @@
     height: 32px;
     width: 65px;
     bottom: 11px;
+}
+
+input[type="number"] {
+    border-radius: 10px;
+    border: .1px solid #aaaaaf;
+    padding: 5px;
+    width: 130px;  
 }

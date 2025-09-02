@@ -48,9 +48,16 @@ class RadarFieldsManager {
 
     const lat = this._getNumberFromSpan(map.lat);
     const lng = this._getNumberFromSpan(map.lng);
-    const tower = this._getNumberFromInput(map.towerHeight);
-    const agl = this._getNumberFromInput(map.aglThreshold);
+    let tower = this._getNumberFromInput(map.towerHeight);
+    let agl = this._getNumberFromInput(map.aglThreshold);
     const { min, max } = this._getRangeFromSlider(map.elevationSlider);
+
+    
+    // Convert to meters if UI is imperial
+    if (window.units === 'imperial') {
+      tower = ft2m(tower);
+      agl   = ft2m(agl);
+    }
 
     return {
       lat,
@@ -79,9 +86,16 @@ class RadarFieldsManager {
     this._setSpanText(map.lat, this._fmt4(lat));
     this._setSpanText(map.lng, this._fmt4(lng));
 
+    // Convert for display only if UI is imperial
+    let towerDisplay = (window.units === 'imperial') ? m2ft(tower_height_m) : tower_height_m;
+    let aglDisplay   = (window.units === 'imperial') ? m2ft(agl_threshold_m) : agl_threshold_m;
+
+    towerDisplay = this._roundWhole(towerDisplay);
+    aglDisplay = this._roundWhole(aglDisplay);
+
     // Number inputs
-    this._setInputValue(map.towerHeight, this._numOrEmpty(tower_height_m));
-    this._setInputValue(map.aglThreshold, this._numOrEmpty(agl_threshold_m));
+    this._setInputValue(map.towerHeight, this._numOrEmpty(towerDisplay));
+    this._setInputValue(map.aglThreshold, this._numOrEmpty(aglDisplay));
 
     // Two-way slider
     this._setRangeOnSlider(map.elevationSlider, elevation_angles?.min, elevation_angles?.max);
@@ -251,6 +265,10 @@ class RadarFieldsManager {
       agl_threshold_m: null,
       elevation_angles: { min: null, max: null }
     };
+  }
+
+  _roundWhole(n) {
+    return _isNum(n) ? Math.round(n) : n; // keep null/undefined as-is
   }
 }
 

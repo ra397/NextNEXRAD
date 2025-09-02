@@ -40,7 +40,7 @@ class RadarLayer {
                 params: {
                     lat: site.lat,
                     lng: site.lng,
-                    tower_height_m: parseFloat(ft2m(site.tower)),
+                    tower_height_m: parseInt(site.tower),
                     agl_threshold_m: 914.4,
                     elevation_angles: {
                         min: 0.5,
@@ -248,7 +248,6 @@ class RadarLayer {
 
     nexradMarkerClick(event, marker) {
         // Display info menu
-        console.log("This marker was clicked", marker.properties.id);
         const id = marker.properties.id;
 
         let radar = null;
@@ -325,7 +324,13 @@ class RadarLayer {
                     break;
                 }
             }
-            const content = this.createLabel(id, name, elev_ft);
+
+            let elevation = elev_ft;
+            if (window.units == 'metric') {
+                elevation = ft2m(elev_ft).toFixed(0);
+            }
+
+            const content = this.createLabel(id, name, elevation);
             this.activeTip = new markerTip(
                 new google.maps.LatLng(lat, lng),
                 'arrow_btm_box',
@@ -336,7 +341,12 @@ class RadarLayer {
     }
 
     createLabel(id, name, elev_ft) {
-        const elev = `${elev_ft} ft`;
+        let elev;
+        if (window.units == 'metric') {
+            elev = `${elev_ft} m`;
+        } else {
+            elev = `${elev_ft} ft`;
+        }
         const div = document.createElement('div');
         div.innerHTML = `
             <div>

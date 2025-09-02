@@ -118,15 +118,23 @@ function hideSpinner() {
     this.isLoading = false;
 }
 
-// Convert feet to meters
-function ft2m(feet) {
-  return (feet * 0.3048).toFixed(2);
+function ft2m(v) {
+  if (v == null || v === '') return null;
+  const n = typeof v === 'string' ? parseFloat(v) : v;
+  return isNaN(n) ? null : n * 0.3048;
+}
+function m2ft(v) {
+  if (v == null || v === '') return null;
+  const n = typeof v === 'string' ? parseFloat(v) : v;
+  return isNaN(n) ? null : n / 0.3048;
 }
 
-// Convert meters to feet
-function m2ft(meters) {
-  return (meters * 3.28084).toFixed(2);
+function km2ToMi2(v) {
+  if (v == null || v === '') return null;
+  const n = typeof v === 'string' ? parseFloat(v) : v;
+  return isNaN(n) ? null : n * 0.3861021585424458; // 1 km² = 0.3861021585 mi²
 }
+
 
 document.getElementById("existingRadarSites-checkbox").addEventListener("change", function () {
   if (this.checked) {

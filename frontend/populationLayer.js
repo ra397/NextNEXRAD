@@ -35,7 +35,12 @@ class PopulationLayer {
 
     slider.addEventListener("input", e => {
       this.threshold = this.getThresholdFromSlider(+e.target.value);
-      label.textContent = `${this.threshold.toLocaleString()} people / 25 km²`;
+      if (window.units === 'metric') {
+        label.textContent = `${this.threshold.toLocaleString()} people / 25 km²`;
+      } else {
+        const mi2 = 25 * 0.386102; // 1 km² = 0.386102 mi²
+        label.textContent = `${this.threshold.toLocaleString()} people / ${mi2.toFixed(2)} mi²`;
+      }
       this.canvas.style.display = "block";
       this.draw();
     });

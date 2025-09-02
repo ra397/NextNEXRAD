@@ -53,7 +53,6 @@
             <div class="sidebar-icon add-radar" onclick="toggleWindow('arbitrary-radar')" data-target="arbitrary-radar"></div>
             <div class="sidebar-icon cloud" onclick="toggleWindow('pod-settings')" data-target="pod-settings"></div>
             <div class="sidebar-icon control" onclick="toggleWindow('map-control')" data-target="usgs-settings"></div>
-            <div class="sidebar-icon settings" onclick="toggleWindow('settings-window')" data-target="settings-window"></div>
             <div class="sidebar-icon reset" onclick="reset()"></div>
             <!-- <div class="sidebar-icon info" onclick="toggleWindow('information')" data-target="information"></div> -->
         </div>
@@ -64,13 +63,13 @@
                 <span class="window-exit" id="radar-settings-window-exit-btn">&times;</span>
             </div>
             <div class="window-items-container">
-                <div class="settings-label">AGL Threshold (ft):</div>
+                <div class="settings-label">AGL Threshold (m):</div>
                 <div class="settings-input">
                     <input id="threshold-range-slider" class="styled-range-slider" type="range" min="0" max="2" value="0"/>
                     <div class="tick-labels">
-                        <span>3K</span>
-                        <span>&nbsp;6K</span>
-                        <span>10K</span>
+                        <span>1,000</span>
+                        <span>&nbsp;2,000</span>
+                        <span>3,000</span>
                     </div>
                 </div>
                 <div class="settings-label">Show/Hide</div>
@@ -89,7 +88,7 @@
             </div>
             <div class="window-items-container">
                 <div class="settings-label">
-                    Click on Map to select location:
+                    Click on map to select location:
                 </div>
                 <div class="settings-input">
                     <span id="radarLat">Latitude</span>
@@ -101,14 +100,14 @@
                     Tower Height (m):
                 </div>
                 <div class="settings-input">
-                    <input type="number" id="towerHeight-input" min="0" placeholder="e.g. 10">
+                    <input type="number" id="towerHeight-input" min="0">
                 </div>
 
                 <div class="settings-label">
                     AGL Threshold (m):
                 </div>
                 <div class="settings-input">
-                    <input type="number" id="aglThreshold-input" min="0" placeholder="914.4">
+                    <input type="number" id="aglThreshold-input" min="0">
                 </div>
 
                 <div class="settings-label">
@@ -167,7 +166,7 @@
                     </div>
                 </div>
 
-                <span class="settings-label">Radar Range Rings (km)</span>
+                <span class="settings-label">Range Rings (km)</span>
                 <div class="settings-input">
                     <input type="range" class="styled-range-slider" id="dynamic-radar-range-slider" min="0" max="5" value="0" step="1">
                     <div class="range-slider-labels">
@@ -233,7 +232,7 @@
                     </div>
                 </div>
 
-                <span class="settings-label">Radar Range Rings (km)</span>
+                <span class="settings-label">Range Rings (km)</span>
                 <div class="settings-input">
                     <input type="range" class="styled-range-slider" id="existing-radar-range-slider" min="0" max="5" value="0" step="1">
                     <div class="range-slider-labels">
@@ -328,6 +327,22 @@
                         <span class="edit-marker-icon" data-marker-type="population"></span>
                         <span id="clear-pop-layer"></span>
                     </div>
+                </div>
+            </div>
+
+            <div class="window-items-container">
+                <div class="settings-label">Overlay Color</div>
+                <div class="settings-input">
+                    <span class="color-option" data-color="green" style="background-color: rgb(82, 182, 82);"></span>
+                    <span class="color-option" data-color="purple" style="background-color: rgb(82, 82, 182);"></span>
+                    <span class="color-option" data-color="gray" style="background-color: rgb(172, 172, 172);"></span>
+                    <span class="color-option" data-color="yellow" style="background-color: rgb(255, 222, 32);"></span>
+                </div>
+
+                <div class="settings-label">Units</div>
+                <div class="settings-input">
+                    <span class="unit-option" data-unit="metric">Metric</span>
+                    <span class="unit-option" data-unit="imperial">Imperial</span>
                 </div>
             </div>
         </div>
@@ -431,22 +446,6 @@
             </div>
             <div id="pod-legend-label-container">
                 <!-- Dynamic tick labels -->
-            </div>
-        </div>
-
-        <div id="settings-window" class="sidebar-window">
-            <div class="window-title-container">
-                <span class="window-title">Settings</span>
-                <span class="window-exit" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
-            </div>
-            <div class="window-items-container">
-                <div class="settings-label">Radar Coverage Color</div>
-                <div class="settings-input">
-                    <span class="color-option" data-color="green" style="background-color: rgb(82, 182, 82);"></span>
-                    <span class="color-option" data-color="purple" style="background-color: rgb(82, 82, 182);"></span>
-                    <span class="color-option" data-color="gray" style="background-color: rgb(172, 172, 172);"></span>
-                    <span class="color-option" data-color="yellow" style="background-color: rgb(255, 222, 32);"></span>
-                </div>
             </div>
         </div>
 
