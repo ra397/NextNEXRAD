@@ -1,23 +1,46 @@
 class RangeRings {
-    constructor(map) {
+    constructor(map, unit = "metric") {
         this.map = map;
-        this.distances = [0, 50000, 100000, 150000, 200000, 230000];
-        this.labels = ['None', '50', '100', '150', '200', '230'];
+
+        this.unit = unit; // "metric" or "imperial"
+
+        this.options = {
+            metric: {
+                distances: [0, 50000, 100000, 150000, 200000, 230000],
+                labels: ['None', '50 km', '100 km', '150 km', '200 km', '230 km']
+            },
+            imperial: {
+                distances: [0, 80467, 160934, 241402], // 50, 100, 150 miles in meters
+                labels: ['None', '50 mi', '100 mi', '150 mi']
+            }
+        };
+
         this.states = {}; // siteId -> sliderValue
         this.rings = {};  // siteId -> array of google.maps.Circle
     }
 
+    setUnit(unit) {
+        if (unit !== "metric" && unit !== "imperial") {
+            console.warn("Invalid unit:", unit);
+            return;
+        }
+        this.unit = unit;
+        // Re-draw all rings in new units
+        Object.keys(this.states).forEach(siteId => {
+            const center = this.rings[siteId]?.[0]?.getCenter();
+            if (center) this.update(siteId, center);
+        });
+    }
+
     initSlider(siteId, sliderId, getCenterFn) {
-        // Save default state if first time
         if (!this.states[siteId]) this.states[siteId] = 0;
 
         const slider = document.getElementById(sliderId);
         if (!slider) return console.warn("Slider not found", sliderId);
 
-        // Set current slider value
+        slider.max = this.options[this.unit].distances.length - 1;
         slider.value = this.states[siteId];
 
-        // Reset listeners
         const newSlider = slider.cloneNode(true);
         slider.parentNode.replaceChild(newSlider, slider);
 
@@ -33,6 +56,7 @@ class RangeRings {
         const val = this.states[siteId];
         if (val === 0) return;
 
+        const { distances } = this.options[this.unit];
         const latLng = center instanceof google.maps.LatLng ?
             center : new google.maps.LatLng(center.lat, center.lng);
 
@@ -45,7 +69,7 @@ class RangeRings {
                 fillOpacity: 0.0,
                 map: this.map,
                 center: latLng,
-                radius: this.distances[i],
+                radius: distances[i], // always meters for Google Maps
                 clickable: false,
             });
             arr.push(circle);
@@ -53,16 +77,9 @@ class RangeRings {
         this.rings[siteId] = arr;
     }
 
-    show(siteId) {
-        if (this.rings[siteId]) {
-            this.rings[siteId].forEach(r => r.setMap(this.map));
-        }
-    }
-
-    hide(siteId) {
-        if (this.rings[siteId]) {
-            this.rings[siteId].forEach(r => r.setMap(null));
-        }
+    getState(siteId) {
+        const { labels } = this.options[this.unit];
+        return labels[this.states[siteId] || 0];
     }
 
     remove(siteId, resetState = true) {
@@ -71,10 +88,6 @@ class RangeRings {
             delete this.rings[siteId];
         }
         if (resetState) this.states[siteId] = 0;
-    }
-
-    getState(siteId) {
-        return this.labels[this.states[siteId] || 0];
     }
 
     resetAll() {
