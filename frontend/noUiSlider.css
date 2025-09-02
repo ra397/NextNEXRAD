@@ -1,18 +1,27 @@
 .noUi-connect {
     background: lightgrey;
+    height: 8px;
+}
+
+.noUi-connects {
+    height: 8px;
 }
 
 .noUi-tooltip {
     border: none;
-    bottom: 80% !important;
+    bottom: 16px !important;
     background: transparent;
+}
+
+.noUi-horizontal {
+    height: 8px;
 }
 
 .noUi-handle {
     cursor: pointer;
 
-    width: 24px !important;    /* Default is usually 28px */
-    height: 24px !important;   /* Default is usually 28px */
+    width: 20px !important;
+    height: 20px !important;  
     border: none !important;
     background: none !important;
     outline: none !important;

@@ -32,3 +32,8 @@
     width: 100%;
     margin-bottom: 6px;
 }
+
+#pod-opacity-value {
+    bottom: 22px;
+    padding: 5px;
+}

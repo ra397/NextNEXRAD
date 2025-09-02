@@ -94,7 +94,7 @@ class PodLayer {
     const opacityLabel = document.getElementById('pod-opacity-value');
     opacitySlider.addEventListener('input', e => {
       const pct = +e.target.value;
-      opacityLabel.textContent = `${pct}%`;
+      opacityLabel.textContent = `${pct}`;
       this.settings.opacity = pct / 100;
       if (this.podOverlay) this.podOverlay.setOpacity(this.settings.opacity);
     });
