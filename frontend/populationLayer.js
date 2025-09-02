@@ -13,6 +13,9 @@ class PopulationLayer {
     
     // Store the current color (default black)
     this.currentColor = "#000000";
+
+    // Store the current opactiy
+    this.currentOpacity = 0.5;
   }
 
   getThresholdFromSlider(sliderValue) {
@@ -83,6 +86,8 @@ class PopulationLayer {
     const g = parseInt(hex.substring(2, 4), 16);
     const b = parseInt(hex.substring(4, 6), 16);
 
+    const alpha = Math.round(this.currentOpacity * 255);
+
     const imageData = this.ctx.createImageData(this.width, this.height);
     for (let y = 0; y < this.height; y++) {
       for (let x = 0; x < this.width; x++) {
@@ -94,7 +99,7 @@ class PopulationLayer {
           imageData.data[idx] = r;
           imageData.data[idx + 1] = g;
           imageData.data[idx + 2] = b;
-          imageData.data[idx + 3] = 125;
+          imageData.data[idx + 3] = alpha;
         } else {
           imageData.data[idx + 3] = 0;
         }
@@ -118,6 +123,18 @@ class PopulationLayer {
   setColor(hexColor) {
     this.currentColor = hexColor;
     
+    // Redraw if canvas is visible
+    if (this.canvas.style.display !== "none" && this.data) {
+      this.draw();
+    }
+  }
+
+  getOpacity() {
+    return this.currentOpacity;
+  }
+
+  setOpacity(opacity) {
+    this.currentOpacity = Math.max(0, Math.min(1, opacity));
     // Redraw if canvas is visible
     if (this.canvas.style.display !== "none" && this.data) {
       this.draw();

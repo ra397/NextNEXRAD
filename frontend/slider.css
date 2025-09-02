@@ -20,6 +20,10 @@
     border: none; /* Remove default border */
 }
 
+#marker-opacity {
+    width: 50%;
+}
+
 #threshold-range-slider {
     margin-bottom: 7px;
 }

@@ -228,4 +228,19 @@ class markerCollection {
             window.globalHighlightedMarker = null;
         }
     }
+
+    getMarkerStyle() {
+        return {
+            color: this.markerFill,
+            size: this.markerSize,
+        }
+    }
+
+    async setMarkerStyle(hexValue, size) {
+        await this.updateIcons({
+            markerFill: hexValue,
+            markerStroke: hexValue,
+            markerSize: size,
+        });
+    }
 }

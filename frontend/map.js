@@ -138,17 +138,17 @@ function km2ToMi2(v) {
 
 document.getElementById("existingRadarSites-checkbox").addEventListener("change", function () {
   if (this.checked) {
-    existingRadarLayer.showMarkers();
+    radarLayer.nexradMarkers.show();
   } else {
-    existingRadarLayer.hideMarkers();
+    radarLayer.nexradMarkers.hide();
   }
 });
 
 document.getElementById("generatedRadarSites-checkbox").addEventListener("change", function () {
   if (this.checked) {
-    customRadarLayer.showMarkers();
+    radarLayer.customMarkers.show();
   } else {
-    customRadarLayer.hideMarkers();
+    radarLayer.customMarkers.hide();
   }
 });
 

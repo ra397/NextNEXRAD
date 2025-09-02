@@ -364,6 +364,12 @@
                 <label for="marker-size" id="marker-size-label">Base Size</label>
                 <input type="number" value="4" max="12" min="2.5" step="0.5" id="marker-size" onchange="updateMarker()">
             </div>
+
+            <div class="control-row" id="opacity-control-row" style="display: none;">
+                <label for="marker-opacity">Opacity</label>
+                <input type="range" class="styled-range-slider" min="0" max="1" step="0.1" value="0.5" id="marker-opacity" onchange="updateMarker()">
+                <span id="opacity-value">50%</span>
+            </div>
         </div>
 
         <div id="pod-settings" class="sidebar-window">

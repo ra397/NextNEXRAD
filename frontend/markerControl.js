@@ -28,16 +28,19 @@ document.querySelectorAll('.edit-marker-icon[data-marker-type]').forEach(icon =>
 const title = document.getElementById("marker-preview");
 const colorInput = document.getElementById("marker-fill");
 const sizeInput = document.getElementById('marker-size');
+const opacityInput = document.getElementById('marker-opacity');
+const opacityValue = document.getElementById('opacity-value');
 
 function populateMarkerControlPopup(markerType) {
     let markerStyle = null;
     document.getElementById("marker-size-label").style.display = "block";
     sizeInput.style.display = "block";
+    document.getElementById("opacity-control-row").style.display = "none";
     if (markerType == "nexrad") {
-        markerStyle = existingRadarLayer.getMarkerStyle();
+        markerStyle = radarLayer.nexradMarkers.getMarkerStyle();
         title.textContent = "NEXRAD Markers";
     } else if (markerType == "generated") {
-        markerStyle = customRadarLayer.getMarkerStyle();
+        markerStyle = radarLayer.customMarkers.getMarkerStyle();
         title.textContent = "Custom Markers";
     } else if (markerType == "usgs") {
         markerStyle = usgsLayer.getMarkerStyle();
@@ -52,7 +55,14 @@ function populateMarkerControlPopup(markerType) {
         title.textContent = "Population Layer";
         document.getElementById("marker-size-label").style.display = "none";
         sizeInput.style.display = "none";
+
+        document.getElementById("opacity-control-row").style.display = "block";
+
         colorInput.value = populationLayer.getColor();
+
+        const currentOpacity = populationLayer.getOpacity();
+        opacityInput.value = currentOpacity;
+        opacityValue.textContent = `${Math.round(currentOpacity * 100)}%`;
         return;
     }
     else {
@@ -64,15 +74,22 @@ function populateMarkerControlPopup(markerType) {
 
 function updateMarker() {
     if (currentMarkerType == "nexrad") {
-        existingRadarLayer.setMarkerStyle(colorInput.value, sizeInput.value);
+        radarLayer.nexradMarkers.setMarkerStyle(colorInput.value, sizeInput.value);
     } else if (currentMarkerType == "generated") {
-        customRadarLayer.setMarkerStyle(colorInput.value, sizeInput.value);
+        radarLayer.customMarkers.setMarkerStyle(colorInput.value, sizeInput.value);
     } else if (currentMarkerType == "usgs") {
         usgsLayer.setMarkerStyle(colorInput.value, sizeInput.value);
     } else if (currentMarkerType == "river") {
         riverLayer.setColor(colorInput.value);
     } else if (currentMarkerType == "population") {
         populationLayer.setColor(colorInput.value);
+        
+        // Update opacity if the control is visible
+        if (opacityInput && opacityValue) {
+            const newOpacity = parseFloat(opacityInput.value);
+            populationLayer.setOpacity(newOpacity);
+            opacityValue.textContent = `${Math.round(newOpacity * 100)}%`;
+        }
     } 
     else {
         console.error("Invalid markerType.");
