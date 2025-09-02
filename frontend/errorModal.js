@@ -4,8 +4,21 @@
     const messageEl = document.getElementById('error-message');
     const closeEl = document.getElementById('error-close');
 
-    window.showError = function (message) {
-        messageEl.textContent = message;
+    window.showError = function (messages) {
+        // Clear old messages
+        messageEl.innerHTML = '';
+
+        // Make sure we always work with an array
+        const errs = Array.isArray(messages) ? messages : [messages];
+
+        errs.forEach(msg => {
+            const span = document.createElement('span');
+            span.textContent = msg;
+            span.classList.add('error-span'); // style each line if needed
+            messageEl.appendChild(span);
+            messageEl.appendChild(document.createElement('br')); // line break
+        });
+
         overlay.classList.add('visible');
     };
 
@@ -13,18 +26,15 @@
         overlay.classList.remove('visible');
     };
 
-    // Close via clickable span
     closeEl.addEventListener('click', hideError);
 
-    // Close on click outside the panel
     overlay.addEventListener('click', function (e) {
         if (e.target === overlay) hideError();
     });
 
-    // Close on Escape
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' && overlay.classList.contains('visible')) {
-        hideError();
+            hideError();
         }
     });
 })();
