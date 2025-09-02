@@ -2,6 +2,8 @@ class RadarLayer {
     constructor(map) {
         this.map = map;
 
+        this.rangeRings = new RangeRings(map);
+
         this.nexradMarkers = new markerCollection(this.map);
         this.customMarkers = new markerCollection(this.map);
 
@@ -83,6 +85,7 @@ class RadarLayer {
         // make a marker 
         const marker = this.addMarker(newRadar.id, params.lat, params.lng);
         this.customMarkers.highlightMarker(marker);
+        this.customMarkerClick(null, marker);
 
         // Add to cache
         this.radars.push(newRadar);
@@ -160,6 +163,7 @@ class RadarLayer {
     deleteRadar(id) {
         // Remove marker
         this.customMarkers.deleteMarker(id);
+        this.rangeRings.remove(id);
 
         // Find radar
         let radarIndex = -1;
@@ -243,6 +247,7 @@ class RadarLayer {
     }
 
     nexradMarkerClick(event, marker) {
+        // Display info menu
         console.log("This marker was clicked", marker.properties.id);
         const id = marker.properties.id;
 
@@ -265,6 +270,10 @@ class RadarLayer {
                 this.nexradMarkers.highlightMarker(marker);
             }, 10);
         }
+
+        // Init range rings
+        this.rangeRings.initSlider(marker.properties.id, "existing-radar-range-slider", () => marker.getPosition());
+
     }
 
     customMarkerClick(event, marker) {
@@ -289,6 +298,8 @@ class RadarLayer {
                 this.customMarkers.highlightMarker(marker);
             }, 10);
         }
+
+        this.rangeRings.initSlider(marker.properties.id, "dynamic-radar-range-slider", () => marker.getPosition());
     }
 
     nexradMarkerHover(event, marker) {

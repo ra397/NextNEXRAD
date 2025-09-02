@@ -59,6 +59,7 @@ document.getElementById("update-existing-radar").addEventListener("click", async
         if (!result) {
             const siteId = document.getElementById("existing-radar-site-id").textContent;
             console.log(siteId);
+            radarLayer.rangeRings.remove(siteId);
             radarLayer.toggleOverlay(siteId);
             const newRadar = await radarLayer.newRadarRequest(params);
             toggleWindow('arbitrary-radar-show');
