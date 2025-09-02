@@ -50,6 +50,8 @@ class RadarLayer {
         }
 
         this.nexradMarkers.reactClick = this.nexradMarkerClick.bind(this);
+        this.nexradMarkers.reactMouseOver = this.nexradMarkerHover.bind(this);
+        this.nexradMarkers.reactMouseOut = this.nexradMarkerHoverEnd.bind(this);
     };
 
     initializeCustomMarkers = async () => {
@@ -286,6 +288,63 @@ class RadarLayer {
             setTimeout(() => {
                 this.customMarkers.highlightMarker(marker);
             }, 10);
+        }
+    }
+
+    nexradMarkerHover(event, marker) {
+        if (this.mouseOverTimeout) {
+            clearTimeout(this.mouseOverTimeout);
+        }
+        
+        this.mouseOverTimeout = setTimeout(async () => {
+            const id = marker.properties.id;
+            const res_nexradInfo = await fetch('public/data/nexrad_conus.json');
+            const sites = await res_nexradInfo.json();
+            
+            let name;
+            let lat;
+            let lng;
+            let elev_ft;
+            for (const site of sites) {
+                if (site.id == id) {
+                    name = site.name;
+                    lat = site.lat;
+                    lng = site.lng;
+                    elev_ft = site.elev;
+                    break;
+                }
+            }
+            const content = this.createLabel(id, name, elev_ft);
+            this.activeTip = new markerTip(
+                new google.maps.LatLng(lat, lng),
+                'arrow_btm_box',
+                content
+            );
+            this.activeTip.setMap(this.map);
+        }, 500); 
+    }
+
+    createLabel(id, name, elev_ft) {
+        const elev = `${elev_ft} ft`;
+        const div = document.createElement('div');
+        div.innerHTML = `
+            <div>
+                <strong>${id}</strong><br>
+                ${name}<br>
+                Elev: ${elev}
+            </div>
+        `;
+        return div;
+    }
+
+    nexradMarkerHoverEnd() {
+        if (this.mouseOverTimeout) {
+            clearTimeout(this.mouseOverTimeout);
+            this.mouseOverTimeout = null;
+        }
+        if (this.activeTip) {
+            this.activeTip.setMap(null);
+            this.activeTip = null;
         }
     }
 
