@@ -175,40 +175,52 @@ class PodLayer {
       return output;
   }
 
-  async fetchAndDraw(dateRanges) {
+async fetchAndDraw(dateRanges) {
     showSpinner();
 
-    const url = "https://s-iihr80.iihr.uiowa.edu/hyddatapp";
-    const payload = {
-      "product": "pod",
-      "method": "aggregate",
-      "datetime": dateRanges
-    };
+    try {
+        const url = "https://s-iihr80.iihr.uiowa.edu/hyddatapp";
+        const payload = {
+            "product": "pod",
+            "method": "aggregate",
+            "datetime": dateRanges
+        };
 
-    console.log("Sending request to POD server: ", payload);
+        console.log("Sending request to POD server: ", payload);
 
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload)
-    });    
-    const arrayBuffer = await response.arrayBuffer();
-    if (!this.di) {
-      this.di = new dynaImg();
-      this.di.image = new Image();
-      this.di.image.crossOrigin = '';
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const arrayBuffer = await response.arrayBuffer();
+        
+        if (!this.di) {
+            this.di = new dynaImg();
+            this.di.image = new Image();
+            this.di.image.crossOrigin = '';
+        }
+        
+        this.applyStyling();
+        const blob = await this.di.loadFromArrayBuffer(arrayBuffer);
+
+        if (this.podOverlay) this.podOverlay.remove();
+        this.podOverlay = customOverlay(blob, window.constants.pod.POD_BBOX, this.map, 'OverlayView');
+        this.podOverlay.setOpacity(this.settings.opacity);
+
+    } catch (error) {
+        showError("Error fetching POD data.");
+    } finally {
+        hideSpinner();
     }
-    this.applyStyling();
-    const blob = await this.di.loadFromArrayBuffer(arrayBuffer);
-
-    if (this.podOverlay) this.podOverlay.remove();
-    this.podOverlay = customOverlay(blob, window.constants.pod.POD_BBOX, this.map, 'OverlayView');
-    this.podOverlay.setOpacity(this.settings.opacity);
-
-    hideSpinner();
-  }
+}
 
   async redrawStylingOnly() {
     if (!this.di || !this.podOverlay) return;

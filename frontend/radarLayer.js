@@ -383,5 +383,41 @@ class RadarLayer {
         }
         return true;
     }
+
+    reset() {
+        console.log("Resetting RadarLayer: removing all custom radars and markers");
+        
+        // Clear all custom markers by removing them from the map and clearing the array
+        for (let i = 0; i < this.customMarkers.markers.length; i++) {
+            this.customMarkers.markers[i].setMap(null);
+        }
+        this.customMarkers.markers = [];
+        
+        // Find and remove all radars with integer IDs (custom radars)
+        const radarsToRemove = [];
+        for (let i = this.radars.length - 1; i >= 0; i--) {
+            const radar = this.radars[i];
+            if (Number.isInteger(radar.id)) {
+                radarsToRemove.push(radar);
+                
+                // Remove overlay if it exists
+                if (radar.overlay) {
+                    radar.overlay.setMap(null);
+                    radar.overlay = null;
+                }
+                
+                // Remove range rings for this radar
+                this.rangeRings.remove(radar.id);
+                
+                // Remove from radars array
+                this.radars.splice(i, 1);
+            }
+        }
+        
+        console.log(`Reset complete: removed ${radarsToRemove.length} custom radars`);
+        
+        // Reset the current radar ID counter
+        this.currentRadarId = 0;
+    }
 };
 window.RadarLayer = RadarLayer;
