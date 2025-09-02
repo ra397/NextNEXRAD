@@ -8,7 +8,7 @@ class PopulationLayer {
     this.width = 0;
     this.height = 0;
     this.bounds = null;
-    this.threshold = 0;
+    this.threshold = 1; // Initialize to a reasonable default instead of 0
     this.overlay = null;
     
     // Store the current color (default black)
