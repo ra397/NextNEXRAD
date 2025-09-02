@@ -419,5 +419,68 @@ class RadarLayer {
         // Reset the current radar ID counter
         this.currentRadarId = 0;
     }
+
+    generateUrl() {
+        const baseUrl = "https://s-iihr80.iihr.uiowa.edu/wsr88/?radars=";
+        const encodedRadars = [];
+        for (let i = 0; i < this.radars.length; i++) {
+            const radar = this.radars[i];
+            if (Number.isInteger(radar.id)) {
+            encodedRadars.push(this.encodeRadarParams(radar.params));
+            }
+        }
+        const paramsString = encodedRadars.join(';');
+        return baseUrl + paramsString;
+    }
+
+    encodeRadarParams(params) {
+        const {
+            lat,
+            lng,
+            tower_height_m,
+            agl_threshold_m,
+            elevation_angles: { min, max },
+        } = params;
+
+        const latStr = lat.toFixed(4);
+        const lngStr = Math.abs(lng).toFixed(4);
+
+        const towerHeightStr = Math.round(tower_height_m).toString();
+        const aglThresholdStr = Math.round(agl_threshold_m).toString();
+
+        const minStr = min.toString();
+        const maxStr = max.toString();
+
+        return [latStr, lngStr, towerHeightStr, aglThresholdStr, minStr, maxStr].join(',');
+    }
+
+    decodeRadarParams(encodedStr) {
+        const parts = encodedStr.split(',');
+
+        if (parts.length !== 6) {
+            throw new Error('Invalid radar params string length');
+        }
+
+        const [latStr, lngStr, towerHeightStr, aglThresholdStr, minStr, maxStr] = parts;
+
+        return {
+            lat: parseFloat(latStr),
+            lng: -parseFloat(lngStr), // restore negative sign
+            tower_height_m: parseInt(towerHeightStr, 10),
+            agl_threshold_m: parseInt(aglThresholdStr, 10),
+            elevation_angles: {
+            min: parseFloat(minStr),
+            max: parseFloat(maxStr),
+            },
+        };
+    }
+
+    decodeRadarParamsListFromUrl(url) {
+        const urlObj = new URL(url);
+        const paramsSubstring = urlObj.searchParams.get('radars');
+        if (!paramsSubstring) return [];
+        const encodedRadars = paramsSubstring.split(';').filter(s => s.trim() !== '');
+        return encodedRadars.map(this.decodeRadarParams);
+    }
 };
 window.RadarLayer = RadarLayer;

@@ -49,10 +49,18 @@ async function initMap() {
   map.overlayMapTypes.push(terrainOverlay);
   window.terrainOverlay = terrainOverlay;
   window.map = map;
-  terrainOverlay.setMap(null); // Start with terrain overlay OFF
+  terrainOverlay.setMap(null); // Start with terrain overlay OFF  
 
   radarLayer = new RadarLayer(map);
   window.radarLayer = radarLayer;
+
+  // Decode URL
+  const radarParamsList = radarLayer.decodeRadarParamsListFromUrl(window.location.href);
+  
+  showSpinner();
+  const promises = radarParamsList.map(params => radarLayer.newRadarRequest(params));
+  await Promise.all(promises);
+  hideSpinner();
   
   mapLocationSelector = new MapLocationSelector(map);
   window.mapLocationSelector = mapLocationSelector;
