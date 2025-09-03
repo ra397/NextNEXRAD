@@ -55,10 +55,11 @@ async function initMap() {
   window.radarLayer = radarLayer;
 
   // Decode URL
-  const radarParamsList = radarLayer.decodeRadarParamsListFromUrl(window.location.href);
+  const radars = radarLayer.decodeRadarParamsListFromUrl(window.location.href);
   showSpinner();
-  const promises = radarParamsList.map(params => radarLayer.newRadarRequest(params));
+  const promises = radars.map(radar => radarLayer.newRadarRequest(radar.params, radar.id));
   await Promise.all(promises);
+  radarLayer.customMarkers.unhighlightMarkers();
   hideSpinner();
   
   mapLocationSelector = new MapLocationSelector(map);
@@ -105,7 +106,6 @@ function getInput(input) {
   if (isNaN(value) || value < 0) {
     return null;
   }
-
   return value;
 }
 

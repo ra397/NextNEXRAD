@@ -66,7 +66,7 @@ class RadarLayer {
         this.customMarkers.reactClick = this.customMarkerClick.bind(this);
     }
 
-    async newRadarRequest(params) {
+    async newRadarRequest(params, id = null) {
         // Check for duplicates
         if (this.radars.some(radar => this.isEqual(params, radar.params))) {
             showError("Duplicate Radar.");
@@ -76,9 +76,11 @@ class RadarLayer {
         // Fetch coverage and create radar
         const overlay = await this.fetchCoverage(params);
         if (!overlay) return null;
+
+        const newRadarId = id !== null ? id: ++this.currentRadarId;
         
         const newRadar = {
-            id: ++this.currentRadarId,
+            id: newRadarId,
             params: params,
             overlay: overlay,
         };
@@ -426,21 +428,22 @@ class RadarLayer {
         for (let i = 0; i < this.radars.length; i++) {
             const radar = this.radars[i];
             if (Number.isInteger(radar.id)) {
-            encodedRadars.push(this.encodeRadarParams(radar.params));
+            encodedRadars.push(this.encodeRadarParams(radar));
             }
         }
         const paramsString = encodedRadars.join(';');
         return baseUrl + paramsString;
     }
 
-    encodeRadarParams(params) {
+    encodeRadarParams(radar) {
+        const id = radar.id;
         const {
             lat,
             lng,
             tower_height_m,
             agl_threshold_m,
             elevation_angles: { min, max },
-        } = params;
+        } = radar.params;
 
         const latStr = lat.toFixed(4);
         const lngStr = Math.abs(lng).toFixed(4);
@@ -451,27 +454,30 @@ class RadarLayer {
         const minStr = min.toString();
         const maxStr = max.toString();
 
-        return [latStr, lngStr, towerHeightStr, aglThresholdStr, minStr, maxStr].join(',');
+        return [id, latStr, lngStr, towerHeightStr, aglThresholdStr, minStr, maxStr].join(',');
     }
 
     decodeRadarParams(encodedStr) {
         const parts = encodedStr.split(',');
 
-        if (parts.length !== 6) {
+        if (parts.length !== 7) {
             throw new Error('Invalid radar params string length');
         }
 
-        const [latStr, lngStr, towerHeightStr, aglThresholdStr, minStr, maxStr] = parts;
+        const [id, latStr, lngStr, towerHeightStr, aglThresholdStr, minStr, maxStr] = parts;
 
         return {
-            lat: parseFloat(latStr),
-            lng: -parseFloat(lngStr), // restore negative sign
-            tower_height_m: parseInt(towerHeightStr, 10),
-            agl_threshold_m: parseInt(aglThresholdStr, 10),
-            elevation_angles: {
-            min: parseFloat(minStr),
-            max: parseFloat(maxStr),
-            },
+            id: parseInt(id),
+            params: {
+                lat: parseFloat(latStr),
+                lng: -parseFloat(lngStr), // restore negative sign
+                tower_height_m: parseInt(towerHeightStr, 10),
+                agl_threshold_m: parseInt(aglThresholdStr, 10),
+                elevation_angles: {
+                    min: parseFloat(minStr),
+                    max: parseFloat(maxStr),
+                },
+            }
         };
     }
 
