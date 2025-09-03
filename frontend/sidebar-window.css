@@ -88,7 +88,6 @@
     display: inline-block;
     width: 30px;
     height: 30px;
-    border-radius: 50%;
     margin: 0 5px;
     cursor: pointer;
     border: 3px solid transparent;
@@ -107,13 +106,13 @@
 .unit-option {
     display: inline-block;
     width: 60px;
-    height: 20px;
     border-radius: 14px;
     margin: 0 12px;
     cursor: pointer;
     border: 3px solid #a1a1a1;
     transition: border-color 0.2s ease;
-    padding: 2px;
+    padding: 2px 0px;
+    line-height: 1.3rem;
 }
 
 .unit-option:hover {

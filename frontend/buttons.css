@@ -1,8 +1,8 @@
 .submit-btn {
     cursor: pointer;
     text-align: center;
-    padding: 6px;
-    border-radius: 7px;
+    padding: 8px;
+    border-radius: 13px;
     background: #247b7b;
     color: #FFFFFA
 }
@@ -33,6 +33,6 @@
     text-align: center;
     background: #d9534f;
     color: #FFFFFA;
-    padding: 6px;
-    border-radius: 7px;
+    padding: 8px;
+    border-radius: 13px;
 }
