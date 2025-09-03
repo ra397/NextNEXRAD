@@ -59,6 +59,9 @@ class RadarFieldsManager {
       agl   = ft2m(agl);
     }
 
+    tower = this._roundWhole(tower);
+    agl = this._roundWhole(agl);
+
     return {
       lat,
       lng,

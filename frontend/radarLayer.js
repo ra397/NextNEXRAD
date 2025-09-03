@@ -41,7 +41,7 @@ class RadarLayer {
                     lat: site.lat,
                     lng: site.lng,
                     tower_height_m: parseInt(site.tower),
-                    agl_threshold_m: 914.4,
+                    agl_threshold_m: 914,
                     elevation_angles: {
                         min: 0.5,
                         max: 19.5,
