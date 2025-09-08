@@ -282,3 +282,15 @@ const standardStyle = [
 window.lightStyle = lightStyle;
 window.darkStyle = darkStyle;
 window.standardStyle = standardStyle;
+
+const dtypeMap = {
+    'uint8': Uint8Array,
+    'uint16': Uint16Array,
+    'uint32': Uint32Array,
+    'int8': Int8Array,
+    'int16': Int16Array,
+    'int32': Int32Array,
+    'float32': Float32Array,
+    'float64': Float64Array
+};
+window.dtypeMap = dtypeMap;

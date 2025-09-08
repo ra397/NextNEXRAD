@@ -50,6 +50,41 @@ def get_blockage(easting, northing, elevation_angles_deg=None, tower_m=None, agl
         resampleAlg=gdal.GRA_NearestNeighbour
     )
 
+    # To generate reports:
+    coverage_1km_res = gdal.Warp(
+        '',
+        '/vsimem/5070.tif',
+        resampleAlg=gdal.GRA_NearestNeighbour,
+        xRes=1000,
+        yRes=1000,
+        format='MEM'
+    )
+
+    coverage_1km_res_gt = coverage_1km_res.GetGeoTransform()
+    left = coverage_1km_res_gt[0]    # top-left x coordinate
+    top = coverage_1km_res_gt[3]     # top-left y coordinate
+
+    coverage_1km_res_matrix = coverage_1km_res.GetRasterBand(1).ReadAsArray()
+
+    indices = np.where(coverage_1km_res_matrix == 1)
+    row_indices = indices[0]
+    col_indices = indices[1]
+
+    colOffset = int((left - -2583576) // 1000)
+    rowOffset = int((3402178 - top) // 1000)
+
+    row_indices += rowOffset
+    col_indices += colOffset
+
+    row_indices *= 5221
+    row_indices += col_indices
+
+    coverage_indices = row_indices.astype(np.uint32)
+
+    coverage_indices_bytes = coverage_indices.tobytes()
+    coverage_indices_b64 = base64.b64encode(coverage_indices_bytes).decode('utf-8')
+
+
     # Read result and convert to PNG
     reprojected_ds = gdal.Open('/vsimem/3857.tif')
     array = reprojected_ds.ReadAsArray()
@@ -88,6 +123,10 @@ def get_blockage(easting, northing, elevation_angles_deg=None, tower_m=None, agl
             "south": south,
             "east": east,
             "west": west
+        },
+        "coverage_indices": {
+            "data": coverage_indices_b64,
+            "dtype": str(coverage_indices.dtype)
         }
     }
 

@@ -88,11 +88,11 @@ def recolor_png(input_path, target_color_str):
             if chunk_type == b'IHDR':
                 ihdr = data
             elif chunk_type == b'IDAT':
-                idat_data += data
+                idat_data += data # type: ignore
             else:
                 chunks.append((chunk_type, data))
 
-    width, height, bit_depth, color_type, compression, filter_method, interlace = struct.unpack(">IIBBBBB", ihdr)
+    width, height, bit_depth, color_type, compression, filter_method, interlace = struct.unpack(">IIBBBBB", ihdr) # type: ignore
 
     if bit_depth != 8 or color_type != 6:
         raise NotImplementedError("Only 32-bit RGBA PNGs are supported (bit depth 8, color type 6)")

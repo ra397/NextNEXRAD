@@ -15,6 +15,8 @@ class RadarLayer {
         this.radars = [];
 
         this.currentRadarId = 0;
+
+        this.coverageIndicesMap = new Map();
     }
 
     async loadNexradBounds() {
@@ -74,10 +76,15 @@ class RadarLayer {
         }
         
         // Fetch coverage and create radar
-        const overlay = await this.fetchCoverage(params);
+        const result = await this.fetchCoverage(params);
+        if (!result) return null;
+
+        const { overlay, coverageIndices } = result;
         if (!overlay) return null;
 
         const newRadarId = id !== null ? id: ++this.currentRadarId;
+
+        this.coverageIndicesMap.set(newRadarId, coverageIndices);
         
         const newRadar = {
             id: newRadarId,
@@ -117,13 +124,17 @@ class RadarLayer {
         console.log(radarToUpdate);
 
         // Update radar params and overlay, keep ID the same
-        const overlay = await this.fetchCoverage(params);
-        if (!overlay) return null;
+        const result = await this.fetchCoverage(params);
+        if (!result) return null;
+
+        const { overlay, coverageIndices } = result;
 
         if (radarToUpdate.overlay) {
             radarToUpdate.overlay.setMap(null);
             radarToUpdate.overlay = null;
         }
+
+        this.coverageIndicesMap.set(id, coverageIndices);
 
         radarToUpdate.overlay = overlay;
         radarToUpdate.overlay.setMap(this.map);
@@ -145,9 +156,16 @@ class RadarLayer {
         if (duplicateIndex !== -1) { // params are duplicate
             const radarToUpdate = this.radars[duplicateIndex];
             if (radarToUpdate.overlay === null) {
-                const overlay = await this.fetchCoverage(params);
+                const result = await this.fetchCoverage(params);
+                if (!result) return false;
+                
+                const { overlay, coverageIndices } = result;
                 radarToUpdate.overlay = overlay;
-                return true; // attached overlay
+                
+                // Store coverageIndices for this radar
+                this.coverageIndicesMap.set(radarToUpdate.id, coverageIndices);
+                
+                return true;
             } else {
                 // Ensure overlay is visible
                 const isVisible = radarToUpdate.overlay.getMap();
@@ -179,6 +197,8 @@ class RadarLayer {
         }
         console.log("The radar we are trying to delete is below:");
         console.log(radar);
+        // Remove coverageIndices
+        this.coverageIndicesMap.delete(id);
         // Remove overlay
         radar.overlay.setMap(null);
         radar.ovlerlay = null;
@@ -191,14 +211,15 @@ class RadarLayer {
     async fetchCoverage(p) {
         const steps = [0.5, 0.9, 1.3, 1.8, 2.4, 3.1, 4.0, 5.1, 6.4, 8.0, 10.0, 12.5, 15.6, 19.5];
 
-        console.log(p);
+        const minIndex = steps.indexOf(p.elevation_angles.min);
+        const maxIndex = steps.indexOf(p.elevation_angles.max);
 
         const [x5070, y5070] = proj4('EPSG:4326', 'EPSG:5070', [p.lng, p.lat]);
         const body = {
             easting: x5070, northing: y5070,
             max_alt_m: p.agl_threshold_m,
             tower_m: p.tower_height_m,
-            elevation_angles: steps.slice(p.elevation_angles.min, p.elevation_angles.max + 1),
+            elevation_angles: steps.slice(minIndex, maxIndex + 1),
             color: window.overlay_color
         };
 
@@ -216,6 +237,9 @@ class RadarLayer {
             return null;
         }
 
+        const binaryCoverageIndices = Uint8Array.from(atob(data.coverage_indices.data), c => c.charCodeAt(0));
+        const coverageIndices = new Uint32Array(binaryCoverageIndices.buffer);
+
         const sw = new google.maps.LatLng(data.bounds.south, data.bounds.west);
         const ne = new google.maps.LatLng(data.bounds.north, data.bounds.east);
         const bounds = new google.maps.LatLngBounds(sw, ne);
@@ -223,7 +247,7 @@ class RadarLayer {
         const overlay = customOverlay(data.image_url, bounds, this.map, 'OverlayView');
         overlay.setOpacity(0.7);
         hideSpinner();
-        return overlay;
+        return { overlay, coverageIndices };
     }
 
     toggleOverlay(id) {
@@ -394,6 +418,13 @@ class RadarLayer {
             this.customMarkers.markers[i].setMap(null);
         }
         this.customMarkers.markers = [];
+
+        // Clear coverageIndices for custom radars (integer IDs)
+        for (const [radarId] of this.coverageIndicesMap) {
+            if (Number.isInteger(radarId)) {
+                this.coverageIndicesMap.delete(radarId);
+            }
+        }
         
         // Find and remove all radars with integer IDs (custom radars)
         const radarsToRemove = [];

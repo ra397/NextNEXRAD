@@ -4,6 +4,7 @@ import traceback
 from flask_cors import CORS
 import os
 from recolor import recolor_png
+import base64
 
 app = Flask(__name__)
 CORS(app, resources={
@@ -63,6 +64,40 @@ def get_tile():
         return send_file(img_buffer, mimetype='image/png')
     else:
         return jsonify({'error': 'Tile not found'}), 404
+
+
+@app.route('/api-wsr88/get-basin')
+def get_basin():
+    basin_id = request.args.get("id")
+    with open(f'resources/basins/{basin_id}.bin', 'rb') as f:
+        basin = f.read()
+        basin_b64 = base64.b64encode(basin).decode('utf-8')
+    return jsonify({
+        'data': basin_b64,
+        'dtype': 'uint32'
+    })
+
+with open('resources/coverages/3k_ft.bin', 'rb') as f:
+    coverage = f.read()
+    coverage_b64 = base64.b64encode(coverage).decode('utf-8')
+
+@app.route('/api-wsr88/get-coverage')
+def get_coverage():
+    return jsonify({
+        'data': coverage_b64,
+        'dtype': "uint8"
+    })
+
+with open('resources/population/ppp.bin', 'rb') as f:
+    population = f.read()
+    population_b64 = base64.b64encode(population).decode('utf-8')
+                                      
+@app.route('/api-wsr88/get-population')
+def get_population():
+    return jsonify({
+        'data': population_b64,
+        'dtype': "uint16"
+    })
 
 if __name__ == "__main__":
     app.run(debug=True)
