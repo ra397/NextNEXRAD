@@ -77,12 +77,13 @@ def get_basin():
         'dtype': 'uint32'
     })
 
-with open('resources/coverages/3k_ft.bin', 'rb') as f:
-    coverage = f.read()
-    coverage_b64 = base64.b64encode(coverage).decode('utf-8')
-
 @app.route('/api-wsr88/get-coverage')
 def get_coverage():
+    threshold = request.args.get('threshold', default='3k_ft', type=str)
+    file_path = f'resources/coverages/{threshold}.bin'
+    with open(file_path, 'rb') as f:
+        coverage = f.read()
+        coverage_b64 = base64.b64encode(coverage).decode('utf-8')
     return jsonify({
         'data': coverage_b64,
         'dtype': "uint8"
