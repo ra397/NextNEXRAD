@@ -105,6 +105,8 @@ class UsgsLayer {
             return;
         }
         this.loadBasin(usgsId);
+        currentlySelectedUsgsBasin = usgsId;
+        triggerReportGeneration();
     }
 
     usgsSiteHover(event, marker) {

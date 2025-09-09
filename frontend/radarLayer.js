@@ -85,6 +85,7 @@ class RadarLayer {
         const newRadarId = id !== null ? id: ++this.currentRadarId;
 
         this.coverageIndicesMap.set(newRadarId, coverageIndices);
+        triggerReportGeneration();
         
         const newRadar = {
             id: newRadarId,
@@ -135,6 +136,7 @@ class RadarLayer {
         }
 
         this.coverageIndicesMap.set(id, coverageIndices);
+        triggerReportGeneration();
 
         radarToUpdate.overlay = overlay;
         radarToUpdate.overlay.setMap(this.map);
@@ -164,6 +166,7 @@ class RadarLayer {
                 
                 // Store coverageIndices for this radar
                 this.coverageIndicesMap.set(radarToUpdate.id, coverageIndices);
+                triggerReportGeneration();
                 
                 return true;
             } else {
@@ -199,6 +202,7 @@ class RadarLayer {
         console.log(radar);
         // Remove coverageIndices
         this.coverageIndicesMap.delete(id);
+        triggerReportGeneration();
         // Remove overlay
         radar.overlay.setMap(null);
         radar.ovlerlay = null;
@@ -425,6 +429,7 @@ class RadarLayer {
                 this.coverageIndicesMap.delete(radarId);
             }
         }
+        triggerReportGeneration();
         
         // Find and remove all radars with integer IDs (custom radars)
         const radarsToRemove = [];

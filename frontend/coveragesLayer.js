@@ -109,6 +109,8 @@ class CoveragesLayer {
     const thresholdSlider = document.querySelector('input[type="range"]');
     if (thresholdSlider) {
       thresholdSlider.value = "0";
+      changeCoverageThreshold("3k_ft");
+      triggerReportGeneration();
     }
   }
 }

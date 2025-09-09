@@ -2,6 +2,9 @@ let population;
 let coverage;
 let dataLoaded = false;
 
+let currentlySelectedUsgsBasin = null;
+window.currentlySelectedUsgsBasin = currentlySelectedUsgsBasin;
+
 document.addEventListener("DOMContentLoaded", async () => {
     loadDataUsingWorker();
 });
@@ -23,19 +26,45 @@ function loadDataUsingWorker() {
     };
 }
 
-function changeCoverageThreshold(newThreshold) {
-    const worker = new Worker("report-worker.js");
-    worker.postMessage({
-        type: 'get_coverage',
-        serverUrl: window._env_prod.SERVER_URL,
-        threshold: newThreshold
-    });
+document.getElementById('threshold-range-slider').addEventListener('change', async (e) => {
+    const thresholds = ['3k_ft', '6k_ft', '10k_ft'];
+    const value = parseInt(e.target.value);
+    const threshold = thresholds[value];
     
-    worker.onmessage = function(e) {
-        coverage = e.data.coverage;
-        worker.terminate();
-        console.log(`Coverage updated to ${newThreshold}`);
-    };
+    try {
+        await changeCoverageThreshold(threshold);
+        triggerReportGeneration({
+            action: 'thresholdChanged',
+            threshold: threshold
+        });
+    } catch (error) {
+        console.error('Error changing coverage threshold:', error);
+    }
+});
+
+function changeCoverageThreshold(newThreshold) {
+    return new Promise((resolve, reject) => {
+        const worker = new Worker("report-worker.js");
+        
+        worker.postMessage({
+            type: 'get_coverage',
+            serverUrl: window._env_prod.SERVER_URL,
+            threshold: newThreshold
+        });
+        
+        worker.onmessage = function(e) {
+            coverage = e.data.coverage;
+            worker.terminate();
+            console.log(`Coverage updated to ${newThreshold}`);
+            resolve(e.data); 
+        };
+        
+        worker.onerror = function(error) {
+            worker.terminate();
+            console.error('Worker error:', error);
+            reject(error); 
+        };
+    });
 }
 
 async function generateReport(basinId = null) {
@@ -68,6 +97,7 @@ async function generateReport(basinId = null) {
         }
         totalArea = basinIncides.length;
     }
+    console.log("\nReporting for basin: ", basinId);
     console.log("Area coverage: ", areaCovered, totalArea, areaCovered / totalArea);
     console.log("Population coverage: ", populationCovered, totalPopulation, populationCovered / totalPopulation);
 }
@@ -102,3 +132,12 @@ function binaryIncudes(arr, target) {
   }
   return false; 
 }
+
+function triggerReportGeneration() {
+    const event = new CustomEvent('generateReport');
+    document.dispatchEvent(event);
+}
+
+document.addEventListener('generateReport', () => {
+    generateReport(currentlySelectedUsgsBasin);
+});
