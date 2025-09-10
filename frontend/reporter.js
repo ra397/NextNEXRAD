@@ -68,10 +68,14 @@ function changeCoverageThreshold(newThreshold) {
 }
 
 async function generateReport(basinId = null) {
-    let areaCovered = 0;
-    let totalArea = 0;
-    let populationCovered = 0;
+    let pixelsCoveredByNexrad = 0;
+    let pixelsCoveredByCustom = 0;
+    let totalPixels = 0;
+
+    let populationCoveredByNexrad = 0;
+    let populationCoveredByCustom = 0;
     let totalPopulation = 0;
+
     if (basinId === null) return;
     else { // Otherwise, if basin is selected, loop over basin indices only
         const basinIncides = await getBasinIndices(basinId);
@@ -81,25 +85,26 @@ async function generateReport(basinId = null) {
             const coverageAtPixel = coverage[index];
 
             if (coverageAtPixel === 1) {
-                areaCovered += 1;
-                populationCovered += populationAtPixel;
+                pixelsCoveredByNexrad++;
+                populationCoveredByNexrad += populationAtPixel;
             }
             else {
                 for (const coverageIndices of radarLayer.coverageIndicesMap.values()) {
                     if (binaryIncudes(coverageIndices, index)) {
-                        areaCovered += 1;
-                        populationCovered += populationAtPixel;
+                        pixelsCoveredByCustom++;
+                        populationCoveredByCustom += populationAtPixel;
                         break;
                     }
                 }
             }
             totalPopulation += populationAtPixel;
         }
-        totalArea = basinIncides.length;
+        totalPixels = basinIncides.length;
     }
-    console.log("\nReporting for basin: ", basinId);
-    console.log("Area coverage: ", areaCovered, totalArea, areaCovered / totalArea);
-    console.log("Population coverage: ", populationCovered, totalPopulation, populationCovered / totalPopulation);
+    const pixelsNotCovered = totalPixels - pixelsCoveredByNexrad - pixelsCoveredByCustom;
+    const populationNotCovered = totalPopulation - populationCoveredByNexrad - populationCoveredByCustom;
+    console.log(pixelsCoveredByNexrad, pixelsCoveredByCustom, pixelsNotCovered);
+    console.log(populationCoveredByNexrad, populationCoveredByCustom, populationNotCovered);
 }
 
 async function getBasinIndices(usgs_id) {
@@ -141,3 +146,32 @@ function triggerReportGeneration() {
 document.addEventListener('generateReport', () => {
     generateReport(currentlySelectedUsgsBasin);
 });
+
+document.getElementById("report-toggle-container").addEventListener('click', () => {
+    const piechartContainer = document.getElementById("piechart-container");
+    piechartContainer.style.display = piechartContainer.style.display === "block" ? "none" : "block";
+})
+
+/* Pie Chart Visualization */
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(() => {
+    drawChart(2, 1, 1);
+});
+
+function drawChart(nexrad, custom, none) {
+    var data = google.visualization.arrayToDataTable([
+        ['Radar', 'Area Covered'],
+        ['NEXRAD',      nexrad],
+        ['Custom Radars',      custom],
+        ['None', none]
+    ]);
+
+    var options = {
+        colors: ["#007200", "#38b000", "#bc4b51"],
+        pieSliceText: 'label-and-percentage',
+    };
+
+    var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+    chart.draw(data, options);
+}

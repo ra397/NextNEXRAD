@@ -16,6 +16,10 @@
         <link rel="stylesheet" href="error-modal.css">
         <link rel="stylesheet" href="buttons.css">
         <link rel="stylesheet" href="radioSelector.css">
+        <link rel="stylesheet" href="report.css">
+
+        <!-- Google Pie Chart -->
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
         <!-- Proj4js for reprojection -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.8.1/proj4.js"></script>
@@ -448,6 +452,17 @@
             <div id="pod-legend-label-container">
                 <!-- Dynamic tick labels -->
             </div>
+        </div>
+
+        <div id="report-toggle-container">
+            <span id="report-menu-title">Basin Stats</span>
+            <img class="drop-down-icon" src="https://maps.gstatic.com/mapfiles/arrow-down.png">
+        </div>
+
+        <div id="piechart-container">
+            <span id="piechart-title">Main title</span><br>
+            <span id="piechart-subtitle">Sub title placeholder</span>
+            <div id="piechart"></div>
         </div>
 
         <!-- Error Modal -->

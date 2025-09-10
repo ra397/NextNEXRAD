@@ -1,0 +1,48 @@
+#report-toggle-container {
+    position: absolute;
+    top: 10px;
+    left: 91px;
+    background: white;
+    width: 120px;
+    height: 38px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 1px;
+}
+
+#report-toggle-container:hover {
+    cursor: pointer;
+    background: rgb(235, 235, 235);
+}
+
+#report-menu-title {
+    color: #000000;
+    font-size: 18px;
+    font-family: Roboto, Arial, sans-serif;
+    font-weight: 500;
+}
+
+.drop-down-icon {
+    max-width: 7px;
+    max-height: 4px;
+    position: relative;
+    right: -5px;
+}
+
+#piechart-container {
+    position: absolute;
+    top: 48px;
+    left: 92px;
+    display: none;
+    background: white;
+}
+
+#piechart-title {
+    font-weight: bold;
+}
+
+#piechart-subtitle {
+    font-size: smaller;
+}
