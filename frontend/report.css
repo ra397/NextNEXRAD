@@ -31,18 +31,63 @@
     right: -5px;
 }
 
-#piechart-container {
-    position: absolute;
-    top: 48px;
-    left: 92px;
-    display: none;
+#basin-info-container {
+    width: fit-content;
+    height: fit-content;
+    padding: 5px;
     background: white;
+    display: none;
+    position: absolute;
+    left: 91px;
+    top: 48px;
+}
+
+#piechart-title-container {
+    display: flex;
+    flex-direction: column;
+}
+
+#piechart-container {
+    display: flex;
+    align-items: center;
+}
+
+.piechart-legend-color {
+    width: 12px;
+    height: 12px;
+    margin-right: 3px;
+    border: 1px solid #666;
+}
+
+.piechart-legend-item {
+    display: flex;
+    align-items: center;
 }
 
 #piechart-title {
+    font-size: 14px;
     font-weight: bold;
+    color: #333;
 }
 
-#piechart-subtitle {
-    font-size: smaller;
+#piechart-basin-id {
+    font-size: 12px;
+    font-weight: 600;
+    color: #0D5C63;
+}
+
+#piechart-subtitle-container {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b7280;
+}
+
+#piechart-controls-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#area-population-toggle {
+    margin-right: 10px;
 }

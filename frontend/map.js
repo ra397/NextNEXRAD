@@ -207,7 +207,8 @@ function closeAllWindows() {
     'existing-radar-show',
     'pod-settings',
     'radar-settings',
-    'map-control'
+    'map-control',
+    'basin-info-container'
   ];
   windows.forEach(windowId => {
     const window = document.getElementById(windowId);
@@ -215,4 +216,6 @@ function closeAllWindows() {
       window.style.display = 'none';
     }
   });
+  // reset basin stats toggle
+  document.getElementById("report-toggle-container").style.width = "120px";
 }

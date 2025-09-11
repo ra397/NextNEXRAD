@@ -21,10 +21,12 @@ document.addEventListener('DOMContentLoaded', function() {
             if (document.getElementById("show-all-coverage-checkbox").checked == true) {
                 coveragesLayer.loadAndShowSelectedCoverage();
             }
+
+            triggerReportGeneration(); // Need to redraw report with the new colors
         });
     });
     
-    // Set default selection (blue)
+    // Set default selection (green)
     document.querySelector('.color-option[data-color="green"]').classList.add('selected');
 });
 
@@ -68,6 +70,13 @@ function updateUnitLabels(){
 
   updateTickLabels();
   updatePopulationLabel();
+
+
+  if (window.units == 'metric') {
+    document.getElementById("piechart-subtitle").textContent = `Total Area: ${window.latestReport.area.total} km`;
+  } else {
+    document.getElementById("piechart-subtitle").textContent = `Total Area: ${km2ToMi2(window.latestReport.area.total).toFixed(0)} mi`;
+  }
 }
 
 function updateTickLabels(){

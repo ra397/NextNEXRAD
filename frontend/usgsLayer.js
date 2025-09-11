@@ -249,6 +249,8 @@ class UsgsLayer {
     reset() {
         this.hideUsgsSites();
         document.getElementById("usgsSites-checkbox").checked = false;
+        currentlySelectedUsgsBasin = null;
+        triggerReportGeneration();
     }
 
     getMarkerStyle() {

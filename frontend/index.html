@@ -459,10 +459,22 @@
             <img class="drop-down-icon" src="https://maps.gstatic.com/mapfiles/arrow-down.png">
         </div>
 
-        <div id="piechart-container">
-            <span id="piechart-title">Main title</span><br>
-            <span id="piechart-subtitle">Sub title placeholder</span>
-            <div id="piechart"></div>
+        <div id="basin-info-container">
+            <div id="piechart-controls-container">
+                <div id="piechart-title-container">
+                    <span id="piechart-title"></span>
+                    <span id="piechart-basin-id"></span>
+                    <span id="piechart-subtitle-container"><span id="piechart-subtitle"></span><sup id="superscript">2</sup></span>
+                </div>
+                <label class="switch round">
+                    <input type="checkbox" id="area-population-toggle">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div id="piechart-container">
+                <canvas id="piechart" width="200" height="200"></canvas>
+                <div id="piechart-legend"></div>
+            </div>
         </div>
 
         <!-- Error Modal -->
@@ -472,13 +484,6 @@
                 <span id="error-close">Close</span>
             </div>
         </div>
-
-        <!-- <div id="information" class="sidebar-window">
-            <div class="window-title-container">
-                <h3>Information</h3>
-            </div>
-            <span class="close-btn" onclick="this.parentElement.style.display='none'">×</span>
-        </div> -->
 
 
         <!-- Loading spinner, shown after request is sent and before coverage loads on map -->
