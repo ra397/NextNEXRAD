@@ -81,13 +81,7 @@ def get_basin():
 def get_coverage():
     threshold = request.args.get('threshold', default='3k_ft', type=str)
     file_path = f'resources/coverages/{threshold}.bin'
-    with open(file_path, 'rb') as f:
-        coverage = f.read()
-        coverage_b64 = base64.b64encode(coverage).decode('utf-8')
-    return jsonify({
-        'data': coverage_b64,
-        'dtype': "uint8"
-    })
+    return send_file(file_path, mimetype='application/octet-stream')
 
 with open('resources/population/ppp.bin', 'rb') as f:
     population = f.read()
@@ -95,10 +89,8 @@ with open('resources/population/ppp.bin', 'rb') as f:
                                       
 @app.route('/api-wsr88/get-population')
 def get_population():
-    return jsonify({
-        'data': population_b64,
-        'dtype': "uint16"
-    })
+    file_path = 'resources/population/ppp.bin'
+    return send_file(file_path, mimetype='application/octet-stream')
 
 if __name__ == "__main__":
     app.run(debug=True)
