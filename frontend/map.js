@@ -190,6 +190,7 @@ async function copyToClipboard(link) {
 }
 
 function reset() {
+  currentlySelectedUsgsBasin = null;
   radarLayer.reset();
   radarLayer.rangeRings.resetAll();
   usgsLayer.reset();

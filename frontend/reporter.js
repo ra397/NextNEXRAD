@@ -1,11 +1,18 @@
 let population;
-let coverage;
+
+let coverage_3k;
+let coverage_6k;
+let coverage_10k;
+
+let coverage = null;
+
 let dataLoaded = false;
 
 let currentlySelectedUsgsBasin = null;
 window.currentlySelectedUsgsBasin = currentlySelectedUsgsBasin;
 
 document.addEventListener("DOMContentLoaded", async () => {
+    console.log("Starting worker ...")
     loadDataUsingWorker();
 });
 
@@ -17,11 +24,14 @@ function loadDataUsingWorker() {
     });
 
     worker.onmessage = function(e) {
-        const { population: pop, coverage: cov } = e.data;
+        const { population: pop, coverage_3k: cov_3k, coverage_6k: cov_6k, coverage_10k: cov_10k } = e.data;
         population = pop;
-        coverage = cov;
+        coverage_3k = cov_3k;
+        coverage_6k = cov_6k;
+        coverage_10k = cov_10k;
         dataLoaded = true;
         worker.terminate(); // Clean up
+        coverage = coverage_3k;
         console.log('Data loaded!');
     };
 }
@@ -31,41 +41,12 @@ document.getElementById('threshold-range-slider').addEventListener('change', asy
     const value = parseInt(e.target.value);
     const threshold = thresholds[value];
     
-    try {
-        await changeCoverageThreshold(threshold);
-        triggerReportGeneration({
-            action: 'thresholdChanged',
-            threshold: threshold
-        });
-    } catch (error) {
-        console.error('Error changing coverage threshold:', error);
-    }
-});
+    if (threshold === "3k_ft") coverage = coverage_3k;
+    else if (threshold === "6k_ft") coverage = coverage_6k;
+    else if (threshold === "10k_ft") coverage = coverage_10k;
 
-function changeCoverageThreshold(newThreshold) {
-    return new Promise((resolve, reject) => {
-        const worker = new Worker("report-worker.js");
-        
-        worker.postMessage({
-            type: 'get_coverage',
-            serverUrl: window._env_prod.SERVER_URL,
-            threshold: newThreshold
-        });
-        
-        worker.onmessage = function(e) {
-            coverage = e.data.coverage;
-            worker.terminate();
-            console.log(`Coverage updated to ${newThreshold}`);
-            resolve(e.data); 
-        };
-        
-        worker.onerror = function(error) {
-            worker.terminate();
-            console.error('Worker error:', error);
-            reject(error); 
-        };
-    });
-}
+    triggerReportGeneration();
+});
 
 async function generateReport(basinId = null) {
     let pixelsCoveredByNexrad = 0;
@@ -90,7 +71,7 @@ async function generateReport(basinId = null) {
             }
             else {
                 for (const coverageIndices of radarLayer.coverageIndicesMap.values()) {
-                    if (binaryIncudes(coverageIndices, index)) {
+                    if (binaryIncludes(coverageIndices, index)) {
                         pixelsCoveredByCustom++;
                         populationCoveredByCustom += populationAtPixel;
                         break;
@@ -135,7 +116,7 @@ async function getBasinIndices(usgs_id) {
     }
 }
 
-function binaryIncudes(arr, target) {
+function binaryIncludes(arr, target) {
   let low = 0;
   let high = arr.length - 1;
 
@@ -169,107 +150,171 @@ document.addEventListener('generateReport', async () => {
     const report = await generateReport(currentlySelectedUsgsBasin);
     if (report == null) return;
     window.latestReport = report;
-    // Using the report, generate the pie chart
-    const basinTitle = "Area Coverage";
-    const basinId = `Basin ID: ${report.basinId}`;
-    let subtitle;
-    if (window.units == "metric") {
-        subtitle = `Total Area: ${report.area.total} km`;
-    } else {
-        subtitle = `Total Area: ${km2ToMi2(report.area.total).toFixed(0)} mi`;
-    }
-    const data = [
-        { label: 'NEXRAD', value: (report.area.coveredByNexrad / report.area.total) * 100, color: colorMap[overlay_color] },
-        { label: 'Custom Radars', value: (report.area.coveredByCustom / report.area.total) * 100, color: radarLayer.customMarkers.getMarkerStyle().color },
-        { label: 'None', value: (report.area.notCovered / report.area.total) * 100, color: "#ffffff"}
+
+    const area_data = [
+        { 
+            label: 'NEXRAD',
+            percentage: `${((latestReport.area.coveredByNexrad / latestReport.area.total) * 100).toFixed(1)}%`,
+            raw: `${((latestReport.area.coveredByNexrad / latestReport.area.total) * usgs_sites[currentlySelectedUsgsBasin].area_km2).toFixed(0)}`,
+            value: (latestReport.area.coveredByNexrad / latestReport.area.total),
+            color: colorMap[overlay_color]
+        },
+        { 
+            label: 'Custom',
+            percentage: `${((latestReport.area.coveredByCustom / latestReport.area.total) * 100).toFixed(1)}%`,
+            raw: `${((latestReport.area.coveredByCustom / latestReport.area.total) * usgs_sites[currentlySelectedUsgsBasin].area_km2).toFixed(0)}`,
+            value: (latestReport.area.coveredByCustom / latestReport.area.total),
+            color: radarLayer.customMarkers.getMarkerStyle().color
+        },
+        { 
+            label: 'No Coverage',
+            percentage: `${((latestReport.area.notCovered / latestReport.area.total) * 100).toFixed(1)}%`,
+            raw: `${((latestReport.area.notCovered / latestReport.area.total) * usgs_sites[currentlySelectedUsgsBasin].area_km2).toFixed(0)}`,
+            value: (latestReport.area.notCovered / latestReport.area.total),
+            color: '#ffffff'
+        },
     ];
-    document.getElementById("area-population-toggle").checked = false;
-    generatePieChart(basinTitle, basinId, subtitle, data);
+    generatePieChart("area-piechart", area_data);
+
+    const totalPopulation = latestReport.population.total || 0;
+    const population_data = [
+        { 
+            label: 'NEXRAD',
+            percentage: totalPopulation > 0 ? `${((latestReport.population.coveredByNexrad / totalPopulation) * 100).toFixed(1)}%` : '0.0%',
+            raw: totalPopulation > 0 ? `${latestReport.population.coveredByNexrad}` : '0',
+            value: totalPopulation > 0 ? (latestReport.population.coveredByNexrad / totalPopulation) : 0,
+            color: colorMap[overlay_color]
+        },
+        { 
+            label: 'Custom',
+            percentage: totalPopulation > 0 ? `${((latestReport.population.coveredByCustom / totalPopulation) * 100).toFixed(1)}%` : '0.0%',
+            raw: totalPopulation > 0 ? `${latestReport.population.coveredByCustom}` : '0',
+            value: totalPopulation > 0 ? (latestReport.population.coveredByCustom / totalPopulation) : 0,
+            color: radarLayer.customMarkers.getMarkerStyle().color
+        },
+        { 
+            label: 'No Coverage',
+            percentage: totalPopulation > 0 ? `${((latestReport.population.notCovered / totalPopulation) * 100).toFixed(1)}%` : '0.0%',
+            raw: totalPopulation > 0 ? `${latestReport.population.notCovered}` : '0',
+            value: totalPopulation > 0 ? (latestReport.population.notCovered / totalPopulation) : 0,
+            color: '#ffffff'
+        },
+    ];
+
+    generatePieChart("population-piechart", population_data);
+
+    const basinTitle = usgs_sites[currentlySelectedUsgsBasin].name;
+    const basinArea_km2 = usgs_sites[currentlySelectedUsgsBasin].area_km2.toFixed(0);
+    const basinArea_mi2 = km2ToMi2(basinArea_km2).toFixed(0);
+    const basinPopulation = latestReport.population.total;
+
+    document.getElementById("basin-title").textContent = basinTitle;
+    document.getElementById("basin-title").setAttribute("title", basinTitle + ` (${currentlySelectedUsgsBasin})`);
+    if (units === "metric") {
+        document.getElementById("area-heading").innerHTML = `Area: ${basinArea_km2} km<sup>2</sup>`;
+    } else {
+        document.getElementById("area-heading").innerHTML = `Area: ${basinArea_mi2} mi<sup>2</sup>`;        
+    }
+    document.getElementById("population-heading").textContent = `Population: ${basinPopulation}`;
 });
 
+let usgs_sites = null;
+// Load usgs json into memory
+fetch('public/data/usgs.json')
+    .then(res => res.json())
+    .then(data => {
+        usgs_sites = data;
+    });
+
 document.getElementById("report-toggle-container").addEventListener('click', () => {
-    // Toggle basin stats window
     const piechartContainer = document.getElementById("basin-info-container");
     const toggleContainer = document.getElementById("report-toggle-container");
     const currentWidth = toggleContainer.style.width;
-    if (currentlySelectedUsgsBasin !== null) {
-        piechartContainer.style.display = piechartContainer.style.display === "block" ? "none" : "block";
-        toggleContainer.style.width = (currentWidth === "324px") ? "120px" : "324px";
-    } else {
+    if (currentlySelectedUsgsBasin === null) {
         showError("A USGS basin must be selected.");
+        return;
     }
+    if (coverage === null) {
+        showError("Waiting for data to load.");
+        return;
+    }
+    piechartContainer.style.display = piechartContainer.style.display === "block" ? "none" : "block";
+    toggleContainer.style.width = (currentWidth === "414px") ? "120px" : "414px";
 });
 
-document.getElementById("area-population-toggle").addEventListener('click', async () => {
-    const report = window.latestReport;
 
-    // Toggle between area and population
-    const piechartTitleElem = document.getElementById("piechart-title");
-    const showingArea = piechartTitleElem.textContent === "Area Coverage";
-
-    let basinTitle, subtitle, data;
-    const basinId = `Basin ID: ${report.basinId}`;
-
-    if (showingArea) {
-        document.getElementById("superscript").style.display = 'none';
-        basinTitle = "Population Coverage";
-        subtitle = `Total Population: ${report.population.total}`;
-        data = [
-            { label: 'NEXRAD', value: (report.population.coveredByNexrad / report.population.total) * 100, color: colorMap[overlay_color] },
-            { label: 'Custom Radars', value: (report.population.coveredByCustom / report.population.total) * 100, color: radarLayer.customMarkers.getMarkerStyle().color },
-            { label: 'None', value: (report.population.notCovered / report.population.total) * 100, color: "#ffffff" }
-        ];
-    } else {
-        document.getElementById("superscript").style.display = 'inline-block';
-        basinTitle = "Area Coverage";
-        if (window.units == 'metric') {
-            subtitle = `Total Area: ${report.area.total} km`;
-        } else {
-            subtitle = `Total Area: ${km2ToMi2(report.area.total).toFixed(0)} mi`;
-        }
-        data = [
-            { label: 'NEXRAD', value: (report.area.coveredByNexrad / report.area.total) * 100, color: colorMap[overlay_color] },
-            { label: 'Custom Radars', value: (report.area.coveredByCustom / report.area.total) * 100, color: radarLayer.customMarkers.getMarkerStyle().color },
-            { label: 'None', value: (report.area.notCovered / report.area.total) * 100, color: "#ffffff" }
-        ];
-    }
-    generatePieChart(basinTitle, basinId, subtitle, data);
-});
-
-function generatePieChart(title, basinId, subtitle, data) {
-    const canvas = document.getElementById('piechart');
+function generatePieChart(piechart_el, data) {
+    const canvas = document.getElementById(piechart_el);
     const ctx = canvas.getContext('2d');
-    // Dynamically fill out titles based on data
-    document.getElementById("piechart-title").textContent = title;
-    document.getElementById("piechart-basin-id").textContent = basinId;
-    document.getElementById("piechart-subtitle").textContent = subtitle;
+
     // Dynamically create legend items based on data
-    const legendContainer = document.getElementById('piechart-legend');
-    legendContainer.innerHTML = ''; // Clear previous legend items
+    let legend_el;
+    if (piechart_el === "area-piechart") legend_el = "area-legend";
+    else if (piechart_el == "population-piechart") legend_el = "population-legend";
+    const legendContainer = document.getElementById(legend_el);
+
+    // Clear any existing legend items
+    legendContainer.innerHTML = "";
+
+    // Create header row
+    const headerRow = document.createElement('div');
+    headerRow.className = 'piechart-legend-row header';
+
+    ['', '%', 'Value'].forEach(text => {
+        const col = document.createElement('div');
+        col.className = 'piechart-legend-col';
+        col.textContent = text;
+        headerRow.appendChild(col);
+    });
+    legendContainer.appendChild(headerRow);
+
+    // Create rows
     data.forEach(item => {
-        // Create legend item container
-        const legendItem = document.createElement('div');
-        legendItem.className = 'piechart-legend-item';
-        
-        // Create color box
+        const row = document.createElement('div');
+        row.className = 'piechart-legend-row';
+
+        // Column 1: Color box + label
+        const labelCol = document.createElement('div');
+        labelCol.className = 'piechart-legend-col label-col';
+
         const colorBox = document.createElement('div');
         colorBox.className = 'piechart-legend-color';
         colorBox.style.backgroundColor = item.color;
-        
-        // Create label span
+
         const labelSpan = document.createElement('span');
         labelSpan.textContent = item.label;
-        
-        // Append elements to legend item
-        legendItem.appendChild(colorBox);
-        legendItem.appendChild(labelSpan);
-        
-        // Append legend item to container
-        legendContainer.appendChild(legendItem);
+
+        labelCol.appendChild(colorBox);
+        labelCol.appendChild(labelSpan);
+        row.appendChild(labelCol);
+
+        // Column 2: Percentage Value
+        const percentCol = document.createElement('div');
+        percentCol.className = 'piechart-legend-col';
+        percentCol.textContent = item.percentage;
+        row.appendChild(percentCol);
+
+        // Column 3: Raw Value
+        if (piechart_el === "area-piechart") {
+            const metric_area = parseFloat(item.raw).toFixed(0);
+            const imperial_area = parseFloat(km2ToMi2(item.raw)).toFixed(0);
+            const valueCol = document.createElement('div');
+            valueCol.className = 'piechart-legend-col area-value'
+            valueCol.dataset.metric = metric_area;
+            valueCol.dataset.imperial = imperial_area;
+            valueCol.innerHTML = (units === "metric") ? metric_area : imperial_area;
+            row.appendChild(valueCol);
+        } else {
+            const valueCol = document.createElement('div');
+            valueCol.className = 'piechart-legend-col';
+            valueCol.innerHTML = item.raw;
+            row.appendChild(valueCol);
+        }
+        legendContainer.appendChild(row);
     });
 
-    // Dynamically generate pie chart based on data
-    const MIN_LABEL_PERCENTAGE = 10;
+
+    // Dynamically create pie chart based on data
     const totalValue = data.reduce((sum, item) => sum + item.value, 0);
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
@@ -277,6 +322,7 @@ function generatePieChart(title, basinId, subtitle, data) {
     let startAngle = -Math.PI / 2; // Start from the top (12 o'clock position)
 
     data.forEach(item => {
+        console.log(item.value);
         const sliceAngle = (item.value / totalValue) * 2 * Math.PI; // Angle for the current slice
         const endAngle = startAngle + sliceAngle;
 
@@ -288,24 +334,13 @@ function generatePieChart(title, basinId, subtitle, data) {
         ctx.fillStyle = item.color;
         ctx.fill();
 
-        // Add labels
-        if (item.value >= MIN_LABEL_PERCENTAGE) {
-            const labelAngle = startAngle + sliceAngle / 2;
-            const labelX = centerX + Math.cos(labelAngle) * (radius * 0.7);
-            const labelY = centerY + Math.sin(labelAngle) * (radius * 0.7);
-            
-            ctx.fillStyle = '#000';
-            ctx.font = '14px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(item.value.toFixed(0) + '%', labelX, labelY);
-        }
         startAngle = endAngle; // Update the starting angle for the next slice
-    });
+    });   
+    
     // Draw border around the entire pie
     ctx.beginPath();
     ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-    ctx.strokeStyle = "#666";
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = "#000";
+    ctx.lineWidth = 1;
     ctx.stroke();
 }

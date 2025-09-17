@@ -25,7 +25,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.8.1/proj4.js"></script>
 
         <!-- GeographicLib -->
-        <script src="https://cdn.jsdelivr.net/npm/geographiclib-geodesic@2.1.1/geographiclib-geodesic.min.js"></script>
+        <!--<script src="https://cdn.jsdelivr.net/npm/geographiclib-geodesic@2.1.1/geographiclib-geodesic.min.js"></script>-->
 
         <!-- fflate to read gzip files -->
         <script src="https://unpkg.com/fflate/umd/index.js"></script>
@@ -41,7 +41,7 @@
         <link rel="stylesheet" href="noUiSlider.css">
 
         <!-- plotly -->
-        <script src="https://cdn.plot.ly/plotly-2.31.1.js" charset="utf-8"></script>
+        <!--<script src="https://cdn.plot.ly/plotly-2.31.1.js" charset="utf-8"></script>-->
         
         <!-- Google Maps API -->
         <script
@@ -460,20 +460,22 @@
         </div>
 
         <div id="basin-info-container">
-            <div id="piechart-controls-container">
-                <div id="piechart-title-container">
-                    <span id="piechart-title"></span>
-                    <span id="piechart-basin-id"></span>
-                    <span id="piechart-subtitle-container"><span id="piechart-subtitle"></span><sup id="superscript">2</sup></span>
-                </div>
-                <label class="switch round">
-                    <input type="checkbox" id="area-population-toggle">
-                    <span class="toggle-slider"></span>
-                </label>
+            <div id="basin-title-container">
+                <span id="basin-title"></span>
             </div>
-            <div id="piechart-container">
-                <canvas id="piechart" width="200" height="200"></canvas>
-                <div id="piechart-legend"></div>
+            <div class="stats-container">
+                <div class="legend-items-container" id="area-legend"></div>
+                <div class="chart-container">
+                    <span class="basin-subtitle" id="area-heading"><sup>2</sup></span>
+                    <canvas class="piechart" id="area-piechart" width="120" height="120"></canvas>
+                </div>
+            </div>
+            <div class="stats-container">
+                <div class="legend-items-container" id="population-legend"></div>
+                <div class="chart-container">
+                    <span class="basin-subtitle" id="population-heading"></span>
+                    <canvas class="piechart" id="population-piechart" width="120" height="120"></canvas>
+                </div>
             </div>
         </div>
 

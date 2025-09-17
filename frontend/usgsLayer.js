@@ -4,9 +4,7 @@ class UsgsLayer {
 
         this.usgsSitesMarkers = new markerCollection(this.map);
 
-        this.populationPerBasinMap = null;
-
-        this.basinLayers = {};
+        this.currentBasinLayer = null;
 
         this._lastMarkerSize = null;
         
@@ -27,7 +25,6 @@ class UsgsLayer {
         this.usgsSitesMarkers.reactMouseOver = this.usgsSiteHover.bind(this);
         this.usgsSitesMarkers.reactMouseOut = this.usgsSiteHoverEnd.bind(this);
         this.loadUsgsSites();
-        this.loadPopulationPerBasin();
     }
 
     loadUsgsSites() {
@@ -62,15 +59,6 @@ class UsgsLayer {
         });        
     }
 
-    loadPopulationPerBasin() {
-        fetch('public/data/usgs_population_map.json')
-            .then(res => res.json())
-            .then(data => {
-            this.populationPerBasinMap = data;
-            })
-            .catch(err => console.error('Error loading population map:', err));        
-    }
-
     showUsgsSites() {
         this.usgsSitesMarkers.show();
     }
@@ -78,10 +66,10 @@ class UsgsLayer {
     hideUsgsSites() {
         this.usgsSitesMarkers.hide();
 
-        for (const usgsId in this.basinLayers) {
-            this.basinLayers[usgsId].setMap(null);
+        if (this.currentBasinLayer) {
+            this.currentBasinLayer.setMap(null);
+            this.currentBasinLayer = null;
         }
-        this.basinLayers = {};
 
         for (const marker of this.usgsSitesMarkers.markers) {
             if (marker.customLabel && marker.customLabel.remove) {
@@ -98,15 +86,32 @@ class UsgsLayer {
 
     usgsSiteClicked(event, marker) {
         const usgsId = marker.properties.usgs_id;
-        // If the basin is already shown, remove it and the label
-        if (this.basinLayers[usgsId]) {
-            this.basinLayers[usgsId].setMap(null); // Remove basin from map
-            delete this.basinLayers[usgsId];       // Delete reference
-            return;
+        if (this.currentBasinLayer) {
+            if (currentlySelectedUsgsBasin === usgsId) {
+                // close the basin
+                this.currentBasinLayer.setMap(null);
+                this.currentBasinLayer = null;
+                // set currently selected usgs basin to null
+                currentlySelectedUsgsBasin = null;
+            } 
+            else {
+                // close the old basin layer
+                this.currentBasinLayer.setMap(null);
+                this.currentBasinLayer = null;
+                // open the new basin layer
+                this.loadBasin(usgsId);
+                // update currently selected usgs basin
+                currentlySelectedUsgsBasin = usgsId;
+                triggerReportGeneration();
+            }
         }
-        this.loadBasin(usgsId);
-        currentlySelectedUsgsBasin = usgsId;
-        triggerReportGeneration();
+        else {
+            // open the new basin layer
+            this.loadBasin(usgsId);
+            // update currently selected usgs basin
+            currentlySelectedUsgsBasin = usgsId;
+            triggerReportGeneration();
+        }
     }
 
     usgsSiteHover(event, marker) {
@@ -134,7 +139,7 @@ class UsgsLayer {
 
             const usgsId = marker.properties.usgs_id;
             const area = marker.properties.drainage_area;
-            const population = this.populationPerBasinMap?.[usgsId] ?? null;
+            const population = usgs_sites?.[usgsId]?.population ?? null
 
             this.showLabel(marker, usgsId, area, population);
             marker._isHoverLabel = true; // Mark this as a hover label
@@ -179,7 +184,7 @@ class UsgsLayer {
                 clickable: false
             });
 
-            this.basinLayers[usgsId] = layer;
+            this.currentBasinLayer = layer;
         } catch (err) {
             console.error("Error loading basin:", err);
         }        

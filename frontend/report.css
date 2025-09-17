@@ -33,21 +33,57 @@
 
 #basin-info-container {
     width: fit-content;
+    max-width: 414px;
     height: fit-content;
-    padding: 5px;
     background: white;
     display: none;
     position: absolute;
     left: 91px;
     top: 48px;
+    text-align: center;
 }
 
-#piechart-title-container {
+#basin-title-container {
+    text-align: left;
+    padding: 2px 2ch 2px 2ch;
+    background-color: #247B7B;
+    color: white;
+    font-size: 1.3em;
+    width: fit-content;
+    margin-bottom: 15px;
+    margin-top: 5px;
+}
+
+#basin-title:hover {
+    cursor: pointer;
+}
+
+.basin-subtitle {
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+.legend-items-container {
     display: flex;
     flex-direction: column;
+    gap: 4px;
+    font-size: 14px;
 }
 
-#piechart-container {
+.piechart-legend-row {
+    display: grid;
+    grid-template-columns: 115px 65px 70px;
+    align-items: center;
+    gap: 8px;
+}
+
+.piechart-legend-row.header {
+    font-weight: 550;
+    padding-bottom: 4px;
+    margin-bottom: 4px;
+}
+
+.piechart-legend-col {
     display: flex;
     align-items: center;
 }
@@ -55,39 +91,28 @@
 .piechart-legend-color {
     width: 12px;
     height: 12px;
-    margin-right: 3px;
+    margin-right: 6px;
     border: 1px solid #666;
 }
 
-.piechart-legend-item {
+.label-col {
     display: flex;
     align-items: center;
 }
 
-#piechart-title {
-    font-size: 14px;
-    font-weight: bold;
-    color: #333;
-}
-
-#piechart-basin-id {
-    font-size: 12px;
-    font-weight: 600;
-    color: #0D5C63;
-}
-
-#piechart-subtitle-container {
-    font-size: 12px;
-    font-weight: 600;
-    color: #6b7280;
-}
-
-#piechart-controls-container {
+.stats-container {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    margin-top: -10px;
+    padding: 10px;
 }
 
-#area-population-toggle {
-    margin-right: 10px;
+.chart-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.piechart {
+    max-width: 120px;
+    max-height: 120px;
 }

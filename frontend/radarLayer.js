@@ -17,6 +17,8 @@ class RadarLayer {
         this.currentRadarId = 0;
 
         this.coverageIndicesMap = new Map();
+
+        this.sites = null;
     }
 
     async loadNexradBounds() {
@@ -26,7 +28,7 @@ class RadarLayer {
 
     initializeNexrad = async () => {
         const res_nexradInfo = await fetch('public/data/nexrad_conus.json');
-        const sites = await res_nexradInfo.json();
+        this.sites = await res_nexradInfo.json();
 
         await this.nexradMarkers.init({
             map: this.map, 
@@ -34,7 +36,7 @@ class RadarLayer {
             marker_options: { markerFill: '#FF0000', markerStroke: '#FF0000', markerSize: 4.5 }
         });
         
-        for (const site of sites) {
+        for (const site of this.sites) {
             this.nexradMarkers.makeMarker(site.lat, site.lng, {properties: {id: site.id}}, {clickable: true, mouseOver: true, mouseOut: true});
 
             this.radars.push({
@@ -338,26 +340,25 @@ class RadarLayer {
         
         this.mouseOverTimeout = setTimeout(async () => {
             const id = marker.properties.id;
-            const res_nexradInfo = await fetch('public/data/nexrad_conus.json');
-            const sites = await res_nexradInfo.json();
             
             let name;
             let lat;
             let lng;
-            let elev_ft;
-            for (const site of sites) {
+            let elevation;
+            for (const site of this.sites) {
                 if (site.id == id) {
                     name = site.name;
                     lat = site.lat;
                     lng = site.lng;
-                    elev_ft = site.elev;
+                    elevation = site.elevation;
                     break;
                 }
             }
 
-            let elevation = elev_ft;
-            if (window.units == 'metric') {
-                elevation = ft2m(elev_ft).toFixed(0);
+            if (window.units == 'imperial') {
+                elevation = m2ft(elevation).toFixed(0);
+            } else {
+                elevation = elevation.toFixed(0);
             }
 
             const content = this.createLabel(id, name, elevation);

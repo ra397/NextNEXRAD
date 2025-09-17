@@ -1,22 +1,15 @@
 let db = null;
 
 self.onmessage = async function(e) {
-    const { type, serverUrl, threshold } = e.data;
-    
-    if (type === 'get_coverage') {
-        await initDatabaseConnection();
-        const coverageData = await fetchCoverage(serverUrl, threshold);
-        postMessage({ coverage: coverageData });
-        return;
-    }
-    
-    // Your existing initial load code
+    const { serverUrl } = e.data;    
     await initDatabaseConnection();
-    const [population, coverage] = await Promise.all([
+    const [population, coverage_3k, coverage_6k, coverage_10k] = await Promise.all([
         fetchPopulation(serverUrl),
-        fetchCoverage(serverUrl, "3k_ft")
+        fetchCoverage(serverUrl, "3k_ft"),
+        fetchCoverage(serverUrl, "6k_ft"),
+        fetchCoverage(serverUrl, "10k_ft")
     ]);
-    postMessage({ population, coverage });
+    postMessage({ population, coverage_3k, coverage_6k, coverage_10k });
 }
 
 const dtypeMap = {
@@ -39,13 +32,18 @@ async function fetchPopulation(serverUrl) {
     
     // Not in cache, fetch from server
     const response = await fetch(`${serverUrl}/get-population`);
-    const result = await response.json();
-    const binaryData = Uint8Array.from(atob(result.data), c => c.charCodeAt(0));
-    const arrayType = dtypeMap[result.dtype];
-    const populationData = new arrayType(binaryData.buffer);
     
+    if (!response.ok) throw new Error("Failed to fetch");
+
+    const ds = new DecompressionStream("gzip");
+    const decompressedStream = response.body.pipeThrough(ds);
+    const decompressedBuffer = await new Response(decompressedStream).arrayBuffer();    
+    
+    const arrayType = dtypeMap["uint16"];
+    const populationData = new arrayType(decompressedBuffer);
+
     // Store in cache for next time
-    await storeArray(populationData, 'population');
+   const stored = await storeArray(populationData, 'population');
     
     return populationData;
 }
@@ -61,9 +59,18 @@ async function fetchCoverage(serverUrl, threshold = "3k_ft") {
     
     // Not in cache, fetch from server
     const response = await fetch(`${serverUrl}/get-coverage?threshold=${encodeURIComponent(threshold)}`);
-    const result = await response.json();
-    const coverageData = Uint8Array.from(atob(result.data), c => c.charCodeAt(0));
-    
+
+    if (!response.ok) throw new Error("Failed to fetch");
+
+    // Decompress the gzip stream
+    const ds = new DecompressionStream("gzip");
+    const decompressedStream = response.body.pipeThrough(ds);
+    const decompressedBuffer = await new Response(decompressedStream).arrayBuffer();
+
+    // Convert to typed array
+    const arrayType = dtypeMap["uint8"]; // or dynamic from header if you change that
+    const coverageData = new arrayType(decompressedBuffer);
+
     // Store in cache for next time
     const stored = await storeArray(coverageData, cacheKey);
     

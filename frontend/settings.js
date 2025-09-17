@@ -70,13 +70,7 @@ function updateUnitLabels(){
 
   updateTickLabels();
   updatePopulationLabel();
-
-
-  if (window.units == 'metric') {
-    document.getElementById("piechart-subtitle").textContent = `Total Area: ${window.latestReport.area.total} km`;
-  } else {
-    document.getElementById("piechart-subtitle").textContent = `Total Area: ${km2ToMi2(window.latestReport.area.total).toFixed(0)} mi`;
-  }
+  updateBasinStatsWindowUnits();
 }
 
 function updateTickLabels(){
@@ -154,4 +148,19 @@ function relabelAllRangeSliders(unit) {
     'dynamic-radar-range-slider',
     'existing-radar-range-slider'
   ].forEach(id => relabelRangeSlider(id, unit));
+}
+
+function updateBasinStatsWindowUnits() {
+  if (currentlySelectedUsgsBasin === null || coverage === null) return;
+  const area_km_2 = usgs_sites[currentlySelectedUsgsBasin].area_km2.toFixed(0);
+  const area_mi_2 = km2ToMi2(area_km_2).toFixed(0);
+  if (units === "metric") {
+    document.getElementById("area-heading").innerHTML = `Area: ${area_km_2} km<sup>2</sup>`;
+  } else {
+    document.getElementById("area-heading").innerHTML = `Area: ${area_mi_2} mi<sup>2</sup>`;
+  }
+  const useMetric = units === "metric";
+  document.querySelectorAll("#area-legend .area-value").forEach(el => {
+    el.innerHTML = useMetric ? el.dataset.metric : el.dataset.imperial;
+  });
 }

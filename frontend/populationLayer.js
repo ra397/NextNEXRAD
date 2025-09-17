@@ -54,11 +54,12 @@ class PopulationLayer {
   }
 
   async load() {
-    // Load bounds in EPSG:4326
-    const boundsRes = await fetch("public/data/popRaster_bounds.json");
-    const boundsArray = await boundsRes.json(); // [west, south, east, north]
-    this.bounds = boundsArray;
-
+    this.bounds = {
+      "north": 53.736124580,
+      "south": 19.536152311,
+      "east": -59.502724570,
+      "west": -131.819737006
+    };
     // Load and decompress binary raster
     const gzRes = await fetch("public/data/usa_ppp_2020_5km_epsg3857_clipped.bin.gz");
     const compressed = new Uint8Array(await gzRes.arrayBuffer());
