@@ -82,10 +82,6 @@ def get_coverage():
     threshold = request.args.get('threshold', default='3k_ft', type=str)
     file_path = f'resources/coverages/{threshold}.bin'
     return send_file(file_path, mimetype='application/octet-stream')
-
-with open('resources/population/ppp.bin', 'rb') as f:
-    population = f.read()
-    population_b64 = base64.b64encode(population).decode('utf-8')
                                       
 @app.route('/api-wsr88/get-population')
 def get_population():
