@@ -20,25 +20,25 @@ async function initMap() {
   const darkMapType = new google.maps.StyledMapType(darkStyle, { name: 'Dark' });
 
   // Initialize the map
-  const map = new google.maps.Map(document.getElementById("map"), {
-      center: { lat: 39.5, lng: -98.35 }, // Center USA
-      zoom: 5,
-      minZoom: 5,
-      maxZoom: 12,
-      mapTypeId: 'light', // Default to light mode
-      gestureHandling: "greedy", // Allow scrolling to zoom (without using CTRL)
-      mapTypeControl: true, 
-      mapTypeControlOptions: {
-          style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
-          position: google.maps.ControlPosition.TOP_LEFT,
-          mapTypeIds: ['light', 'dark', 'standard', 'satellite', 'hybrid']
-      },
-      fullScreenControl: true,
-      fullscreenControlOptions: {
-          position: google.maps.ControlPosition.BOTTOM_RIGHT
-      },
+  map = new google.maps.Map(document.getElementById("map"), {
+    center: { lat: 39.5, lng: -98.35 }, // Center USA
+    zoom: 5,
+    minZoom: 5,
+    maxZoom: 12,
+    mapTypeId: 'light', // Default to light mode
+    gestureHandling: "greedy", // Allow scrolling to zoom (without using CTRL)
+    mapTypeControl: true, 
+    mapTypeControlOptions: {
+        style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+        position: google.maps.ControlPosition.TOP_LEFT,
+        mapTypeIds: ['light', 'dark', 'standard', 'satellite', 'hybrid']
+    },
+    fullScreenControl: true,
+    fullscreenControlOptions: {
+        position: google.maps.ControlPosition.BOTTOM_RIGHT
+    },
   });
-
+  
   // Register the custom map types
   map.mapTypes.set('light', lightMapType);
   map.mapTypes.set('dark', darkMapType);
