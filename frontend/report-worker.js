@@ -83,7 +83,6 @@ async function initDatabaseConnection() {
 
         request.onsuccess = function(event) {
             db = event.target.result;
-            console.log("Database opened successfully.");
             _resolve();
         }
 

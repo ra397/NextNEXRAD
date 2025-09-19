@@ -14,7 +14,6 @@ const existingObserver = new MutationObserver((mutations) => {
             
             // Only trigger if it was visible before and is now hidden
             if (wasVisible && !isCurrentlyVisible) {
-                console.log("Existing window became invisible - unhighlighting markers");
                 radarLayer.nexradMarkers.unhighlightMarkers();
             }
             // Update the tracking variable
@@ -47,7 +46,6 @@ const observer = new MutationObserver((mutations) => {
                                     window.getComputedStyle(showWindow).display !== 'none';
             
             if (showWasVisible && !isCurrentlyVisible) {
-                console.log("Window became invisible - unhighlighting markers");
                 radarLayer.customMarkers.unhighlightMarkers();
             }
             
@@ -77,7 +75,6 @@ const radarObserver = new MutationObserver(() => {
                                window.getComputedStyle(radarWindow).display !== "none";
 
     if (!wasWindowVisible && isCurrentlyVisible) {
-        console.log("Radar window opened");
         mapLocationSelector.setOnLocationSelected((location) => {
             document.getElementById("radarLat").textContent = location.lat;
             document.getElementById("radarLng").textContent = location.lng;
