@@ -10,8 +10,6 @@ class RadarLayer {
         this.initializeNexrad();
         this.initializeCustomMarkers();
 
-        this.nexradBounds = {};
-
         this.radars = [];
 
         this.currentRadarId = 0;
@@ -19,11 +17,6 @@ class RadarLayer {
         this.coverageIndicesMap = new Map();
 
         this.sites = null;
-    }
-
-    async loadNexradBounds() {
-        const res_nexradBounds = await fetch('public/data/nexrad_coverages/radar_bounds.json');
-        this.nexradBounds = await res_nexradBounds.json();
     }
 
     initializeNexrad = async () => {

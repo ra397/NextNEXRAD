@@ -26,10 +26,15 @@ function displayResults(results) {
     const li = document.createElement("li");
     li.textContent = `${site.name} – ${site.id}`;
     li.setAttribute("data-id", `${site.id}`);
+    li.setAttribute("data-type", site.type); // usgs or nexrad?
     li.setAttribute("title", `${site.name} – ${site.id}`);
     li.className = "search-result-item";
     resultsContainer.appendChild(li);
   }
+}
+
+function matchesKeywords(keywords, text) {
+  return keywords.every(keyword => text.includes(keyword));
 }
 
 function searchSites(searchTerm) {
@@ -42,16 +47,24 @@ function searchSites(searchTerm) {
   const keywords = normalizedSearch.split(/\s+/); // split into words
   const matches = [];
 
-  for (const [site_id, siteData] of Object.entries(usgs_sites)) {
-    const siteName = siteData.name || "";
-    const combined = (siteName + " " + site_id).toLowerCase();
-
-    // Check that all keywords are present
-    const allKeywordsMatch = keywords.every(keyword => combined.includes(keyword));
-
-    if (allKeywordsMatch) {
-      matches.push({ id: site_id, name: siteName });
+  // search nexrad first
+  const nexrad_sites = radarLayer.sites;
+  for (const site of nexrad_sites) {
+    const combined = `${site.name} ${site.id}`.toLowerCase();
+    if (matchesKeywords(keywords, combined)) {
+      matches.push({ id: site.id, name: site.name, type: 'nexrad' });
       if (matches.length === 10) break;
+    }
+  }
+
+  // search usgs sites next
+  if (matches.length < 10) {
+    for (const [site_id, siteData] of Object.entries(usgs_sites)) {
+      const combined = `${siteData.name} ${site_id}`.toLowerCase();
+      if (matchesKeywords(keywords, combined)) {
+        matches.push({ id: site_id, name: siteData.name, type: 'usgs' });
+        if (matches.length === 10) break;
+      }
     }
   }
 
@@ -69,15 +82,22 @@ searchInput.addEventListener("input", () => {
 
 // Listen to search result click
 resultsContainer.addEventListener('click', function(event) {
-    // Check if the clicked element is a direct child of search-results
-    if (event.target.parentElement === resultsContainer) {
-        // Get the data-id attribute and log it
-        const usgsId = event.target.getAttribute('data-id');
-        handleUserSelection(usgsId)
+  if (event.target.parentElement === resultsContainer) {
+    const siteId = event.target.getAttribute('data-id');
+    const siteType = event.target.getAttribute('data-type');
+
+    if (siteType === 'nexrad') {
+      handleRadarSelection(siteId);
+    } else if (siteType === 'usgs') {
+      handleUsgsSelection(siteId);
     }
+
+    clearResults();
+    searchInput.value = "";
+  }
 });
 
-function handleUserSelection(usgsId) {
+function handleUsgsSelection(usgsId) {
     let marker;
     let lat = null;
     let lng = null;
@@ -96,4 +116,23 @@ function handleUserSelection(usgsId) {
     }
     clearResults();
     searchInput.value = "";
+}
+
+function handleRadarSelection(nexradId) {
+  const delta = 1.5;
+  for (let i = 0; i < radarLayer.nexradMarkers.markers.length; i++) {
+    const marker = radarLayer.nexradMarkers.markers[i];
+    if (marker.properties.id === nexradId) {
+      lat = marker.position.lat();
+      lng = marker.position.lng();
+      const sw = { lat: lat - delta, lng: lng - delta };
+      const ne = { lat: lat + delta, lng: lng + delta };
+      const bounds = new google.maps.LatLngBounds(sw, ne);
+
+      map.fitBounds(bounds);
+      map.fitBounds(bounds);
+      radarLayer.nexradMarkerClick(null, marker);
+      return;
+    }
+  }
 }
