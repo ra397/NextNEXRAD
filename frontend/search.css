@@ -1,15 +1,25 @@
 #search-input-container {
     display: flex;
     align-items: center;
+    justify-content: center;
+    min-height: 38px;
 }
 
 #search-container {
     background: white;
-    padding: 1rem 1rem 0 1rem;
+    max-width: 50ch;
+    overflow: hidden;
 }
 
 #search-icon {
-    height: 21px;
+    height: 30px;
+    margin-left: -30px;
+}
+
+.search-result-item {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;    
 }
 
 .search-result-item:hover {
@@ -17,7 +27,15 @@
     cursor: pointer;
 }
 
+#search-input {
+    border: none;
+    height: 38px;
+    text-align: center;
+}
+
 #search-results {
     list-style-type: none;
     padding: 0px;
+    line-height: 1.5em;
+    display: none;
 }

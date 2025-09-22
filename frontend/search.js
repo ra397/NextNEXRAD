@@ -11,19 +11,22 @@ function normalize(text) {
 
 function clearResults() {
   resultsContainer.innerHTML = "";
+  resultsContainer.style.display = "none";
 }
 
 function displayResults(results) {
   clearResults();
   if (results.length === 0) {
-    // Optionally, show "No results" or nothing
+    resultsContainer.style.display = "none";
     return;
   }
-
+  
+  resultsContainer.style.display = "block";
   for (const site of results) {
     const li = document.createElement("li");
     li.textContent = `${site.name} – ${site.id}`;
     li.setAttribute("data-id", `${site.id}`);
+    li.setAttribute("title", `${site.name} – ${site.id}`);
     li.className = "search-result-item";
     resultsContainer.appendChild(li);
   }
@@ -87,16 +90,10 @@ function handleUserSelection(usgsId) {
         }
     }
     if (lat && lng) {
-        zoomTo(lat, lng, 10);
         usgsLayer.showUsgsSites();
         document.getElementById("usgsSites-checkbox").checked = true;
-        usgsLayer.usgsSiteClicked(null, marker);
+        usgsLayer.usgsSiteClicked(null, marker, goTo=true);
     }
     clearResults();
     searchInput.value = "";
-}
-
-function zoomTo(lat, lng, zoomLevel = 12) {
-    const location = new google.maps.LatLng(lat, lng);
-    map.moveCamera({ center: location, zoom: zoomLevel });
 }

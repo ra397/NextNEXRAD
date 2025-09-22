@@ -84,7 +84,7 @@ class UsgsLayer {
         this.hoverTimeouts.clear();
     }
 
-    usgsSiteClicked(event, marker) {
+    usgsSiteClicked(event, marker, goTo=false) {
         const usgsId = marker.properties.usgs_id;
         if (this.currentBasinLayer) {
             if (currentlySelectedUsgsBasin === usgsId) {
@@ -99,7 +99,7 @@ class UsgsLayer {
                 this.currentBasinLayer.setMap(null);
                 this.currentBasinLayer = null;
                 // open the new basin layer
-                this.loadBasin(usgsId);
+                this.loadBasin(usgsId, goTo);
                 // update currently selected usgs basin
                 currentlySelectedUsgsBasin = usgsId;
                 triggerReportGeneration();
@@ -107,7 +107,7 @@ class UsgsLayer {
         }
         else {
             // open the new basin layer
-            this.loadBasin(usgsId);
+            this.loadBasin(usgsId, goTo);
             // update currently selected usgs basin
             currentlySelectedUsgsBasin = usgsId;
             triggerReportGeneration();
@@ -169,7 +169,7 @@ class UsgsLayer {
         }
     }
 
-    async loadBasin(usgsId) {
+    async loadBasin(usgsId, goTo) {
         try {
             const buf = await this._getArrayBuffer(`public/data/pbf_basins/${usgsId}.pbf`);
             const geojson = geobuf.decode(new Pbf(new Uint8Array(buf)));
@@ -183,6 +183,30 @@ class UsgsLayer {
                 strokeWeight: 1,
                 clickable: false
             });
+
+            if (goTo) {
+                const coordinatesList = geojson.geometry.coordinates; 
+                let minLat = Infinity, maxLat = -Infinity;
+                let minLng = Infinity, maxLng = -Infinity;
+
+                coordinatesList.forEach(coordinates => {
+                    coordinates.forEach(([lng, lat]) => {
+                        if (lat < minLat) minLat = lat;
+                        if (lat > maxLat) maxLat = lat;
+                        if (lng < minLng) minLng = lng;
+                        if (lng > maxLng) maxLng = lng;
+                    });
+                });
+
+                const bounds = new google.maps.LatLngBounds(
+                    new google.maps.LatLng(minLat, minLng), 
+                    new google.maps.LatLng(maxLat, maxLng)
+                );
+
+                // Fit the map to this bounding box
+                map.fitBounds(bounds);
+                map.fitBounds(bounds);
+            }
 
             this.currentBasinLayer = layer;
         } catch (err) {
