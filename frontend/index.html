@@ -17,6 +17,7 @@
         <link rel="stylesheet" href="buttons.css">
         <link rel="stylesheet" href="radioSelector.css">
         <link rel="stylesheet" href="report.css">
+        <link rel="stylesheet" href="search.css">
 
         <!-- Google Pie Chart -->
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -454,9 +455,20 @@
             </div>
         </div>
 
-        <div id="report-toggle-container">
-            <span id="report-menu-title">Basin Stats</span>
-            <img class="drop-down-icon" src="https://maps.gstatic.com/mapfiles/arrow-down.png">
+        <div id="top-bar-container">
+            <div id="report-toggle-container">
+                <span id="report-menu-title">Basin Stats</span>
+                <img class="drop-down-icon" src="https://maps.gstatic.com/mapfiles/arrow-down.png">
+            </div>
+
+            <div id="search-container">
+                <div id="search-input-container">
+                    <input type="text" id="search-input" placeholder="Search ...">
+                    <img id="search-icon" src="public/icons/search.png">
+                </div>
+                <ul id="search-results">
+                </ul>
+            </div>
         </div>
 
         <div id="basin-info-container">
@@ -523,6 +535,7 @@
         <script src="windowObserver.js"></script>
         <script src="oneWaySlider.js"></script>
         <script src="reporter.js"></script>
+        <script src="search.js"></script>
         <script src="map.js"></script>
         <script>
             window.onload = function () {

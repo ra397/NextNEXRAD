@@ -1,7 +1,4 @@
 #report-toggle-container {
-    position: absolute;
-    top: 10px;
-    left: 91px;
     background: white;
     width: 120px;
     height: 38px;
@@ -41,6 +38,15 @@
     left: 91px;
     top: 48px;
     text-align: center;
+}
+
+#top-bar-container {
+    position: absolute;
+    top: 10px;
+    left: 91px;
+
+    display: flex;
+    gap: 1rem;
 }
 
 #basin-title-container {

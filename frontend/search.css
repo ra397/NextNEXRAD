@@ -1,0 +1,23 @@
+#search-input-container {
+    display: flex;
+    align-items: center;
+}
+
+#search-container {
+    background: white;
+    padding: 1rem 1rem 0 1rem;
+}
+
+#search-icon {
+    height: 21px;
+}
+
+.search-result-item:hover {
+    background: rgb(180, 180, 180);
+    cursor: pointer;
+}
+
+#search-results {
+    list-style-type: none;
+    padding: 0px;
+}

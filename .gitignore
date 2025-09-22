@@ -15,3 +15,6 @@ backend/population/*.tif
 
 # Ignore processor.py outputs, for testing purposes only
 outputs
+
+
+scripts/
