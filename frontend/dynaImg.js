@@ -171,7 +171,6 @@ class dynaImg {
     }
 
     async load (url) {
-        console.log ("[dynaPng] Loading data: ", url)
         const req = await this._getArrayBuffer(url,  { signal: AbortSignal.timeout(2500) })
         const res = await req;
 
@@ -236,6 +235,5 @@ class boxMask {
                 c++;
             }
         }
-        console.log(c, Math.round(1000*c/n)/100 + "%")
     }
 }

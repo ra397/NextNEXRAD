@@ -46,7 +46,7 @@ def calculate_blockage():
         traceback.print_exc()
         return jsonify({"detail": str(e)}), 500
 
-TILE_BASE_PATH = r'C:\Users\ralaya\Documents\gis\projects\wsr88-coverage-app\frontend\public\data\nexrad_coverages'
+TILE_BASE_PATH = r''
 
 @app.route('/api-wsr88/tiles', methods=['GET'])
 def get_tile():
@@ -64,29 +64,6 @@ def get_tile():
         return send_file(img_buffer, mimetype='image/png')
     else:
         return jsonify({'error': 'Tile not found'}), 404
-
-
-@app.route('/api-wsr88/get-basin')
-def get_basin():
-    basin_id = request.args.get("id")
-    with open(f'resources/basins/{basin_id}.bin', 'rb') as f:
-        basin = f.read()
-        basin_b64 = base64.b64encode(basin).decode('utf-8')
-    return jsonify({
-        'data': basin_b64,
-        'dtype': 'uint32'
-    })
-
-@app.route('/api-wsr88/get-coverage')
-def get_coverage():
-    threshold = request.args.get('threshold', default='3k_ft', type=str)
-    file_path = f'resources/coverages/{threshold}.bin'
-    return send_file(file_path, mimetype='application/octet-stream')
-                                      
-@app.route('/api-wsr88/get-population')
-def get_population():
-    file_path = 'resources/population/ppp.bin'
-    return send_file(file_path, mimetype='application/octet-stream')
 
 if __name__ == "__main__":
     app.run(debug=True)

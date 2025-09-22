@@ -123,8 +123,6 @@ class RadarLayer {
                 break;
             }
         }
-        console.log("The radar we are tring to update is below:");
-        console.log(radarToUpdate);
 
         // Update radar params and overlay, keep ID the same
         const result = await this.fetchCoverage(params);
@@ -200,8 +198,6 @@ class RadarLayer {
                 break;
             }
         }
-        console.log("The radar we are trying to delete is below:");
-        console.log(radar);
         // Remove coverageIndices
         this.coverageIndicesMap.delete(id);
         triggerReportGeneration();
@@ -267,7 +263,6 @@ class RadarLayer {
                 break;
             }
         }
-        console.log(radarToToggle);
         if (!radarToToggle.overlay) return;
         const isOverlayVisible = radarToToggle.overlay.getMap();
         radarToToggle.overlay.setMap(isOverlayVisible ? null : this.map);
@@ -415,9 +410,7 @@ class RadarLayer {
         return true;
     }
 
-    reset() {
-        console.log("Resetting RadarLayer: removing all custom radars and markers");
-        
+    reset() {        
         // Clear all custom markers by removing them from the map and clearing the array
         for (let i = 0; i < this.customMarkers.markers.length; i++) {
             this.customMarkers.markers[i].setMap(null);
@@ -451,10 +444,7 @@ class RadarLayer {
                 // Remove from radars array
                 this.radars.splice(i, 1);
             }
-        }
-        
-        console.log(`Reset complete: removed ${radarsToRemove.length} custom radars`);
-        
+        }        
         // Reset the current radar ID counter
         this.currentRadarId = 0;
     }

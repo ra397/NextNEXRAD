@@ -64,8 +64,6 @@ class CoveragesLayer {
     const threshold = this.getSelectedThreshold();
     this.currentThreshold = threshold;
 
-    console.log(this.currentThreshold);
-
     this.clear();
     this.map.overlayMapTypes.clear();
 

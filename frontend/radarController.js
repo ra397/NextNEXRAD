@@ -58,7 +58,6 @@ document.getElementById("update-existing-radar").addEventListener("click", async
         const result = await radarLayer.getOverlayForNexradRadar(params);
         if (!result) {
             const siteId = document.getElementById("existing-radar-site-id").textContent;
-            console.log(siteId);
             radarLayer.rangeRings.remove(siteId);
             radarLayer.toggleOverlay(siteId);
             const newRadar = await radarLayer.newRadarRequest(params);

@@ -4,10 +4,10 @@ self.onmessage = async function(e) {
     const { serverUrl } = e.data;    
     await initDatabaseConnection();
     const [population, coverage_3k, coverage_6k, coverage_10k] = await Promise.all([
-        fetchPopulation(serverUrl),
-        fetchCoverage(serverUrl, "3k_ft"),
-        fetchCoverage(serverUrl, "6k_ft"),
-        fetchCoverage(serverUrl, "10k_ft")
+        fetchPopulation(),
+        fetchCoverage("3k_ft"),
+        fetchCoverage("6k_ft"),
+        fetchCoverage("10k_ft")
     ]);
     postMessage({ population, coverage_3k, coverage_6k, coverage_10k });
 }
@@ -23,7 +23,7 @@ const dtypeMap = {
     'float64': Float64Array
 };
 
-async function fetchPopulation(serverUrl) {
+async function fetchPopulation() {
     // Try cache first
     const cached = await getArray('population');
     if (cached) {
@@ -31,7 +31,7 @@ async function fetchPopulation(serverUrl) {
     }
     
     // Not in cache, fetch from server
-    const response = await fetch(`${serverUrl}/get-population`);
+    const response = await fetch(`public/data/population/ppp.bin.gz`);
     
     if (!response.ok) throw new Error("Failed to fetch");
 
@@ -48,7 +48,7 @@ async function fetchPopulation(serverUrl) {
     return populationData;
 }
 
-async function fetchCoverage(serverUrl, threshold = "3k_ft") {
+async function fetchCoverage(threshold = "3k_ft") {
     const cacheKey = `coverage_${threshold}`;
     
     // Try cache first
@@ -58,7 +58,7 @@ async function fetchCoverage(serverUrl, threshold = "3k_ft") {
     }
     
     // Not in cache, fetch from server
-    const response = await fetch(`${serverUrl}/get-coverage?threshold=${encodeURIComponent(threshold)}`);
+    const response = await fetch(`public/data/coverages/${threshold}.bin.gz`);
 
     if (!response.ok) throw new Error("Failed to fetch");
 
@@ -83,7 +83,6 @@ async function initDatabaseConnection() {
 
         request.onsuccess = function(event) {
             db = event.target.result;
-            console.log("Database opened successfully.");
             _resolve();
         }
 

@@ -194,9 +194,6 @@ async fetchAndDraw(dateRanges) {
             "method": "aggregate",
             "datetime": dateRanges
         };
-
-        console.log("Sending request to POD server: ", payload);
-
         const response = await fetch(url, {
             method: "POST",
             headers: {

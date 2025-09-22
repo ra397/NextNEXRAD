@@ -12,7 +12,6 @@ let currentlySelectedUsgsBasin = null;
 window.currentlySelectedUsgsBasin = currentlySelectedUsgsBasin;
 
 document.addEventListener("DOMContentLoaded", async () => {
-    console.log("Starting worker ...")
     loadDataUsingWorker();
 });
 
@@ -32,7 +31,6 @@ function loadDataUsingWorker() {
         dataLoaded = true;
         worker.terminate(); // Clean up
         coverage = coverage_3k;
-        console.log('Data loaded!');
     };
 }
 
@@ -104,7 +102,7 @@ async function generateReport(basinId = null) {
 
 async function getBasinIndices(usgs_id) {
     try {
-        const response = await fetch(`${window._env_prod.SERVER_URL}/get-basin?id=${usgs_id}`);
+        const response = await fetch(`public/data/ix_basin/${usgs_id}.json`);
         const result = await response.json();
         const binaryData = Uint8Array.from(atob(result.data), c => c.charCodeAt(0));
         const arrayType = dtypeMap[result.dtype];
@@ -322,7 +320,6 @@ function generatePieChart(piechart_el, data) {
     let startAngle = -Math.PI / 2; // Start from the top (12 o'clock position)
 
     data.forEach(item => {
-        console.log(item.value);
         const sliceAngle = (item.value / totalValue) * 2 * Math.PI; // Angle for the current slice
         const endAngle = startAngle + sliceAngle;
 
