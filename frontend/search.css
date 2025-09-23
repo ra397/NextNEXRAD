@@ -2,40 +2,54 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 38px;
+    height: 38px;
+    border-radius: 30px;
 }
 
 #search-container {
     background: white;
     max-width: 50ch;
     overflow: hidden;
+    border: 0.5px solid #ccc;
+    border-radius: 30px;
 }
 
 #search-icon {
-    height: 30px;
-    margin-left: -30px;
+    height: 24px;
+    opacity: 0.6;
 }
 
 .search-result-item {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;    
+    border-right: 3ch solid transparent;
+    border-left: 3ch solid transparent;
 }
 
 .search-result-item:hover {
-    background: rgb(180, 180, 180);
+    background: #ccc;
     cursor: pointer;
 }
 
 #search-input {
     border: none;
     height: 38px;
-    text-align: center;
+    text-align: left;
+    width: 80%;
+}
+
+#search-input:focus-visible {
+    outline: none;
+}
+
+#search-input:focus-visible + #search-icon {
+    opacity: 1;
 }
 
 #search-results {
     list-style-type: none;
     padding: 0px;
-    line-height: 1.5em;
+    line-height: 1.618em;
     display: none;
 }
