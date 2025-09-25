@@ -5,6 +5,8 @@ from flask_cors import CORS
 import os
 from recolor import recolor_png
 import base64
+from calculate_blockage.read_dem import DemReader
+from calculate_blockage.get_1d_profile import get_1d_profile
 
 app = Flask(__name__)
 CORS(app, resources={
@@ -64,6 +66,27 @@ def get_tile():
         return send_file(img_buffer, mimetype='image/png')
     else:
         return jsonify({'error': 'Tile not found'}), 404
+
+dem_path = r"C:\Users\ralaya\Documents\gis\projects\wsr88-coverage-app\backend\dem250_epsg5070.tif"
+@app.route("/api-wsr88/get-terrain")
+def get_terrain():
+    dem_reader = DemReader(dem_path)
+    easting_str = request.args.get("easting")
+    northing_str = request.args.get("northing")
+    if easting_str is None or northing_str is None:
+        return jsonify({"error": "Missing required parameters 'easting' or 'northing'"}), 400
+    easting = float(easting_str)
+    northing = float(northing_str)
+    window = dem_reader.window(easting=easting, northing=northing, window_size=1840)
+    profile_1d = get_1d_profile(window=window)
+    profile_1d_bytes = profile_1d.tobytes()
+    profile_1d_b64 = base64.b64encode(profile_1d_bytes).decode('utf-8')
+    dem_reader.close()
+    return jsonify({
+        "terrain": profile_1d_b64,
+        "dtype": str(profile_1d.dtype),
+        "width": 230,
+    })
 
 if __name__ == "__main__":
     app.run(debug=True)

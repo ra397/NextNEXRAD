@@ -293,6 +293,16 @@ class RadarLayer {
         // Init range rings
         this.rangeRings.initSlider(marker.properties.id, "existing-radar-range-slider", () => marker.getPosition());
 
+        // Dispatch graph event
+        const position = {
+            lat: marker.position.lat(),
+            lng: marker.position.lng(),
+        };
+
+        const DisplayProfileEvent = new CustomEvent("display_profile", {
+            detail: position,
+        });
+        document.dispatchEvent(DisplayProfileEvent);
     }
 
     customMarkerClick(event, marker) {

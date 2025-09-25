@@ -18,6 +18,7 @@
         <link rel="stylesheet" href="radioSelector.css">
         <link rel="stylesheet" href="report.css">
         <link rel="stylesheet" href="search.css">
+        <link rel="stylesheet" href="TerrainProfile/graph.css">
 
         <!-- Google Pie Chart -->
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -491,6 +492,12 @@
             </div>
         </div>
 
+        <!-- Terrain Profile Graph -->
+        <div id="terrainProfileCanvasContainer" style="display: none;">
+            <span id="profileWindowExit">&times;</span>
+            <canvas id="terrainProfileCanvas" height="400" width="920"></canvas>
+        </div>
+
         <!-- Error Modal -->
         <div id="error-overlay">
             <div id="error-modal">
@@ -537,6 +544,11 @@
         <script src="reporter.js"></script>
         <script src="map.js"></script>
         <script src="search.js"></script>
+        <script src="TerrainProfile/profileSelector.js"></script>
+        <script src="TerrainProfile/profileViewer.js"></script>
+        <script src="TerrainProfile/getTerrainProfile.js"></script>
+        <script src="TerrainProfile/displayTerrainProfile.js"></script>
+        <script src="TerrainProfile/beamModel.js"></script>
         <script>
             window.onload = function () {
                 initMap();
