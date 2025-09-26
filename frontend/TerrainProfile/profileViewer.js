@@ -67,6 +67,8 @@ class ProfileViewer {
         this.profileSelector.profileLine.getPath().setAt(1, constrainedPos);
         }
         this._displayProfileAtAzimuth(azimuth);
+
+        document.getElementById("terrainProfileTitle").textContent = `Azimuth: ${azimuth}°`;
     }
 
     _displayProfileAtAzimuth(azimuth) {
@@ -96,7 +98,7 @@ class ProfileViewer {
         });
 
         // Actual terrain profile
-        graphData(xs, profile, 1);
+        graphData(xs, profile, 1, null, true);
 
         // Beam heights
         const xs_km = xs.map(x => x * 1e3);

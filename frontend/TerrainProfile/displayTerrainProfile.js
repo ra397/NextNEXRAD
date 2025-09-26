@@ -17,7 +17,7 @@ const plotHeight = height - margin.bottom - margin.top;
 let yMin = null;
 let yMax = null;
 
-function graphData(xValues, yValues, fill=false, fillColor=null) {
+function graphData(xValues, yValues, fill=false, fillColor=null, addLabels=false) {
     if (yMin === null || yMax === null) {
         console.error("You must first setYLimits before plotting data.")
         return;
@@ -67,36 +67,42 @@ function graphData(xValues, yValues, fill=false, fillColor=null) {
         ctx.lineWidth = 1;
         ctx.stroke();
     }
-    drawAxisLabels(xValues);
-    drawBorders();
+    if (addLabels) {
+        drawAxisLabels(xValues);
+        drawBorders();
+    }
 }
 
 function drawAxisLabels(xValues) {
     const xMin = Math.min(...xValues);
     const xMax = Math.max(...xValues);
-    
+
     ctx.fillStyle = '#000000';
     ctx.font = '11px Arial';
     ctx.textAlign = 'center';
 
     ctx.lineWidth = 0;
-    
-    // X-axis labels (every nth value)
-    for (let i = 0; i < xValues.length; i += 25) {
+
+    const xStep = 25;
+    const lastXIndex = Math.floor((xValues.length - 1) / xStep) * xStep;
+
+    for (let i = 0; i < xValues.length; i += xStep) {
         const x = margin.left + (plotWidth * (xValues[i] - xMin)) / (xMax - xMin);
         const y = height - 5;
-        ctx.fillText(`${Math.round(xValues[i])} km`, x, y);
+        const label = `${Math.round(xValues[i])}${i === lastXIndex ? ' km' : ''}`;
+        ctx.fillText(label, x, y);
     }
-    
-    // Y-axis labels (5 evenly spaced values)
+
     ctx.textAlign = 'right';
+    const max = Math.round(yMax / 500) * 500;
+    const min = Math.round(yMin / 500) * 500;
+
     for (let i = 0; i < 5; i++) {
-        const max = Math.round(yMax / 500) * 500;
-        const min = Math.round(yMin / 500) * 500;
         const yVal = min + (i * (max - min)) / 4;
         const x = margin.left - 5;
         const y = margin.top + plotHeight - (i * plotHeight) / 4 + 4;
-        ctx.fillText(`${Math.round(yVal)} m`, x, y);
+        const label = `${Math.round(yVal)}${i === 4 ? ' m' : ''}`;
+        ctx.fillText(label, x, y);
     }
 }
 

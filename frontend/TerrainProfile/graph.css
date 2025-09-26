@@ -24,4 +24,18 @@
     border-radius: 15px;
     padding: 5px;
     border: 0.5px solid #ccc;
+    max-height: 40px;
+    box-sizing: border-box;
+}
+
+#terrainProfileTitleContainer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+#terrainProfileTitle {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
