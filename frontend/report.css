@@ -1,12 +1,28 @@
 #report-toggle-container {
     background: white;
-    width: 120px;
+    width: 155px;
     height: 38px;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    border-radius: 1px;
+    padding: 0 8px;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.center-content {
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 1px;
+    flex-grow: 1;
+    gap: 4px; /* optional spacing between title and icon */
+}
+
+#basin-stats-window-close {
+    margin-left: auto;
+    display: none; 
+    font-size: large;
+    font-weight: 600;
 }
 
 #report-toggle-container:hover {

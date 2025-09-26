@@ -224,5 +224,6 @@ function closeAllWindows() {
     }
   });
   // reset basin stats toggle
-  document.getElementById("report-toggle-container").style.width = "120px";
+  document.getElementById("basin-stats-window-close").style.display = "none";
+  document.getElementById("report-toggle-container").style.width = "155px";
 }

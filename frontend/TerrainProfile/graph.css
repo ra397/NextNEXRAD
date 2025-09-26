@@ -22,7 +22,7 @@
     gap: 5px;
     background: white;
     border-radius: 15px;
-    padding: 5px;
+    padding: 0 2ch;
     border: 0.5px solid #ccc;
     max-height: 40px;
     box-sizing: border-box;

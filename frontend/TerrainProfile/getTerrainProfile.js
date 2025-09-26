@@ -1,7 +1,7 @@
 proj4.defs("EPSG:5070", "+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 " +
                          "+x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs");
 
-const SERVER = "http://localhost:5000/api-wsr88/";
+const SERVER = window._env_dev.SERVER_URL;
 
 async function fetchTerrainProfile(lat, lng) {
     const [easting, northing] = proj4("EPSG:4326", "EPSG:5070", [lng, lat]);

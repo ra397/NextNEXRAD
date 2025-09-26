@@ -228,6 +228,7 @@ document.getElementById("report-toggle-container").addEventListener('click', () 
     const piechartContainer = document.getElementById("basin-info-container");
     const toggleContainer = document.getElementById("report-toggle-container");
     const currentWidth = toggleContainer.style.width;
+    const exitButton = document.getElementById("basin-stats-window-close");
     if (currentlySelectedUsgsBasin === null) {
         showError("A USGS basin must be selected.");
         return;
@@ -237,7 +238,8 @@ document.getElementById("report-toggle-container").addEventListener('click', () 
         return;
     }
     piechartContainer.style.display = piechartContainer.style.display === "block" ? "none" : "block";
-    toggleContainer.style.width = (currentWidth === "414px") ? "120px" : "414px";
+    toggleContainer.style.width = (currentWidth === "414px") ? "155px" : "414px";
+    exitButton.style.display =  exitButton.style.display === "block" ? "none" : "block";
 });
 
 
