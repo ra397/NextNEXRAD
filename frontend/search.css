@@ -4,6 +4,7 @@
     justify-content: center;
     height: 38px;
     border-radius: 30px;
+    min-width: 389.3px;
 }
 
 #search-container {
