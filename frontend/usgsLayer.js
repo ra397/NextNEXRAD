@@ -93,6 +93,11 @@ class UsgsLayer {
                 this.currentBasinLayer = null;
                 // set currently selected usgs basin to null
                 currentlySelectedUsgsBasin = null;
+
+                // close the basin stats window
+                document.getElementById("report-toggle-container").style.width = "155px";
+                document.getElementById("basin-info-container").style.display = "none";
+                document.getElementById("basin-stats-window-close").style.display = "none";
             } 
             else {
                 // close the old basin layer

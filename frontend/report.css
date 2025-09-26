@@ -45,8 +45,7 @@
 }
 
 #basin-info-container {
-    width: fit-content;
-    max-width: 414px;
+    width: 414px;
     height: fit-content;
     background: white;
     display: none;
