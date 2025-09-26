@@ -2,7 +2,6 @@ class CoveragesLayer {
   static thresholds = ["3k_tiles", "6k_tiles", "10k_tiles"];
   
   static getSelectedThreshold(rangeSlider = null) {
-    // If no slider passed, try to find it in the DOM by ID first, then by type
     const slider = rangeSlider || 
                    document.getElementById("threshold-range-slider") || 
                    document.querySelector('input[type="range"]');
@@ -19,7 +18,7 @@ class CoveragesLayer {
   constructor(map) {
     this.map = map;
     this.tileLayers = {};
-    this.tileLayerIndex = 0;
+    this.currentTileLayer = null; // Track the currently active tile layer
     this.currentThreshold = "3k_tiles";
 
     this.showAllCheckbox = null;
@@ -64,13 +63,13 @@ class CoveragesLayer {
     const threshold = this.getSelectedThreshold();
     this.currentThreshold = threshold;
 
+    // First, clear any existing coverage layer
     this.clear();
-    this.map.overlayMapTypes.clear();
 
+    // Create the tile layer if it doesn't exist
     if (!this.tileLayers[threshold]) {
       this.tileLayers[threshold] = new google.maps.ImageMapType({
         getTileUrl: (coord, zoom) => {
-          // Call backend instead of direct file access
           const params = new URLSearchParams({
             layer_threshold: threshold,
             z: zoom,
@@ -79,7 +78,7 @@ class CoveragesLayer {
             color: window.overlay_color,
           });
           
-          return `${ window._env_prod.SERVER_URL}/tiles?${params.toString()}`;
+          return `${window._env_prod.SERVER_URL}/tiles?${params.toString()}`;
         },
         tileSize: new google.maps.Size(256, 256),
         maxZoom: 12,
@@ -89,13 +88,22 @@ class CoveragesLayer {
       });
     }
 
-    this.tileLayerIndex = this.map.overlayMapTypes.getLength();
-    this.map.overlayMapTypes.insertAt(this.tileLayerIndex, this.tileLayers[threshold]);
+    // Add the new coverage layer
+    this.currentTileLayer = this.tileLayers[threshold];
+    this.map.overlayMapTypes.push(this.currentTileLayer);
   }
 
   clear() {
-    if (this.map.overlayMapTypes.getAt(this.tileLayerIndex)) {
-      this.map.overlayMapTypes.removeAt(this.tileLayerIndex);
+    if (this.currentTileLayer) {
+      // Find and remove only our coverage layer
+      const overlayMapTypes = this.map.overlayMapTypes;
+      for (let i = overlayMapTypes.getLength() - 1; i >= 0; i--) {
+        if (overlayMapTypes.getAt(i) === this.currentTileLayer) {
+          overlayMapTypes.removeAt(i);
+          break;
+        }
+      }
+      this.currentTileLayer = null;
     }
   }
 

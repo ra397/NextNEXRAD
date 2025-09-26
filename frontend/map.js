@@ -48,10 +48,10 @@ async function initMap() {
 
   addTerrainStyles();
   const terrainOverlay = new TerrainOverlay(new google.maps.Size(256, 256));
-  map.overlayMapTypes.push(terrainOverlay);
+
+  // Store reference but don't add to map yet
   window.terrainOverlay = terrainOverlay;
   window.map = map;
-  terrainOverlay.setMap(null); // Start with terrain overlay OFF  
 
   radarLayer = new RadarLayer(map);
   window.radarLayer = radarLayer;
@@ -169,14 +169,6 @@ document.getElementById("usgsSites-checkbox").addEventListener("change", functio
   }
 });
 
-document.getElementById("terrainOverlay-checkbox").addEventListener("change", function () {
-  if (this.checked) {
-    terrainOverlay.setMap(window.map);
-  } else {
-    terrainOverlay.setMap(null);
-  }
-});
-
 document.getElementById('share-link').addEventListener('click', () => {
   const link = radarLayer.generateUrl();
   copyToClipboard(link);
@@ -203,6 +195,10 @@ function reset() {
   if (currProfileViewer) {
     currProfileViewer.destroy();
     currProfileViewer = null;
+  }
+  if (terrainOverlay) {
+    terrainOverlay.setMap(null);
+    document.getElementById("terrainOverlay-checkbox").checked = false;
   }
   closeAllWindows();
 }

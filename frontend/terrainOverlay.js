@@ -5,14 +5,15 @@ class TerrainOverlay {
         this.name = "Terrain Overlay";
         this.alt = "Terrain Overlay";
         this.tiles = [];
-        this.display = 'block'; // Start visible
+        this.isActive = false;
+        this.map = null;
     }
 
     getTile(coord, zoom, ownerDocument) {
         const div = ownerDocument.createElement("div");
         const img = ownerDocument.createElement("img");
         div.className = "terrain-overlay";
-        div.style.display = this.display;
+        div.style.display = this.isActive ? 'block' : 'none';
         img.src = `https://mt1.google.com/vt/lyrs=t&x=${coord.x}&y=${coord.y}&z=${zoom}`;
         div.appendChild(img);
         this.tiles.push(div);
@@ -27,11 +28,40 @@ class TerrainOverlay {
         }
     }
 
-    setMap(map = null) {
-        this.display = map === null ? 'none' : 'block';
-        this.tiles.forEach(tile => tile.style.display = this.display);
+    setMap(map) {
+        if (map === null && this.map) {
+            // Remove from overlayMapTypes
+            const overlayMapTypes = this.map.overlayMapTypes;
+            for (let i = overlayMapTypes.getLength() - 1; i >= 0; i--) {
+                if (overlayMapTypes.getAt(i) === this) {
+                    overlayMapTypes.removeAt(i);
+                    break;
+                }
+            }
+            this.isActive = false;
+            this.map = null;
+        } else if (map) {
+            // Add to overlayMapTypes
+            this.map = map;
+            this.isActive = true;
+            map.overlayMapTypes.push(this);
+        }
+        
+        // Update existing tiles
+        this.tiles.forEach(tile => {
+            tile.style.display = this.isActive ? 'block' : 'none';
+        });
     }
 }
+
+// Event listener for terrain overlay checkbox
+document.getElementById("terrainOverlay-checkbox").addEventListener("change", function () {
+    if (this.checked) {
+        terrainOverlay.setMap(window.map);
+    } else {
+        terrainOverlay.setMap(null);
+    }
+});
 
 function addTerrainStyles() {
     const style = document.createElement('style');
