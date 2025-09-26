@@ -200,6 +200,10 @@ function reset() {
   populationLayer.clear();
   coveragesLayer.reset();
   riverLayer.reset();
+  if (currProfileViewer) {
+    currProfileViewer.destroy();
+    currProfileViewer = null;
+  }
   closeAllWindows();
 }
 

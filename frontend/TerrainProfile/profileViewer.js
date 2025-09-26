@@ -133,3 +133,18 @@ document.getElementById("profileWindowExit").addEventListener("click", () => {
     currProfileViewer.destroy();
     currProfileViewer = null;
 });
+
+let terrainProfileModeOn = false;
+
+document.getElementById("terrain-profile-mode-toggle").addEventListener("click", () => {
+    if (terrainProfileModeOn === false) {
+        terrainProfileModeOn = true;
+    } else {
+        terrainProfileModeOn = false;
+
+        if (currProfileViewer) {
+            currProfileViewer.destroy();
+            currProfileViewer = null;
+        }
+    }
+});

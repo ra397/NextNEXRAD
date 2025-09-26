@@ -15,3 +15,13 @@
     padding: 2px 5px 0 0;
     cursor: pointer;
 }
+
+#toggle-terrain-profile-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: white;
+    border-radius: 15px;
+    padding: 5px;
+    border: 0.5px solid #ccc;
+}
