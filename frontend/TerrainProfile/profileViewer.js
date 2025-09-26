@@ -129,6 +129,8 @@ document.addEventListener("display_profile", async (event) => {
     const viewer = new ProfileViewer(window.map, lat, lng);
     await viewer.init();
     currProfileViewer = viewer;
+
+    document.getElementById("terrainProfileTitle").textContent = "Azimuth: 0°";
 });
 
 document.getElementById("profileWindowExit").addEventListener("click", () => {
