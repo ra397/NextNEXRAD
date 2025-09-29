@@ -17,9 +17,16 @@ document.addEventListener('DOMContentLoaded', function() {
             const selectedColor = this.getAttribute('data-color');
             window.overlay_color = selectedColor;
 
-            // Reload tiles with the new color
-            if (document.getElementById("show-all-coverage-checkbox").checked == true) {
+            // Reload tiles with the new color if a threshold is selected (not "hide")
+            const currentThreshold = coveragesLayer.getSelectedThreshold();
+            if (currentThreshold !== "hide") {
                 coveragesLayer.loadAndShowSelectedCoverage();
+            }
+
+            // Also reload fixed distance tiles if a threshold is selected (not "none")
+            const currentFixedDistanceThreshold = fixedDistanceCoveragesLayer.getSelectedThreshold();
+            if (currentFixedDistanceThreshold !== "none") {
+                fixedDistanceCoveragesLayer.loadAndShowSelectedCoverage();
             }
 
             triggerReportGeneration(); // Need to redraw report with the new colors
@@ -61,6 +68,7 @@ function setLabelFor(inputId, metricText, imperialText){
 
 function updateUnitLabels(){
   setLabelFor('threshold-range-slider',              'AGL Threshold (m):', 'AGL Threshold (ft):');
+  setLabelFor('fixed-distance-range-slider',         'Distnace (km):', 'Distance (mi):');
   setLabelFor('towerHeight-input',                   'Tower Height (m):',  'Tower Height (ft):');
   setLabelFor('aglThreshold-input',                  'AGL Threshold (m):', 'AGL Threshold (ft):');
   setLabelFor('dynamic-radar-site-tower-height',     'Tower Height (m):',  'Tower Height (ft):');
@@ -69,6 +77,7 @@ function updateUnitLabels(){
   setLabelFor('existing-radar-site-max-alt',         'AGL Threshold (m):', 'AGL Threshold (ft):');
 
   updateTickLabels();
+  updateFixedDistanceTickLabels();
   updatePopulationLabel();
   updateBasinStatsWindowUnits();
 }
@@ -77,8 +86,18 @@ function updateTickLabels(){
   const wrap = document.querySelector('.tick-labels');
   if (!wrap) return;
   const spans = wrap.querySelectorAll('span');
-  const metric   = ['1,000', '2,000', '3,000'];
-  const imperial = ['3,000', '6,000', '10,000'];
+  const metric   = ['None', '1,000', '2,000', '3,000'];
+  const imperial = ['None', '3,000', '6,000', '10,000'];
+  const labels = (window.units === 'metric') ? metric : imperial;
+  spans.forEach((el, i) => { if (labels[i]) el.textContent = labels[i]; });
+}
+
+function updateFixedDistanceTickLabels(){
+  const wrap = document.getElementById('fixed-distance-tick-labels');
+  if (!wrap) return;
+  const spans = wrap.querySelectorAll('span');
+  const metric   = ['None', '100', '150', '230'];
+  const imperial = ['None', '60', '90', '140'];
   const labels = (window.units === 'metric') ? metric : imperial;
   spans.forEach((el, i) => { if (labels[i]) el.textContent = labels[i]; });
 }

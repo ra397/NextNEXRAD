@@ -1,58 +1,54 @@
-class CoveragesLayer {
-  static thresholds = ["hide", "3k_tiles", "6k_tiles", "10k_tiles"];
+class FixedDistanceCoveragesLayer {
+  static thresholds = ["none", "100km", "150km", "230km"];
   
   static getSelectedThreshold(rangeSlider = null) {
     const slider = rangeSlider || 
-                   document.getElementById("threshold-range-slider") || 
-                   document.querySelector('input[type="range"]');
+                   document.getElementById("fixed-distance-range-slider") || 
+                   document.querySelector('#fixed-distance-range-slider');
     
     if (!slider) {
-      console.warn("Range slider not found, returning default threshold");
-      return "hide";
+      console.warn("Fixed distance range slider not found, returning default threshold");
+      return "none";
     }
     
     const sliderValue = parseInt(slider.value);
-    return this.thresholds[sliderValue] || "hide";
+    return this.thresholds[sliderValue] || "none";
   }
 
   constructor(map) {
     this.map = map;
     this.tileLayers = {};
     this.currentTileLayer = null;
-    this.currentThreshold = "hide";
+    this.currentThreshold = "none";
     this.rangeSlider = null;
   }
 
   initUI() {
-    this.rangeSlider = document.querySelector('input[type="range"]');
+    this.rangeSlider = document.getElementById("fixed-distance-range-slider");
     
     if (!this.rangeSlider) {
-      console.error("Range slider not found");
+      console.error("Fixed distance range slider not found");
       return;
     }
 
     this.rangeSlider.addEventListener('input', () => {
       const threshold = this.getSelectedThreshold();
-      if (threshold === "hide") {
+      if (threshold === "none") {
         this.clear();
       } else {
         this.loadAndShowSelectedCoverage();
       }
     });
-
-    document.getElementById("radar-settings-window-exit-btn").addEventListener("click", () => {
-      document.getElementById("radar-settings-window-exit-btn").parentElement.parentElement.style.display = 'none';
-    })
   }
 
   getSelectedThreshold() {
-    return CoveragesLayer.getSelectedThreshold(this.rangeSlider);
+    return FixedDistanceCoveragesLayer.getSelectedThreshold(this.rangeSlider);
   }
 
   loadAndShowSelectedCoverage() {
     const threshold = this.getSelectedThreshold();
     
-    if (threshold === "hide") {
+    if (threshold === "none") {
       this.clear();
       return;
     }
@@ -72,7 +68,7 @@ class CoveragesLayer {
             color: window.overlay_color,
           });
           
-          return `${window._env_prod.SERVER_URL}/tiles?${params.toString()}`;
+          return `${window._env_prod.SERVER_URL}/fixed-distance-tiles?${params.toString()}`;
         },
         tileSize: new google.maps.Size(256, 256),
         maxZoom: 12,
@@ -101,7 +97,7 @@ class CoveragesLayer {
 
   reset() {
     this.clear();
-    const thresholdSlider = document.querySelector('input[type="range"]');
+    const thresholdSlider = document.getElementById("fixed-distance-range-slider");
     if (thresholdSlider) {
       thresholdSlider.value = "0";
       const event = new Event('change', { bubbles: true });
@@ -110,4 +106,4 @@ class CoveragesLayer {
   }
 }
 
-window.CoveragesLayer = CoveragesLayer;
+window.FixedDistanceCoveragesLayer = FixedDistanceCoveragesLayer;

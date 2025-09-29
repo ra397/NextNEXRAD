@@ -83,6 +83,10 @@ async function initMap() {
   coveragesLayer.initUI();
   window.coveragesLayer = coveragesLayer; // So i can access this variable in settings.js
 
+  fixedDistanceCoveragesLayer = new FixedDistanceCoveragesLayer(map);
+  fixedDistanceCoveragesLayer.initUI();
+  window.fixedDistanceCoveragesLayer; fixedDistanceCoveragesLayer;
+
   riverLayer = new RiverNetworkLayer(map);
   riverLayer.initUI();
   window.riverLayer = riverLayer;
@@ -191,6 +195,7 @@ function reset() {
   podLayer.reset();
   populationLayer.clear();
   coveragesLayer.reset();
+  fixedDistanceCoveragesLayer.reset();
   riverLayer.reset();
   if (currProfileViewer) {
     currProfileViewer.destroy();
