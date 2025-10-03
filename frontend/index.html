@@ -311,6 +311,11 @@
                     </div>
                 </div>
 
+                <div class="settings-label">USGS Filter (km)</div>
+                <div class="settings-input double-slider usgsFilter">
+                    <div id="usgsFilterSlider"></div>
+                </div>
+
                 <div class="settings-label">River Network</div>
                 <div class="edit-marker-container">
                     <div class="settings-input" style="flex: 1;">
@@ -540,7 +545,7 @@
         <script src="canvasOverlay.js"></script>
         <script src="public/config.js"></script>
         <script src="constants.js"></script>
-        <script src="elevationAnglesSlider.js"></script>
+        <script type="module" src="elevationAnglesSlider.js"></script>
         <script src="RadarFieldsManager.js"></script>
         <script src="rangeRings.js"></script>
         <script src="radarLayer.js"></script>
@@ -571,6 +576,7 @@
         <script src="TerrainProfile/getTerrainProfile.js"></script>
         <script src="TerrainProfile/displayTerrainProfile.js"></script>
         <script src="TerrainProfile/beamModel.js"></script>
+        <script type="module" src="usgsFilterSlider.js"></script>
         <script>
             window.onload = function () {
                 initMap();

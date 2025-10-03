@@ -50,6 +50,10 @@
     padding: 35px 25px 25px 25px;
 }
 
+.usgsFilter {
+    padding: 35px 35px 25px 25px;
+}
+
 .pop-settings-container {
   display: grid;
   grid-template-columns: 75px 250px 25px; /* label small, input expands, button auto */
