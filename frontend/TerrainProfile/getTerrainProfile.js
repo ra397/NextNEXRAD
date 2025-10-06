@@ -1,11 +1,6 @@
-proj4.defs("EPSG:5070", "+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 " +
-                         "+x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs");
-
-const SERVER = window._env_dev.SERVER_URL;
-
 async function fetchTerrainProfile(lat, lng) {
-    const [easting, northing] = proj4("EPSG:4326", "EPSG:5070", [lng, lat]);
-    const url = `${SERVER}/get-terrain?easting=${encodeURIComponent(easting)}&northing=${encodeURIComponent(northing)}`;
+    const [easting, northing] = proj4("EPSG:4326", "EPSG:3857", [lng, lat]);
+    const url = `${window._env_dev.SERVER_URL}/get-terrain?easting=${encodeURIComponent(easting)}&northing=${encodeURIComponent(northing)}`;
 
     try {
         const response = await fetch(url);
