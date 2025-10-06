@@ -68,7 +68,8 @@ class ProfileViewer {
         }
         this._displayProfileAtAzimuth(azimuth);
 
-        document.getElementById("terrainProfileTitle").textContent = `Azimuth: ${azimuth}°`;
+        const normalizedAzimuth = ((Math.round(azimuth) % 360) + 360) % 360;
+        document.getElementById("terrainProfileTitle").textContent = `Azimuth: ${normalizedAzimuth}°`;
     }
 
     _displayProfileAtAzimuth(azimuth) {
