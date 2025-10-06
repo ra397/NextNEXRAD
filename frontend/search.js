@@ -98,24 +98,26 @@ resultsContainer.addEventListener('click', function(event) {
 });
 
 function handleUsgsSelection(usgsId) {
-    let marker;
-    let lat = null;
-    let lng = null;
-    for (let i = 0; i < usgsLayer.usgsSitesMarkers.markers.length; i++) {
-        marker = usgsLayer.usgsSitesMarkers.markers[i];
-        if (marker.properties.usgs_id === usgsId) {
-            lat = marker.position.lat();
-            lng = marker.position.lng();
-            break;
-        }
-    }
-    if (lat && lng) {
-        usgsLayer.showUsgsSites();
-        document.getElementById("usgsSites-checkbox").checked = true;
-        usgsLayer.usgsSiteClicked(null, marker, goTo=true);
-    }
-    clearResults();
-    searchInput.value = "";
+  let marker;
+  let lat = null;
+  let lng = null;
+  for (let i = 0; i < usgsLayer.usgsSitesMarkers.markers.length; i++) {
+      marker = usgsLayer.usgsSitesMarkers.markers[i];
+      if (marker.properties.usgs_id === usgsId) {
+          lat = marker.position.lat();
+          lng = marker.position.lng();
+          break;
+      }
+  }
+  if (lat && lng) {
+      usgsLayer.showUsgsSites();
+      document.getElementById("usgsSites-checkbox").checked = true;
+      usgsLayer.usgsSiteClicked(null, marker, goTo=true);
+  } else {
+    showError("Could not find USGS stream gage.");
+  }
+  clearResults();
+  searchInput.value = "";
 }
 
 function handleRadarSelection(nexradId) {
