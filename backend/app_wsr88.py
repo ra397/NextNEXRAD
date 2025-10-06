@@ -67,7 +67,7 @@ def get_tile():
     else:
         return jsonify({'error': 'Tile not found'}), 404
 
-dem_path = r"C:\Users\ralaya\Documents\gis\projects\wsr88-coverage-app\backend\dem250_epsg5070.tif"
+dem_path = r"C:\Users\ralaya\Documents\gis\projects\wsr88-coverage-app\backend\dem1000_epsg3857.tif"
 @app.route("/api-wsr88/get-terrain")
 def get_terrain():
     dem_reader = DemReader(dem_path)
@@ -77,8 +77,8 @@ def get_terrain():
         return jsonify({"error": "Missing required parameters 'easting' or 'northing'"}), 400
     easting = float(easting_str)
     northing = float(northing_str)
-    window = dem_reader.window(easting=easting, northing=northing, window_size=1840)
-    profile_1d = get_1d_profile(window=window)
+    window = dem_reader.window(easting=easting, northing=northing, window_size=920, flip=False) # we are in 3857, no need to flip
+    profile_1d = get_1d_profile(window=window, easting=easting, northing=northing)
     profile_1d_bytes = profile_1d.tobytes()
     profile_1d_b64 = base64.b64encode(profile_1d_bytes).decode('utf-8')
     dem_reader.close()

@@ -10,7 +10,7 @@ class DemReader:
         self.width = self.ds.RasterXSize
         self.height = self.ds.RasterYSize
 
-    def window(self, easting, northing, window_size):
+    def window(self, easting, northing, window_size, flip=True):
         px, py = gdal.ApplyGeoTransform(self.inv_gt, easting, northing)
         origin_x = int(round(px))
         origin_y = int(round(py))
@@ -39,7 +39,8 @@ class DemReader:
             dest_y = y_off - top_left_y
             window[dest_y:dest_y+valid_h, dest_x:dest_x+valid_w] = arr
 
-        window = np.flipud(window)
+        if flip:
+            window = np.flipud(window)
 
         return window
 

@@ -27,7 +27,7 @@ def combine_blockage_masks(dem_path, easting, northing,
                            elevation_angles, tower_height, agl_threshold,
                            window_size=window_size, pixel_res=dem_pixel_size):
     dem_reader = DemReader(dem_path)
-    elevation = dem_reader.window(easting, northing, window_size)
+    elevation = dem_reader.window(easting, northing, window_size, flip=True)
     dem_reader.close()
 
     ground_ranges = ground_range_grid(window_size, pixel_res)

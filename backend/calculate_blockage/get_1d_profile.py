@@ -1,29 +1,54 @@
 import numpy as np
+import json
+from pyproj import Geod, Transformer
 
-def get_1d_profile(window: np.ndarray, resolution_m: int = 250, km_radius: int = 230) -> np.ndarray:
-    steps_per_km = 1000 // resolution_m       
-    samples_per_ray = km_radius               
-    total_steps = samples_per_ray * steps_per_km 
+geod = Geod(ellps='WGS84')
 
+# Define coordinate transformers
+to_4326 = Transformer.from_crs("EPSG:3857", "EPSG:4326", always_xy=True)
+to_3857 = Transformer.from_crs("EPSG:4326", "EPSG:3857", always_xy=True)
+
+def transform_3857_to_4326(x, y):
+    return to_4326.transform(x, y)
+
+def transform_4326_to_3857(lon, lat):
+    return to_3857.transform(lon, lat)
+
+def get_1d_profile(window: np.ndarray, easting, northing) -> np.ndarray:
+    profile = []
+
+    for azimuth in range(360):
+        for distance in range(230):
+            value = get_cell_value(window, azimuth, distance, easting, northing)
+            profile.append(value)
+    return np.array(profile).astype(np.uint16)
+
+def get_cell_value(window, azimuth, distance, easting, northing):
+    # Convert center point from EPSG:3857 to lon/lat (WGS84)
+    lon, lat = transform_3857_to_4326(easting, northing)
+
+    # Calculate destination point using geodesic (ellipsoidal) distance
+    dest_lon, dest_lat, _ = geod.fwd(lon, lat, azimuth, distance * 1000)
+
+    # Convert destination point back to EPSG:3857
+    x_coord, y_coord = transform_4326_to_3857(dest_lon, dest_lat)
+
+    # Convert to pixel coordinates in the DEM window
     height, width = window.shape
-    center_x, center_y = width // 2, height // 2
+    center_x = width // 2
+    center_y = height // 2
 
-    angles = np.deg2rad(np.arange(360))
-    dx = np.sin(angles)
-    dy = -np.cos(angles)
+    # Calculate pixel offsets assuming 1km resolution (1000m/pixel)
+    pixel_offset_x = int(round((x_coord - easting) / 1000))
+    pixel_offset_y = int(round((northing - y_coord) / 1000))  # y increases downward
 
-    steps = np.arange(total_steps)
+    ix = center_x + pixel_offset_x
+    iy = center_y + pixel_offset_y
 
-    x = center_x + np.outer(dx, steps)
-    y = center_y + np.outer(dy, steps)
+    # Check for out-of-bounds
+    if 0 <= ix < width and 0 <= iy < height:
+        value = window[iy, ix]
+    else:
+        value = 0
 
-    ix = np.clip(np.round(x).astype(int), 0, width - 1)
-    iy = np.clip(np.round(y).astype(int), 0, height - 1)
-
-    elevation_samples = window[iy, ix]  
-
-    elevation_chunks = elevation_samples.reshape(360, samples_per_ray, steps_per_km)
-
-    max_elevations = elevation_chunks.max(axis=2)
-
-    return max_elevations.flatten()
+    return value
