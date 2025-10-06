@@ -11,6 +11,9 @@ class UsgsLayer {
         // Hover timing control
         this.hoverDelay = 500; // milliseconds to wait before showing hover label
         this.hoverTimeouts = new Map(); // Store timeout IDs per marker
+
+        this.min_area = 0;
+        this.max_area = 1_800_000;
     }
 
     async init() {
@@ -60,7 +63,15 @@ class UsgsLayer {
     }
 
     showUsgsSites() {
-        this.usgsSitesMarkers.show();
+        for (let i = 0; i < this.usgsSitesMarkers.markers.length; i ++) {
+            const marker =  this.usgsSitesMarkers.markers[i];
+            const area = this.usgsSitesMarkers.markers[i].properties.drainage_area;
+            if (area < this.min_area || area > this.max_area) {
+                marker.setMap(null);
+            } else {
+                marker.setMap(window.map);
+            }
+        }
     }
 
     hideUsgsSites() {

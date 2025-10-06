@@ -24,9 +24,12 @@ noUiSlider.create(usgsFilterSlider, {
 usgsFilterSlider.noUiSlider.on("change", () => {
     const { min, max } = fieldManager._getRangeFromSlider("usgsFilterSlider");
     filterUSGS(min, max);
+    usgsLayer.min_area = min;
+    usgsLayer.max_area = max;
 })
 
 function filterUSGS(min_area, max_area) {
+    if (!document.getElementById("usgsSites-checkbox").checked) return;
     for (let i = 0; i < usgsLayer.usgsSitesMarkers.markers.length; i ++) {
         const marker =  usgsLayer.usgsSitesMarkers.markers[i];
         const area = usgsLayer.usgsSitesMarkers.markers[i].properties.drainage_area;
