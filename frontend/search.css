@@ -4,7 +4,7 @@
     justify-content: center;
     height: 38px;
     border-radius: 30px;
-    min-width: 389.3px;
+    padding-left: 2ch;
 }
 
 #search-container {
@@ -42,6 +42,7 @@
 
 #search-input:focus-visible {
     outline: none;
+    width: 389.5px;
 }
 
 #search-input:focus-visible + #search-icon {
