@@ -148,6 +148,12 @@ function km2ToMi2(v) {
   return isNaN(n) ? null : n * 0.3861021585424458; // 1 km² = 0.3861021585 mi²
 }
 
+function mi2ToKm2(v) {
+  if (v == null || v === '') return null;
+  const n = typeof v === 'string' ? parseFloat(v) : v;
+  return isNaN(n) ? null : n / 0.3861021585424458; // 1 mi² ≈ 2.58998811 km²
+}
+
 function kmToMi(v) {
   if (v == null || v === '') return null;
   const n = typeof v === 'string' ? parseFloat(v) : v;

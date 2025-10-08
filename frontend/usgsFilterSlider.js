@@ -40,3 +40,24 @@ function filterUSGS(min_area, max_area) {
         }
     }
 }
+
+document.addEventListener("units_changed", () => {
+    const isImperial = window.units === 'imperial';
+
+    const label = document.getElementById("usgsFilterLabel");
+
+    isImperial ? label.innerHTML = "USGS Filter (mi<sup>2</sup>)" : label.innerHTML = "USGS Filter (km<sup>2</sup>)";
+
+    usgsFilterSlider.noUiSlider.updateOptions({
+        tooltips: [
+            {
+                to: v => isImperial ? `${km2ToMi2(v).toFixed(0)}`: `${parseFloat(v).toFixed(0)}`,
+                from: v => parseFloat(v) // identity function
+            },
+            {
+                to: v => isImperial ? `${km2ToMi2(v).toFixed(0)}` : `${parseFloat(v).toFixed(0)}`,
+                from: v => parseFloat(v)
+            }
+        ]
+    }, true);
+});
