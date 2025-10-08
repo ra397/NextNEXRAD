@@ -89,7 +89,12 @@ function drawAxisLabels(xValues) {
     for (let i = 0; i < xValues.length; i += xStep) {
         const x = margin.left + (plotWidth * (xValues[i] - xMin)) / (xMax - xMin);
         const y = height - 5;
-        const label = `${Math.round(xValues[i])}${i === lastXIndex ? ' km' : ''}`;
+        let label;
+        if (window.units === 'metric') {
+            label = `${Math.round(xValues[i])}${i === lastXIndex ? ' km' : ''}`;
+        } else {
+            label = `${kmToMi(Math.round(xValues[i])).toFixed(0)}${i === lastXIndex ? ' mi' : ''}`;
+        }
         ctx.fillText(label, x, y);
     }
 
@@ -101,7 +106,12 @@ function drawAxisLabels(xValues) {
         const yVal = min + (i * (max - min)) / 4;
         const x = margin.left - 5;
         const y = margin.top + plotHeight - (i * plotHeight) / 4 + 4;
-        const label = `${Math.round(yVal)}${i === 4 ? ' m' : ''}`;
+        let label;
+        if (window.units === 'metric') {
+            label = `${Math.round(yVal)}${i === 4 ? ' m' : ''}`;
+        } else {
+            label = `${m2ft(Math.round(yVal)).toFixed(0)}${i === 4 ? ' ft' : ''}`;
+        }
         ctx.fillText(label, x, y);
     }
 }

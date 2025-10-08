@@ -148,6 +148,11 @@ function km2ToMi2(v) {
   return isNaN(n) ? null : n * 0.3861021585424458; // 1 km² = 0.3861021585 mi²
 }
 
+function kmToMi(v) {
+  if (v == null || v === '') return null;
+  const n = typeof v === 'string' ? parseFloat(v) : v;
+  return isNaN(n) ? null : n * 0.621371;
+}
 
 document.getElementById("existingRadarSites-checkbox").addEventListener("change", function () {
   if (this.checked) {

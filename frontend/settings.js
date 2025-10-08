@@ -80,6 +80,9 @@ function updateUnitLabels(){
   updateFixedDistanceTickLabels();
   updatePopulationLabel();
   updateBasinStatsWindowUnits();
+
+  const unitsChangedEvent = new CustomEvent("units_changed");
+  document.dispatchEvent(unitsChangedEvent);
 }
 
 function updateTickLabels(){

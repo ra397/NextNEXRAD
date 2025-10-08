@@ -10,6 +10,8 @@ class ProfileViewer {
         this.profileSelector = null;
 
         this._onKeyDown = this._onKeyDown.bind(this);
+
+        this.currentProfile = null;
     }
 
     async init() {
@@ -73,9 +75,9 @@ class ProfileViewer {
     }
 
     _displayProfileAtAzimuth(azimuth) {
-        const profile = this._getTerrainSliceByAzimuth(azimuth);
+        this.currentProfile = this._getTerrainSliceByAzimuth(azimuth);
         setYLimits(Math.min(...this.terrainProfile), Math.max(...this.terrainProfile) + 3e3);
-        this.plotTerrainAndBeams(profile);
+        this.plotTerrainAndBeams(this.currentProfile);
     }
 
     _getTerrainSliceByAzimuth(azimuth) {
@@ -153,3 +155,9 @@ document.getElementById("terrain-profile-mode-toggle").addEventListener("click",
         }
     }
 });
+
+document.addEventListener("units_changed", () => {
+    if (document.getElementById("terrainProfileCanvasContainer").style.display === "block") {
+        currProfileViewer.plotTerrainAndBeams(currProfileViewer.currentProfile);
+    }
+})
