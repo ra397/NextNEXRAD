@@ -21,6 +21,8 @@ noUiSlider.create(usgsFilterSlider, {
     }
 })
 
+mergeTooltips(usgsFilterSlider, 30, '-');
+
 usgsFilterSlider.noUiSlider.on("change", () => {
     const { min, max } = fieldManager._getRangeFromSlider("usgsFilterSlider");
     filterUSGS(min, max);
@@ -52,7 +54,7 @@ document.addEventListener("units_changed", () => {
         tooltips: [
             {
                 to: v => isImperial ? `${km2ToMi2(v).toFixed(0)}`: `${parseFloat(v).toFixed(0)}`,
-                from: v => parseFloat(v) // identity function
+                from: v => parseFloat(v)
             },
             {
                 to: v => isImperial ? `${km2ToMi2(v).toFixed(0)}` : `${parseFloat(v).toFixed(0)}`,
@@ -60,4 +62,91 @@ document.addEventListener("units_changed", () => {
             }
         ]
     }, true);
+
+    mergeTooltips(usgsFilterSlider, 30, '-');
 });
+
+function mergeTooltips(slider, threshold, separator) {
+
+    var textIsRtl = getComputedStyle(slider).direction === 'rtl';
+    var isRtl = slider.noUiSlider.options.direction === 'rtl';
+    var isVertical = slider.noUiSlider.options.orientation === 'vertical';
+
+    if (slider._mergeFunction) {
+        slider.noUiSlider.off('update', slider._mergeFunction);
+    }
+
+    slider._mergeFunction = function (values, handle, unencoded, tap, positions) {
+        var tooltips = slider.noUiSlider.getTooltips();
+        var origins = slider.noUiSlider.getOrigins();
+        var options = slider.noUiSlider.options;
+
+        var pools = [[]];
+        var poolPositions = [[]];
+        var poolValues = [[]];
+        var atPool = 0;
+
+        if (tooltips[0]) {
+            pools[0][0] = 0;
+            poolPositions[0][0] = positions[0];
+            poolValues[0][0] = options.tooltips[0].to(unencoded[0]);
+        }
+
+        for (var i = 1; i < positions.length; i++) {
+            if (!tooltips[i] || (positions[i] - positions[i - 1]) > threshold) {
+                atPool++;
+                pools[atPool] = [];
+                poolValues[atPool] = [];
+                poolPositions[atPool] = [];
+            }
+
+            if (tooltips[i]) {
+                pools[atPool].push(i);
+                poolValues[atPool].push(options.tooltips[i].to(unencoded[i]));
+                poolPositions[atPool].push(positions[i]);
+            }
+        }
+
+        pools.forEach(function (pool, poolIndex) {
+            var handlesInPool = pool.length;
+
+            for (var j = 0; j < handlesInPool; j++) {
+                var handleNumber = pool[j];
+
+                if (j === handlesInPool - 1) {
+                    var direction = isVertical ? 'bottom' : 'right';
+                    
+                    // Only merge and reposition if there are multiple handles in this pool
+                    if (handlesInPool > 1) {
+                        // Calculate average position of merged handles
+                        var avgPosition = 0;
+                        poolPositions[poolIndex].forEach(function (value) {
+                            avgPosition += value;
+                        });
+                        avgPosition = avgPosition / handlesInPool;
+                        
+                        // Calculate offset from the rightmost handle's position to the average position
+                        var rightmostPosition = poolPositions[poolIndex][poolPositions[poolIndex].length - 1];
+                        var offsetPixels = ((rightmostPosition - avgPosition) / 1000) * slider.offsetWidth;
+                        
+                        tooltips[handleNumber].innerHTML = poolValues[poolIndex].join(separator);
+                        tooltips[handleNumber].style.display = 'block';
+                        
+                        tooltips[handleNumber].style.left = '-3px';
+                        tooltips[handleNumber].style.bottom = '120%';
+                    } else {
+                        // Not merged, restore default CSS styling
+                        tooltips[handleNumber].innerHTML = poolValues[poolIndex][0];
+                        tooltips[handleNumber].style.display = 'block';
+                        tooltips[handleNumber].style.transform = '';
+                        tooltips[handleNumber].style.left = '';
+                        tooltips[handleNumber].style.bottom = '';
+                    }
+                } else {
+                    tooltips[handleNumber].style.display = 'none';
+                }
+            }
+        });
+    };
+    slider.noUiSlider.on('update', slider._mergeFunction);
+}
