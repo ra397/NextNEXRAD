@@ -91,12 +91,12 @@ async function initMap() {
   riverLayer.initUI();
   window.riverLayer = riverLayer;
 
-  map.addListener("zoom_changed", () => {
-    const zoom = map.getZoom();
-    if (usgsLayer.updateMarkerSize) {
-      usgsLayer.updateMarkerSize(zoom);
-    }
-  })
+  // map.addListener("zoom_changed", () => {
+  //   const zoom = map.getZoom();
+  //   if (usgsLayer.updateMarkerSize) {
+  //     usgsLayer.updateMarkerSize(zoom);
+  //   }
+  // })
 }
 
 // Given an html input element, get the value

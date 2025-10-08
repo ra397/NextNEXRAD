@@ -275,21 +275,21 @@ class UsgsLayer {
         return fetch(url).then(response => response.arrayBuffer());
     }
 
-    updateMarkerSize(zoom) {
-        let size;
+    // updateMarkerSize(zoom) {
+    //     let size;
 
-        if (zoom >= 8 && zoom <= 12) {
-            const zoomBin = Math.floor(zoom);
-            size = Math.max(3.5, Math.min(8, 0.5 * zoomBin));
-        } else {
-            size = 3.5; // default size when zoomed out or too far in
-        }
+    //     if (zoom >= 8 && zoom <= 12) {
+    //         const zoomBin = Math.floor(zoom);
+    //         size = Math.max(3.5, Math.min(8, 0.5 * zoomBin));
+    //     } else {
+    //         size = 3.5; // default size when zoomed out or too far in
+    //     }
 
-        if (this._lastMarkerSize === size) return;
-        this._lastMarkerSize = size;
+    //     if (this._lastMarkerSize === size) return;
+    //     this._lastMarkerSize = size;
 
-        this.usgsSitesMarkers.updateIcons({ markerSize: size });
-    }
+    //     this.usgsSitesMarkers.updateIcons({ markerSize: size });
+    // }
 
     reset() {
         this.hideUsgsSites();
