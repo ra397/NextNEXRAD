@@ -6,7 +6,6 @@ from PIL import Image
 from io import BytesIO
 import base64
 from osgeo import gdal, osr
-from PIL import Image
 import numpy as np
 from io import BytesIO
 import base64

@@ -1,5 +1,4 @@
 import numpy as np
-import json
 from pyproj import Geod, Transformer
 
 geod = Geod(ellps='WGS84')
