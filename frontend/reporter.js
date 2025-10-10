@@ -18,10 +18,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 // Loads population and coverage using worker
 function loadDataUsingWorker() {
     const worker = new Worker("report-worker.js");
-    worker.postMessage({
-        serverUrl: window._env_prod.SERVER_URL
-    });
-
+    worker.postMessage({ config });
     worker.onmessage = function(e) {
         const { population: pop, coverage_3k: cov_3k, coverage_6k: cov_6k, coverage_10k: cov_10k } = e.data;
         population = pop;
@@ -102,7 +99,7 @@ async function generateReport(basinId = null) {
 
 async function getBasinIndices(usgs_id) {
     try {
-        const response = await fetch(`public/data/ix_basin/${usgs_id}.json`);
+        const response = await fetch(`${config.BASIN_IX_1D}/${usgs_id}.json`);
         const result = await response.json();
         const binaryData = Uint8Array.from(atob(result.data), c => c.charCodeAt(0));
         const arrayType = dtypeMap[result.dtype];
@@ -218,7 +215,7 @@ document.addEventListener('generateReport', async () => {
 
 let usgs_sites = null;
 // Load usgs json into memory
-fetch('public/data/usgs.json')
+fetch(config.USGS_JSON)
     .then(res => res.json())
     .then(data => {
         usgs_sites = data;

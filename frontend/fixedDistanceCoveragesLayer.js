@@ -68,7 +68,7 @@ class FixedDistanceCoveragesLayer {
             color: window.overlay_color,
           });
           
-          return `${window._env_prod.SERVER_URL}/fixed-distance-tiles?${params.toString()}`;
+          return `${config.SERVER}/fixed-distance-tiles?${params.toString()}`;
         },
         tileSize: new google.maps.Size(256, 256),
         maxZoom: 12,

@@ -1,7 +1,11 @@
 let db = null;
 
+let config = null;
+
 self.onmessage = async function(e) {
-    const { serverUrl } = e.data;    
+    const { config: _config } = e.data;
+    config = _config;
+
     await initDatabaseConnection();
     const [population, coverage_3k, coverage_6k, coverage_10k] = await Promise.all([
         fetchPopulation(),
@@ -31,7 +35,7 @@ async function fetchPopulation() {
     }
     
     // Not in cache, fetch from server
-    const response = await fetch(`public/data/population/ppp.bin.gz`);
+    const response = await fetch(config.PPP_1D);
     
     if (!response.ok) throw new Error("Failed to fetch");
 
@@ -58,7 +62,7 @@ async function fetchCoverage(threshold = "3k_ft") {
     }
     
     // Not in cache, fetch from server
-    const response = await fetch(`public/data/coverages/${threshold}.bin.gz`);
+    const response = await fetch(`${config.COVERAGES_1D}/${threshold}.bin.gz`);
 
     if (!response.ok) throw new Error("Failed to fetch");
 

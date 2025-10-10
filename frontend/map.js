@@ -1,5 +1,3 @@
-const server = window._env_prod.SERVER_URL;
-
 let map;
 
 let radarLayer;

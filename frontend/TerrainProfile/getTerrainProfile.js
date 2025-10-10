@@ -1,6 +1,6 @@
 async function fetchTerrainProfile(lat, lng) {
     const [easting, northing] = proj4("EPSG:4326", "EPSG:3857", [lng, lat]);
-    const url = `${window._env_dev.SERVER_URL}/get-terrain?easting=${encodeURIComponent(easting)}&northing=${encodeURIComponent(northing)}`;
+    const url = `${config.SERVER}/get-terrain?easting=${encodeURIComponent(easting)}&northing=${encodeURIComponent(northing)}`;
 
     try {
         const response = await fetch(url);

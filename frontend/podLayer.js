@@ -188,13 +188,12 @@ async fetchAndDraw(dateRanges) {
     showSpinner();
 
     try {
-        const url = "https://s-iihr80.iihr.uiowa.edu/hyddatapp";
         const payload = {
             "product": "pod",
             "method": "aggregate",
             "datetime": dateRanges
         };
-        const response = await fetch(url, {
+        const response = await fetch(config.POD, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',

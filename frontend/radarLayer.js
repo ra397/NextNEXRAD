@@ -20,7 +20,7 @@ class RadarLayer {
     }
 
     initializeNexrad = async () => {
-        const res_nexradInfo = await fetch('public/data/nexrad_conus.json');
+        const res_nexradInfo = await fetch(config.NEXRAD_JSON);
         this.sites = await res_nexradInfo.json();
 
         await this.nexradMarkers.init({
@@ -221,7 +221,7 @@ class RadarLayer {
         let data;
         try {
             showSpinner();
-            const res = await fetch(`${window._env_prod.SERVER_URL}/calculate_blockage`, {
+            const res = await fetch(`${config.SERVER}/calculate_blockage`, {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
             });

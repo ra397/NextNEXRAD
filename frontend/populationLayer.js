@@ -61,7 +61,7 @@ class PopulationLayer {
       "west": -131.819737006
     };
     // Load and decompress binary raster
-    const req = await fetch("public/data/usa_ppp_2020_5km_epsg3857_clipped.bin");
+    const req = await fetch(config.PPP_5km);
     //const compressed = new Uint8Array(await gzRes.arrayBuffer());
     const decompressed = await req.arrayBuffer()//fflate.decompressSync(compressed); 
 

@@ -40,7 +40,7 @@ class RiverNetworkLayer {
                 data: null,
                 check_exists: true,
                 tileURL: (_zxy) => {
-                    return `//s-iihr80.iihr.uiowa.edu/hm_devel3/static/nhd_gauge_conn/vtiles/getVtile/?zxy=${_zxy}`;
+                    return `${config.RIVER_VTILES}/?zxy=${_zxy}`;
                 }
             },
             this.map,
