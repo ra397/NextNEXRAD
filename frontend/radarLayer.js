@@ -221,7 +221,7 @@ class RadarLayer {
         let data;
         try {
             showSpinner();
-            const res = await fetch(`${config.SERVER}/calculate_blockage`, {
+            const res = await fetch(`${config.APP_API}/calculate_blockage`, {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
             });

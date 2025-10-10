@@ -31,7 +31,7 @@ class UsgsLayer {
     }
 
     loadUsgsSites() {
-        this._getArrayBuffer(config.USGS_MARKERS).then((ret) => {
+        this._getArrayBuffer(config.USGS_MARKER).then((ret) => {
             const pbf = new Pbf(ret);
             const geojson = geobuf.decode(pbf);  // Converts to GeoJSON
 
@@ -186,7 +186,7 @@ class UsgsLayer {
 
     async loadBasin(usgsId, goTo) {
         try {
-            const buf = await this._getArrayBuffer(`${config.USGS_BOUNDARIES}/${usgsId}.pbf`);
+            const buf = await this._getArrayBuffer(`${config.USGS_BOUNDARY}/${usgsId}.pbf`);
             const geojson = geobuf.decode(new Pbf(new Uint8Array(buf)));
 
             const layer = new google.maps.Data({ map: this.map });

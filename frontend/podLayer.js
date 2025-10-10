@@ -193,7 +193,7 @@ async fetchAndDraw(dateRanges) {
             "method": "aggregate",
             "datetime": dateRanges
         };
-        const response = await fetch(config.POD, {
+        const response = await fetch(config.API_POD, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',

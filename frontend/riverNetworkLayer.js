@@ -40,7 +40,7 @@ class RiverNetworkLayer {
                 data: null,
                 check_exists: true,
                 tileURL: (_zxy) => {
-                    return `${config.RIVER_VTILES}/?zxy=${_zxy}`;
+                    return `${config.NHD_RVR_CONUS}/?zxy=${_zxy}`;
                 }
             },
             this.map,

@@ -72,7 +72,7 @@ class CoveragesLayer {
             color: window.overlay_color,
           });
           
-          return `${config.SERVER}/tiles?${params.toString()}`;
+          return `${config.APP_API}/tiles?${params.toString()}`;
         },
         tileSize: new google.maps.Size(256, 256),
         maxZoom: 12,

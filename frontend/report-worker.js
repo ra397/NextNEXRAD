@@ -62,7 +62,7 @@ async function fetchCoverage(threshold = "3k_ft") {
     }
     
     // Not in cache, fetch from server
-    const response = await fetch(`${config.COVERAGES_1D}/${threshold}.bin.gz`);
+    const response = await fetch(`${config.COVERAGE_1D}/${threshold}.bin.gz`);
 
     if (!response.ok) throw new Error("Failed to fetch");
 
