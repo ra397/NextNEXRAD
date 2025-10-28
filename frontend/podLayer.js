@@ -191,7 +191,7 @@ async fetchAndDraw(dateRanges) {
         const payload = {
             "product": "pod",
             "method": "aggregate",
-            "datetime": dateRanges
+            "date_time": dateRanges
         };
         const response = await fetch(config.API_POD, {
             method: "POST",
@@ -205,16 +205,16 @@ async fetchAndDraw(dateRanges) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const arrayBuffer = await response.arrayBuffer();
-        
+        const json = await response.json();
+
         if (!this.di) {
             this.di = new dynaImg();
             this.di.image = new Image();
             this.di.image.crossOrigin = '';
         }
-        
+
         this.applyStyling();
-        const blob = await this.di.loadFromArrayBuffer(arrayBuffer);
+        const blob = await this.di.loadFromJSONResponse(json);
 
         if (this.podOverlay) this.podOverlay.remove();
         this.podOverlay = customOverlay(blob, window.constants.pod.POD_BBOX, this.map, 'OverlayView');
@@ -222,6 +222,7 @@ async fetchAndDraw(dateRanges) {
 
     } catch (error) {
         showError("Error fetching POD data.");
+        console.error(error);
     } finally {
         hideSpinner();
     }

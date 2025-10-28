@@ -199,9 +199,44 @@ class dynaImg {
         this.scale = s;
         return this.redraw();
     }
+
+    async loadFromJSONResponse(json) {
+        // Decode base64 to binary buffer
+        const binaryStr = atob(json.data);
+        const len = binaryStr.length;
+        const buffer = new ArrayBuffer(len);
+        const view = new Uint8Array(buffer);
+        for (let i = 0; i < len; i++) view[i] = binaryStr.charCodeAt(i);
+
+        // Build typed array based on dtype
+        let typedArray;
+        switch (json.dtype) {
+            case 'uint16':
+                typedArray = new Uint16Array(buffer);
+                break;
+            case 'uint8':
+                typedArray = new Uint8Array(buffer);
+                break;
+            case 'float32':
+                typedArray = new Float32Array(buffer);
+                break;
+            default:
+                throw new Error(`Unsupported dtype: ${json.dtype}`);
+        }
+
+        // Use width/height/scale directly
+        this.width = json.width;
+        this.height = json.height;
+        this.scale = json.scale;
+
+        // Save the values array
+        this.values = typedArray;
+
+        // Prepare canvas and redraw
+        this.setSize(this.width, this.height);
+        return this.redraw();
+    }
 }
-
-
 
 class boxMask {
     parent = null
