@@ -31,13 +31,13 @@ class CoveragesLayer {
       return;
     }
 
-    this.rangeSlider.addEventListener('input', () => {
-      const threshold = this.getSelectedThreshold();
-      if (threshold === "hide") {
-        this.clear();
-      } else {
-        this.loadAndShowSelectedCoverage();
-      }
+    this.rangeSlider.addEventListener('change', () => {
+        const threshold = this.getSelectedThreshold();
+        if (threshold === "hide") {
+            this.clear();
+        } else {
+            this.loadAndShowSelectedCoverage();
+        }
     });
 
     document.getElementById("radar-settings-window-exit-btn").addEventListener("click", () => {
